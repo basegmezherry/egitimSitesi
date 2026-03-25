@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Birim Çevirici — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+.conv-wrap{max-width:600px;margin:0 auto;padding:80px 20px 40px}
+.conv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.conv-header a{color:var(--text-2);text-decoration:none;font-size:13px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:20px}
+.cat-btn{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all var(--t-fast);font-family:var(--f-body);font-size:12.5px;font-weight:600;color:var(--text-2)}
+.cat-btn:hover,.cat-btn.active{border-color:var(--cyan);background:rgba(99,219,255,.08);color:var(--cyan)}
+.cat-btn .cat-icon{font-size:22px;display:block;margin-bottom:4px}
+.conv-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.conv-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:16px}
+.conv-input-group{display:flex;flex-direction:column;gap:6px}
+.conv-label{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;font-family:var(--f-mono)}
+.conv-num{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:var(--f-mono);font-size:20px;font-weight:700;color:var(--text);width:100%;outline:none;transition:border-color var(--t-fast)}
+.conv-num:focus{border-color:var(--cyan)}
+.conv-select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-family:var(--f-body);font-size:13.5px;color:var(--text);width:100%;outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%238fa3bf' d='M5 7L1 3h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.swap-btn{background:rgba(99,219,255,.1);border:1px solid rgba(99,219,255,.2);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all var(--t-fast);color:var(--cyan);flex-shrink:0;margin-top:26px}
+.swap-btn:hover{background:rgba(99,219,255,.2);transform:rotate(180deg)}
+.result-box{background:rgba(99,219,255,.05);border:1px solid rgba(99,219,255,.15);border-radius:12px;padding:16px;text-align:center;margin-top:4px}
+.result-num{font-family:var(--f-mono);font-size:28px;font-weight:800;color:var(--cyan)}
+.result-unit{font-size:13px;color:var(--text-2);margin-top:4px}
+.formula-box{background:rgba(255,209,102,.05);border:1px solid rgba(255,209,102,.15);border-radius:10px;padding:12px;font-family:var(--f-mono);font-size:12.5px;color:var(--text-2);margin-top:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="conv-wrap">
+  <div class="conv-header">
+    <a href="index.html">← Araçlar</a>
+    <div style="font-family:var(--f-display);font-size:18px;font-weight:800">🔄 Birim Çevirici</div>
+    <span></span>
+  </div>
+
+  <div class="cat-grid" id="catGrid"></div>
+
+  <div class="conv-box">
+    <div class="conv-row">
+      <div class="conv-input-group">
+        <div class="conv-label">Kaynak</div>
+        <input type="number" class="conv-num" id="fromVal" value="1" oninput="convert()">
+        <select class="conv-select" id="fromUnit" onchange="convert()"></select>
+      </div>
+      <div class="swap-btn" onclick="swap()">⇄</div>
+      <div class="conv-input-group">
+        <div class="conv-label">Hedef</div>
+        <input type="number" class="conv-num" id="toVal" readonly style="opacity:.7">
+        <select class="conv-select" id="toUnit" onchange="convert()"></select>
+      </div>
+    </div>
+    <div class="result-box">
+      <div class="result-num" id="resultNum">1</div>
+      <div class="result-unit" id="resultUnit"></div>
+    </div>
+    <div class="formula-box" id="formulaBox"></div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+<script>
+const UNITS = {
+  uzunluk: {
+    label: '📏 Uzunluk',
+    units: { mm:0.001, cm:0.01, m:1, km:1000, inç:0.0254, fit:0.3048, yarda:0.9144, mil:1609.344 }
+  },
+  kütle: {
+    label: '⚖️ Kütle',
+    units: { mg:0.000001, g:0.001, kg:1, ton:1000, pound:0.453592, ons:0.0283495 }
+  },
+  sıcaklık: {
+    label: '🌡️ Sıcaklık',
+    units: { '°C':'c', '°F':'f', 'K':'k' },
+    special: true
+  },
+  alan: {
+    label: '🔲 Alan',
+    units: { 'mm²':0.000001, 'cm²':0.0001, 'm²':1, 'km²':1e6, 'dönüm':1000, 'hektar':10000, 'fit²':0.0929 }
+  },
+  hacim: {
+    label: '🧃 Hacim',
+    units: { ml:0.001, cl:0.01, dl:0.1, L:1, 'm³':1000, 'tatlı kaşığı':0.00492, 'bardak':0.24 }
+  },
+  hız: {
+    label: '🚀 Hız',
+    units: { 'm/s':1, 'km/s':1000, 'km/h':0.27778, 'mph':0.44704, 'knot':0.514444 }
+  },
+  zaman: {
+    label: '⏰ Zaman',
+    units: { saniye:1, dakika:60, saat:3600, gün:86400, hafta:604800, ay:2629800, yıl:31557600 }
+  },
+  veri: {
+    label: '💾 Veri',
+    units: { bit:1, bayt:8, KB:8000, MB:8e6, GB:8e9, TB:8e12 }
+  }
+};
+
+let activeCat = 'uzunluk';
+
+function renderCats() {
+  const icons = { uzunluk:'📏', kütle:'⚖️', sıcaklık:'🌡️', alan:'🔲', hacim:'🧃', hız:'🚀', zaman:'⏰', veri:'💾' };
+  document.getElementById('catGrid').innerHTML = Object.keys(UNITS).map(k => `
+    <button class="cat-btn ${k===activeCat?'active':''}" onclick="setCat('${k}')">
+      <span class="cat-icon">${icons[k]}</span>${k.charAt(0).toUpperCase()+k.slice(1)}
+    </button>`).join('');
+}
+
+function setCat(cat) {
+  activeCat = cat;
+  renderCats();
+  const cat_data = UNITS[cat];
+  const units = Object.keys(cat_data.units);
+  const opts = units.map(u => `<option value="${u}">${u}</option>`).join('');
+  document.getElementById('fromUnit').innerHTML = opts;
+  document.getElementById('toUnit').innerHTML = opts;
+  document.getElementById('toUnit').selectedIndex = 1;
+  document.getElementById('fromVal').value = 1;
+  convert();
+}
+
+function convert() {
+  const cat = UNITS[activeCat];
+  const fromUnit = document.getElementById('fromUnit').value;
+  const toUnit = document.getElementById('toUnit').value;
+  const val = parseFloat(document.getElementById('fromVal').value) || 0;
+
+  let result;
+  if (cat.special && activeCat === 'sıcaklık') {
+    result = convertTemp(val, fromUnit, toUnit);
+  } else {
+    const fromFactor = cat.units[fromUnit];
+    const toFactor = cat.units[toUnit];
+    result = val * fromFactor / toFactor;
+  }
+
+  const formatted = Math.abs(result) >= 0.001 && Math.abs(result) < 1e10
+    ? Number(result.toFixed(8)).toString()
+    : result.toExponential(4);
+
+  document.getElementById('toVal').value = formatted;
+  document.getElementById('resultNum').textContent = formatted;
+  document.getElementById('resultUnit').textContent = `${val} ${fromUnit} = ${formatted} ${toUnit}`;
+  document.getElementById('formulaBox').textContent = `1 ${fromUnit} = ${(cat.special ? convertTemp(1,fromUnit,toUnit) : (cat.units[fromUnit]/cat.units[toUnit])).toFixed(6)} ${toUnit}`;
+}
+
+function convertTemp(val, from, to) {
+  let c;
+  if (from === '°C') c = val;
+  else if (from === '°F') c = (val - 32) * 5/9;
+  else c = val - 273.15;
+  if (to === '°C') return c;
+  if (to === '°F') return c * 9/5 + 32;
+  return c + 273.15;
+}
+
+function swap() {
+  const fv = document.getElementById('fromUnit').value;
+  const tv = document.getElementById('toUnit').value;
+  document.getElementById('fromUnit').value = tv;
+  document.getElementById('toUnit').value = fv;
+  document.getElementById('fromVal').value = document.getElementById('toVal').value;
+  convert();
+}
+
+renderCats();
+setCat('uzunluk');
+</script>
+</body>
+</html>

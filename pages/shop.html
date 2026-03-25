@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mağaza — EduPlay</title>
+<meta name="description" content="EduPlay mağazası. Kazandığın altınlarla avatar, tema ve özel özellikler satın al!">
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.shop-hero{background:linear-gradient(135deg,rgba(255,209,102,.1),rgba(199,125,255,.06));border:1px solid rgba(255,209,102,.2);border-radius:20px;padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.coin-balance{display:flex;align-items:center;gap:10px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);border-radius:12px;padding:10px 18px}
+.coin-num{font-family:var(--f-display);font-size:28px;font-weight:900;color:var(--gold)}
+.shop-cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cat-tab{padding:8px 18px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--f-body);font-size:13.5px;font-weight:600;transition:all var(--t-fast)}
+.cat-tab.active{background:rgba(99,219,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.shop-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;text-align:center;transition:all var(--t-mid);position:relative;overflow:hidden}
+.shop-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity var(--t-mid)}
+.shop-item:hover{border-color:var(--border-h);transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.shop-item:hover::before{opacity:1}
+.shop-item.owned{border-color:rgba(184,255,78,.3);background:rgba(184,255,78,.03)}
+.shop-item.equipped{border-color:var(--cyan);background:rgba(99,219,255,.06)}
+.item-preview{width:72px;height:72px;border-radius:18px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.item-name{font-family:var(--f-display);font-size:13.5px;font-weight:700;margin-bottom:4px}
+.item-desc{font-size:11.5px;color:var(--text-2);margin-bottom:12px;line-height:1.5}
+.item-price{display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--f-mono);font-size:13px;color:var(--gold);margin-bottom:10px}
+.buy-btn{width:100%;padding:8px;border-radius:8px;border:none;font-family:var(--f-body);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--t-fast)}
+.buy-btn.can-buy{background:linear-gradient(135deg,var(--gold),#e6a800);color:var(--ink)}
+.buy-btn.can-buy:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(255,209,102,.3)}
+.buy-btn.owned-btn{background:rgba(184,255,78,.1);color:var(--lime);border:1px solid rgba(184,255,78,.3)}
+.buy-btn.equipped-btn{background:rgba(99,219,255,.1);color:var(--cyan);border:1px solid rgba(99,219,255,.3)}
+.buy-btn.no-coin{background:rgba(255,255,255,.06);color:var(--text-3);cursor:not-allowed}
+.new-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--coral),#e85454);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px}
+.category-section{display:none}
+.category-section.active{display:block}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a>
+    <a href="learn.html">📚 Öğren</a><a href="games.html">🎮 Oyunlar</a>
+    <a href="daily.html">🎯 Görevler</a><a href="shop.html" class="active">🛒 Mağaza</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="games.html">🎮 Oyunlar</a><a href="daily.html">🎯 Görevler</a>
+  <a href="shop.html">🛒 Mağaza</a><a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:32px 20px">
+
+  <div class="ad-slot ad-slot--top" data-ad-slot="shop-top" data-ad-platform="ezoic"></div>
+
+  <div class="shop-hero">
+    <div>
+      <div style="font-family:var(--f-display);font-size:22px;font-weight:800;margin-bottom:4px">🛒 Mağaza</div>
+      <p style="font-size:13px;color:var(--text-2)">Kazandığın altınlarla özelleştir!</p>
+    </div>
+    <div class="coin-balance">
+      <span style="font-size:22px">💰</span>
+      <div><div class="coin-num" id="coinBalance">0</div><div style="font-size:11px;color:var(--text-2)">Altın</div></div>
+    </div>
+  </div>
+
+  <!-- Kategori tabları -->
+  <div class="shop-cat-tabs">
+    <button class="cat-tab active" onclick="switchCat('avatars',this)">🎭 Avatarlar</button>
+    <button class="cat-tab" onclick="switchCat('themes',this)">🎨 Temalar</button>
+    <button class="cat-tab" onclick="switchCat('boosts',this)">⚡ Güçlendirici</button>
+    <button class="cat-tab" onclick="switchCat('frames',this)">🖼️ Çerçeveler</button>
+  </div>
+
+  <!-- Avatarlar -->
+  <div class="category-section active" id="cat-avatars">
+    <div class="shop-grid" id="avatarGrid"></div>
+  </div>
+
+  <!-- Temalar -->
+  <div class="category-section" id="cat-themes">
+    <div class="shop-grid" id="themeGrid"></div>
+  </div>
+
+  <!-- Güçlendiriciler -->
+  <div class="category-section" id="cat-boosts">
+    <div class="shop-grid" id="boostGrid"></div>
+  </div>
+
+  <!-- Çerçeveler -->
+  <div class="category-section" id="cat-frames">
+    <div class="shop-grid" id="frameGrid"></div>
+  </div>
+
+  <div class="ad-slot ad-slot--bottom" data-ad-slot="shop-bottom" data-ad-platform="ezoic"></div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+const SHOP = {
+  avatars: [
+    {id:'av_rocket',icon:'🚀',name:'Roket',desc:'Hızlı ve kararlı öğrenci',price:0,color:'#63dbff'},
+    {id:'av_star',icon:'⭐',name:'Yıldız',desc:'Parlayan yetenek',price:50,color:'#ffd166'},
+    {id:'av_brain',icon:'🧠',name:'Beyin',desc:'Akıllı öğrenci',price:80,color:'#c77dff'},
+    {id:'av_fire',icon:'🔥',name:'Ateş',desc:'Ateşli çalışan',price:100,color:'#ff6b6b'},
+    {id:'av_diamond',icon:'💎',name:'Elmas',desc:'En değerli öğrenci',price:200,color:'#63dbff',isNew:true},
+    {id:'av_crown',icon:'👑',name:'Kral',desc:'Liderlik tablosu hakimi',price:300,color:'#ffd166'},
+    {id:'av_wizard',icon:'🧙',name:'Büyücü',desc:'Bilgelik ve güç',price:150,color:'#c77dff'},
+    {id:'av_robot',icon:'🤖',name:'Robot',desc:'Teknolojiyi seven öğrenci',price:120,color:'#b8ff4e',isNew:true},
+  ],
+  themes: [
+    {id:'th_default',icon:'🌑',name:'Varsayılan',desc:'Klasik karanlık tema',price:0,color:'#63dbff'},
+    {id:'th_ocean',icon:'🌊',name:'Okyanus',desc:'Derin mavi tonlar',price:100,color:'#3b82f6'},
+    {id:'th_forest',icon:'🌲',name:'Orman',desc:'Yeşil doğa teması',price:100,color:'#10b981'},
+    {id:'th_sunset',icon:'🌅',name:'Gün Batımı',desc:'Turuncu ve pembe tonlar',price:150,color:'#ff6b6b',isNew:true},
+    {id:'th_galaxy',icon:'🌌',name:'Galaksi',desc:'Yıldızlarla dolu mor tema',price:200,color:'#c77dff'},
+    {id:'th_gold',icon:'✨',name:'Altın',desc:'Premium altın tema',price:500,color:'#ffd166'},
+  ],
+  boosts: [
+    {id:'b_xp2',icon:'⚡',name:'2x XP (1 Saat)',desc:'1 saat boyunca kazanılan XP iki katına çıkar',price:30,color:'#63dbff'},
+    {id:'b_xp3',icon:'🔋',name:'3x XP (30 Dk)',desc:'30 dakika boyunca 3x XP kazan',price:50,color:'#b8ff4e'},
+    {id:'b_streak',icon:'🔥',name:'Seri Kalkanı',desc:'Bir gün seri kırılmasını engeller',price:40,color:'#ff6b6b'},
+    {id:'b_hint',icon:'💡',name:'5 İpucu',desc:'Testlerde 5 ipucu hakkı',price:25,color:'#ffd166'},
+    {id:'b_time',icon:'⏰',name:'Süre Uzatma',desc:'Testlerde +30 saniye',price:35,color:'#c77dff'},
+  ],
+  frames: [
+    {id:'fr_none',icon:'⬜',name:'Çerçevesiz',desc:'Sade avatar',price:0,color:'#8fa3bf'},
+    {id:'fr_cyan',icon:'🔵',name:'Cyan Çerçeve',desc:'Parlayan cyan halka',price:60,color:'#63dbff'},
+    {id:'fr_gold',icon:'🟡',name:'Altın Çerçeve',desc:'Prestijli altın halka',price:150,color:'#ffd166'},
+    {id:'fr_rainbow',icon:'🌈',name:'Gökkuşağı',desc:'Animasyonlu renk geçişi',price:300,color:'#c77dff',isNew:true},
+    {id:'fr_fire',icon:'🔴',name:'Ateş Çerçeve',desc:'Alev efektli kırmızı halka',price:200,color:'#ff6b6b'},
+  ]
+};
+
+function getState(){try{return JSON.parse(localStorage.getItem('eduplay_user')||'{}')}catch{return{}}}
+function setState(s){localStorage.setItem('eduplay_user',JSON.stringify(s))}
+
+function renderGrid(catKey, gridId){
+  const s = getState();
+  const items = SHOP[catKey];
+  const owned = s.shopOwned||{};
+  const equipped = s.shopEquipped||{};
+  const coins = s.coins||0;
+
+  document.getElementById(gridId).innerHTML = items.map(item => {
+    const isOwned = !!owned[item.id] || item.price === 0;
+    const isEquipped = equipped[catKey] === item.id;
+    const canBuy = !isOwned && coins >= item.price;
+    let btnClass = canBuy ? 'can-buy' : isEquipped ? 'equipped-btn' : isOwned ? 'owned-btn' : 'no-coin';
+    let btnText = isEquipped ? '✓ Aktif' : isOwned ? 'Giy' : canBuy ? '💰 Satın Al' : `💰 ${item.price}`;
+    return `
+    <div class="shop-item ${isEquipped?'equipped':isOwned?'owned':''}">
+      ${item.isNew?'<div class="new-badge">YENİ</div>':''}
+      <div class="item-preview" style="background:rgba(${hexToRgb(item.color)},.12)">${item.icon}</div>
+      <div class="item-name">${item.name}</div>
+      <div class="item-desc">${item.desc}</div>
+      ${!isOwned?`<div class="item-price"><span>💰</span><span>${item.price}</span></div>`:''}
+      <button class="buy-btn ${btnClass}" onclick="handleBuy('${catKey}','${item.id}')">${btnText}</button>
+    </div>`;
+  }).join('');
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+function handleBuy(cat, id){
+  const s = getState();
+  const item = SHOP[cat].find(x=>x.id===id);
+  if(!item) return;
+  const owned = s.shopOwned||{};
+  const equipped = s.shopEquipped||{};
+  const coins = s.coins||0;
+
+  if(owned[id] || item.price===0){
+    // Zaten sahip — giy
+    equipped[cat] = id;
+    s.shopEquipped = equipped;
+    setState(s);
+    renderAll();
+    if(window.showToast) showToast(item.name+' aktif edildi!','success');
+    return;
+  }
+
+  if(coins < item.price){
+    if(window.showToast) showToast('Yeterli altın yok! Görev tamamla 💰','error');
+    return;
+  }
+
+  s.coins = coins - item.price;
+  s.shopOwned = owned;
+  s.shopOwned[id] = true;
+  s.shopEquipped = equipped;
+  s.shopEquipped[cat] = id;
+  setState(s);
+  document.getElementById('coinBalance').textContent = s.coins;
+  renderAll();
+  if(window.showToast) showToast(item.name+' satın alındı! 🎉','success');
+}
+
+function renderAll(){
+  renderGrid('avatars','avatarGrid');
+  renderGrid('themes','themeGrid');
+  renderGrid('boosts','boostGrid');
+  renderGrid('frames','frameGrid');
+}
+
+function switchCat(cat, btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cat-'+cat).classList.add('active');
+}
+
+function init(){
+  const s = getState();
+  document.getElementById('coinBalance').textContent = s.coins||0;
+  document.getElementById('navXP').textContent = (s.xp||0).toLocaleString();
+  const name = s.name||'EP';
+  document.getElementById('navAvatar').textContent = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  renderAll();
+}
+
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+init();
+</script>
+</body>
+</html>

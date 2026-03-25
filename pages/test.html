@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testler — EduPlay</title>
+  <link rel="stylesheet" href="../css/style.css">
+      <style>
+    .test-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
+
+    .test-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .test-card:hover { transform:translateY(-4px); border-color:rgba(0,245,212,0.3); }
+
+    .test-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .test-title { font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .test-meta { display:flex; gap:12px; font-size:12px; color:var(--text-muted); margin-bottom:16px; }
+
+    /* Quiz Interface */
+    #quizContainer { display:none; }
+
+    .quiz-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .quiz-progress-text { font-family:var(--font-display); font-size:14px; color:var(--text-muted); }
+    .quiz-score-display { font-family:var(--font-display); font-size:16px; color:var(--warning); }
+
+    .quiz-timer {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 60px;
+      text-align: right;
+    }
+    .quiz-timer.warning { color: var(--danger); animation: pulse 0.5s ease-in-out infinite; }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+
+    .question-num { font-size:12px; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+    .question-text { font-size:20px; font-weight:600; line-height:1.5; color:var(--text); margin-bottom:28px; }
+
+    .options-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    .option-btn {
+      background: rgba(255,255,255,0.03);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      text-align: left;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: rgba(0,245,212,0.4);
+      background: rgba(0,245,212,0.05);
+    }
+
+    .option-btn.selected { border-color: var(--primary); background: rgba(0,245,212,0.1); color: var(--primary); }
+    .option-btn.correct { border-color: var(--success); background: rgba(0,200,150,0.15); color: var(--success); }
+    .option-btn.wrong { border-color: var(--danger); background: rgba(255,71,87,0.1); color: var(--danger); }
+    .option-btn:disabled { cursor: default; }
+
+    .option-letter {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      flex-shrink: 0;
+    }
+
+    .explanation-box {
+      background: rgba(0,245,212,0.06);
+      border: 1px solid rgba(0,245,212,0.2);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--text);
+      margin-top: 16px;
+      display: none;
+    }
+
+    /* Results */
+    #resultsContainer { display:none; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .result-emoji { font-size: 72px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+    .result-score {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .result-label { font-size:16px; color:var(--text-muted); margin-bottom:32px; }
+
+    .result-stats { display:flex; justify-content:center; gap:32px; margin-bottom:32px; }
+    .result-stat .value { font-family:var(--font-display); font-size:24px; font-weight:700; color:var(--text); }
+    .result-stat .label { font-size:12px; color:var(--text-muted); }
+
+    @media (max-width:768px) {
+      .options-grid { grid-template-columns:1fr; }
+      .question-card { padding:24px; }
+      .question-text { font-size:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">EduPlay</span>
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="../index.html">🏠 Ana Sayfa</a></li>
+    <li><a href="learn.html">📚 Eğitim</a></li>
+    <li><a href="test.html" class="active">✏️ Testler</a></li>
+    <li><a href="games.html">🎮 Oyunlar</a></li>
+    <li><a href="leaderboard.html">🏆 Liderlik</a></li>
+    <li><a href="apk.html">📱 APK</a></li>
+    <li><a href="about.html">ℹ️ Hakkında</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warning)">⚡ <span data-user-xp>0</span></div>
+    <a href="profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a>
+  </div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<nav class="mobile-nav">
+  <a href="../index.html">🏠 Ana Sayfa</a>
+  <a href="learn.html">📚 Eğitim</a>
+  <a href="test.html">✏️ Testler</a>
+  <a href="games.html">🎮 Oyunlar</a>
+  <a href="leaderboard.html">🏆 Liderlik</a>
+  <a href="apk.html">📱 APK</a>
+  <a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <!-- Test List -->
+    <div id="testListContainer">
+      <div class="page-header">
+        <h1 class="page-title">✏️ Test Merkezi</h1>
+        <p class="page-subtitle">Bilgini sına, puan kazan, sıralamada yüksel!</p>
+      </div>
+
+      <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-bottom:32px">
+        <span class="ad-label">Reklam</span>
+      </div>
+
+      <div class="tabs" id="categoryTabs" style="max-width:500px">
+        <button class="tab-btn active" onclick="switchCategory('all',this)">Tümü</button>
+        <button class="tab-btn" onclick="switchCategory('math',this)">🔢 Matematik</button>
+        <button class="tab-btn" onclick="switchCategory('science',this)">🔬 Fen</button>
+        <button class="tab-btn" onclick="switchCategory('history',this)">📜 Tarih</button>
+        <button class="tab-btn" onclick="switchCategory('language',this)">📝 Türkçe</button>
+      </div>
+
+      <div class="test-grid" id="testGrid"></div>
+    </div>
+
+    <!-- Quiz Interface -->
+    <div id="quizContainer">
+      <div class="quiz-header">
+        <div>
+          <div class="quiz-progress-text" id="progressText">Soru 1 / 5</div>
+          <div class="progress-bar" style="width:200px;margin-top:8px">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:12px;color:var(--text-muted)">TEST</div>
+          <div style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text)" id="quizTitle">Test</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--text-muted)">Süre</div>
+          <div class="quiz-timer" id="timerDisplay">05:00</div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-num" id="questionNum">SORU 1</div>
+        <div class="question-text" id="questionText"></div>
+        <div class="options-grid" id="optionsContainer"></div>
+        <div class="explanation-box" id="explanationBox"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <button class="btn btn-secondary" onclick="quitQuiz()">✕ Çık</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Sonraki →</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsContainer">
+      <div class="result-card">
+        <div class="result-emoji" id="resultEmoji">🎉</div>
+        <div class="result-score" id="resultScore">100%</div>
+        <div class="result-label" id="resultLabel">Mükemmel!</div>
+        <div class="result-stats">
+          <div class="result-stat">
+            <div class="value" id="correctCount">0</div>
+            <div class="label">Doğru ✅</div>
+          </div>
+          <div class="result-stat">
+            <div class="value" id="wrongCount">0</div>
+            <div class="label">Yanlış ❌</div>
+          </div>
+          <div class="result-stat">
+            <div class="value" id="earnedXP">0</div>
+            <div class="label">XP Kazandın ⚡</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="retryTest()">🔄 Tekrar Dene</button>
+          <button class="btn btn-secondary" onclick="backToTests()">📋 Testler</button>
+          <a href="leaderboard.html" class="btn btn-secondary">🏆 Liderlik</a>
+        </div>
+      </div>
+
+      <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-top:32px;max-width:600px;margin-left:auto;margin-right:auto">
+        <span class="ad-label">Reklam</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border:none;padding-top:0">
+      <span>© 2025 EduPlay</span>
+      <a href="../index.html" style="color:var(--primary);text-decoration:none">Ana Sayfa</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+let allTests = [];
+let currentTest = null;
+let currentQuestionIndex = 0;
+let score = 0;
+let timer = null;
+let timeLeft = 0;
+let selectedAnswer = null;
+let activeCategory = 'all';
+
+// Load tests from JSON
+async function loadTests() {
+  try {
+    const res = await fetch('../data/tests.json');
+    const data = await res.json();
+    allTests = data.categories;
+    renderTestGrid();
+  } catch(e) {
+    console.warn('Test verisi yüklenemedi, demo kullanılıyor');
+    renderTestGrid();
+  }
+}
+
+function renderTestGrid() {
+  const grid = document.getElementById('testGrid');
+  const diffMap = { easy: { label:'Kolay', cls:'badge-primary' }, medium: { label:'Orta', cls:'badge-warning' }, hard: { label:'Zor', cls:'badge-danger' } };
+
+  let html = '';
+  allTests.forEach(cat => {
+    if (activeCategory !== 'all' && cat.id !== activeCategory) return;
+    cat.tests.forEach(test => {
+      const d = diffMap[test.difficulty] || diffMap.easy;
+      const userScores = Storage.get('test_scores', {});
+      const prevScore = userScores[test.id];
+      html += `
+        <div class="test-card" onclick="startTest('${cat.id}','${test.id}')">
+          <div class="test-header">
+            <span style="font-size:32px">${cat.icon}</span>
+            <span class="badge ${d.cls}">${d.label}</span>
+          </div>
+          <div class="test-title">${test.title}</div>
+          <div class="test-meta">
+            <span>❓ ${test.questions.length} Soru</span>
+            <span>⏱️ ${Math.floor(test.time/60)} dk</span>
+            <span>⚡ ${test.xp} XP</span>
+          </div>
+          ${prevScore !== undefined ? `
+            <div class="progress-bar" style="margin-bottom:8px">
+              <div class="progress-fill" style="width:${prevScore}%"></div>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted)">En iyi: ${prevScore}%</div>
+          ` : `<div style="font-size:12px;color:var(--text-muted)">Henüz çözülmedi</div>`}
+          <button class="btn btn-primary btn-sm" style="margin-top:12px;width:100%">▶ Testi Başlat</button>
+        </div>
+      `;
+    });
+  });
+  grid.innerHTML = html || '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:40px">Bu kategoride test bulunamadı.</p>';
+}
+
+function switchCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('#categoryTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTestGrid();
+}
+
+function startTest(catId, testId) {
+  const cat = allTests.find(c => c.id === catId);
+  currentTest = cat?.tests.find(t => t.id === testId);
+  if (!currentTest) return;
+
+  currentQuestionIndex = 0;
+  score = 0;
+  selectedAnswer = null;
+
+  document.getElementById('testListContainer').style.display = 'none';
+  document.getElementById('quizContainer').style.display = 'block';
+  document.getElementById('resultsContainer').style.display = 'none';
+  document.getElementById('quizTitle').textContent = currentTest.title;
+
+  timeLeft = currentTest.time;
+  startTimer();
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = currentTest.questions[currentQuestionIndex];
+  const total = currentTest.questions.length;
+
+  document.getElementById('questionNum').textContent = `SORU ${currentQuestionIndex + 1}`;
+  document.getElementById('progressText').textContent = `Soru ${currentQuestionIndex + 1} / ${total}`;
+  document.getElementById('progressFill').style.width = `${(currentQuestionIndex / total) * 100}%`;
+  document.getElementById('questionText').textContent = q.text;
+  document.getElementById('explanationBox').style.display = 'none';
+  document.getElementById('nextBtn').disabled = true;
+  selectedAnswer = null;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts = document.getElementById('optionsContainer');
+  opts.innerHTML = q.options.map((opt, i) => `
+    <button class="option-btn" onclick="selectAnswer(${i})" data-index="${i}">
+      <div class="option-letter">${letters[i]}</div>
+      <span>${opt}</span>
+    </button>
+  `).join('');
+}
+
+function selectAnswer(index) {
+  if (selectedAnswer !== null) return;
+  selectedAnswer = index;
+
+  const q = currentTest.questions[currentQuestionIndex];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach(btn => btn.disabled = true);
+  btns[index].classList.add(index === q.answer ? 'correct' : 'wrong');
+
+  if (index === q.answer) {
+    score++;
+  } else {
+    btns[q.answer].classList.add('correct');
+  }
+
+  const expBox = document.getElementById('explanationBox');
+  expBox.style.display = 'block';
+  expBox.innerHTML = `💡 <strong>Açıklama:</strong> ${q.explanation}`;
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  currentQuestionIndex++;
+  if (currentQuestionIndex >= currentTest.questions.length) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  clearInterval(timer);
+
+  const total = currentTest.questions.length;
+  const pct = Math.round((score / total) * 100);
+  const xpEarned = Math.round((score / total) * currentTest.xp);
+
+  const emojis = ['😢', '😕', '🙂', '😊', '🎉'];
+  const labels = ['Biraz daha çalış!', 'Gelişiyorsun!', 'İyi gidiyor!', 'Harika!', 'Mükemmel!'];
+  const tier = Math.min(4, Math.floor(pct / 25));
+
+  document.getElementById('resultEmoji').textContent = emojis[tier];
+  document.getElementById('resultScore').textContent = `${pct}%`;
+  document.getElementById('resultLabel').textContent = labels[tier];
+  document.getElementById('correctCount').textContent = score;
+  document.getElementById('wrongCount').textContent = total - score;
+  document.getElementById('earnedXP').textContent = xpEarned;
+
+  document.getElementById('quizContainer').style.display = 'none';
+  document.getElementById('resultsContainer').style.display = 'block';
+
+  // Save score
+  const scores = Storage.get('test_scores', {});
+  if (!scores[currentTest.id] || pct > scores[currentTest.id]) {
+    scores[currentTest.id] = pct;
+    Storage.set('test_scores', scores);
+  }
+
+  UserState.addXP(xpEarned);
+  showToast(`✅ Test tamamlandı! +${xpEarned} XP`, 'success');
+}
+
+function startTimer() {
+  clearInterval(timer);
+  const timerEl = document.getElementById('timerDisplay');
+
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = formatTime(timeLeft);
+    if (timeLeft <= 30) timerEl.classList.add('warning');
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      showResults();
+    }
+  }, 1000);
+}
+
+function quitQuiz() {
+  clearInterval(timer);
+  backToTests();
+}
+
+function backToTests() {
+  document.getElementById('testListContainer').style.display = 'block';
+  document.getElementById('quizContainer').style.display = 'none';
+  document.getElementById('resultsContainer').style.display = 'none';
+  renderTestGrid();
+}
+
+function retryTest() {
+  const catId = allTests.find(c => c.tests.some(t => t.id === currentTest.id))?.id;
+  if (catId) startTest(catId, currentTest.id);
+}
+
+document.addEventListener('DOMContentLoaded', loadTests);
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

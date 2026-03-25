@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /pages/profile.html
+Disallow: /pages/settings.html
+
+Sitemap: https://eduplay.com.tr/sitemap.xml

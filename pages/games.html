@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oyunlar — EduPlay</title>
+  <link rel="stylesheet" href="../css/style.css">
+      <style>
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .game-card:hover { transform:translateY(-6px); box-shadow:var(--shadow),0 0 40px rgba(0,245,212,0.08); border-color:rgba(0,245,212,0.3); }
+
+    .game-banner {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .game-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.4));
+    }
+
+    .game-body { padding: 20px; flex: 1; }
+    .game-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .game-desc { font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:16px; }
+    .game-footer { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--border); background:rgba(0,0,0,0.15); }
+    .game-rating { display:flex; align-items:center; gap:4px; font-size:13px; color:var(--warning); font-weight:600; }
+    .game-plays { font-size:12px; color:var(--text-muted); }
+
+    .game-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">EduPlay</span>
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="../index.html">🏠 Ana Sayfa</a></li>
+    <li><a href="learn.html">📚 Eğitim</a></li>
+    <li><a href="test.html">✏️ Testler</a></li>
+    <li><a href="games.html" class="active">🎮 Oyunlar</a></li>
+    <li><a href="leaderboard.html">🏆 Liderlik</a></li>
+    <li><a href="apk.html">📱 APK</a></li>
+    <li><a href="about.html">ℹ️ Hakkında</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warning)">⚡ <span data-user-xp>0</span></div>
+    <a href="profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a>
+  </div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<nav class="mobile-nav">
+  <a href="../index.html">🏠 Ana Sayfa</a>
+  <a href="learn.html">📚 Eğitim</a>
+  <a href="test.html">✏️ Testler</a>
+  <a href="games.html">🎮 Oyunlar</a>
+  <a href="leaderboard.html">🏆 Liderlik</a>
+  <a href="apk.html">📱 APK</a>
+  <a href="profile.html">👤 Profil</a>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">🎮 Oyun Merkezi</h1>
+      <p class="page-subtitle">5 farklı eğitici oyunla öğrenmeyi eğlenceye dönüştür!</p>
+    </div>
+
+    <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-bottom:40px">
+      <span class="ad-label">Reklam</span>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid-4" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:48px">
+      <div class="stat-card">
+        <div class="stat-icon cyan">🎮</div>
+        <div class="stat-info"><div class="value">5</div><div class="label">Oyun</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">🏆</div>
+        <div class="stat-info"><div class="value" id="gamesWon">0</div><div class="label">Kazanılan</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">⚡</div>
+        <div class="stat-info"><div class="value" id="gameXP">0</div><div class="label">Oyun XP</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">🎯</div>
+        <div class="stat-info"><div class="value" id="bestScore">-</div><div class="label">En İyi Skor</div></div>
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-bottom:28px">
+      <div class="section-title">Tüm Oyunlar</div>
+      <div class="section-line"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px">
+
+      <a href="games/math-rush.html" class="game-card">
+        <div class="game-banner" style="background:linear-gradient(135deg,#0a2845,#0d4a8a)">🔢</div>
+        <div class="game-body">
+          <div class="game-title">Matematik Koşusu</div>
+          <div class="game-tags">
+            <span class="badge badge-primary">Matematik</span>
+            <span class="badge badge-success">Kolay</span>
+            <span class="badge badge-warning">Hızlı</span>
+          </div>
+          <p class="game-desc">Süre dolmadan doğru cevapları seç! Hız ve doğruluk puanını belirler. Rakiplerini geç, liderlik tablosuna çık!</p>
+        </div>
+        <div class="game-footer">
+          <div class="game-rating">⭐ 4.8 <span style="color:var(--text-muted);font-weight:400"> / 5</span></div>
+          <div class="game-plays">🎮 12.4K oynanma</div>
+        </div>
+      </a>
+
+      <a href="games/word-hunt.html" class="game-card">
+        <div class="game-banner" style="background:linear-gradient(135deg,#0a3828,#0d6b4a)">🔤</div>
+        <div class="game-body">
+          <div class="game-title">Kelime Avı</div>
+          <div class="game-tags">
+            <span class="badge badge-secondary">Dil</span>
+            <span class="badge badge-warning">Orta</span>
+            <span class="badge badge-primary">Kelime</span>
+          </div>
+          <p class="game-desc">Izgarada gizlenmiş kelimeleri bul! Yatay, dikey ve çapraz yönlerde saklanan kelimeleri keşfet.</p>
+        </div>
+        <div class="game-footer">
+          <div class="game-rating">⭐ 4.7</div>
+          <div class="game-plays">🎮 9.8K oynanma</div>
+        </div>
+      </a>
+
+      <a href="games/memory-match.html" class="game-card">
+        <div class="game-banner" style="background:linear-gradient(135deg,#1a0a38,#3d1a7a)">🧩</div>
+        <div class="game-body">
+          <div class="game-title">Hafıza Oyunu</div>
+          <div class="game-tags">
+            <span class="badge badge-primary">Hafıza</span>
+            <span class="badge badge-success">Kolay</span>
+          </div>
+          <p class="game-desc">Eşleşen kartları bul! Hafızanı güçlendir, daha az hamlede tamamla, yüksek puan kazan.</p>
+        </div>
+        <div class="game-footer">
+          <div class="game-rating">⭐ 4.9</div>
+          <div class="game-plays">🎮 18.2K oynanma</div>
+        </div>
+      </a>
+
+      <a href="games/quiz-blitz.html" class="game-card">
+        <div class="game-banner" style="background:linear-gradient(135deg,#0a2818,#1a5a30)">🔬</div>
+        <div class="game-body">
+          <div class="game-title">Quiz Blitz</div>
+          <div class="game-tags">
+            <span class="badge badge-secondary">Fen</span>
+            <span class="badge badge-warning">Orta</span>
+            <span class="badge badge-danger">Hızlı Ateş</span>
+          </div>
+          <p class="game-desc">10 saniyede cevapla veya puan kaybet! Bilim, tarih, matematik sorularına hız reaksiyonunla yanıt ver.</p>
+        </div>
+        <div class="game-footer">
+          <div class="game-rating">⭐ 4.6</div>
+          <div class="game-plays">🎮 7.3K oynanma</div>
+        </div>
+      </a>
+
+      <a href="games/word-chain.html" class="game-card">
+        <div class="game-banner" style="background:linear-gradient(135deg,#2a1a0a,#5a3a10)">📜</div>
+        <div class="game-body">
+          <div class="game-title">Kelime Zinciri</div>
+          <div class="game-tags">
+            <span class="badge badge-secondary">Dil</span>
+            <span class="badge badge-danger">Zor</span>
+            <span class="badge badge-primary">Strateji</span>
+          </div>
+          <p class="game-desc">Son harften başlayarak kelime zinciri kur! Kelime hazineni genişlet, zinciri ne kadar uzatabilirsin?</p>
+        </div>
+        <div class="game-footer">
+          <div class="game-rating">⭐ 4.5</div>
+          <div class="game-plays">🎮 5.1K oynanma</div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Ad bottom -->
+    <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-top:40px">
+      <span class="ad-label">Reklam</span>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border:none;padding-top:0">
+      <span>© 2025 EduPlay</span>
+      <a href="../index.html" style="color:var(--primary);text-decoration:none">Ana Sayfa</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const gameScores = Storage.get('game_scores', {});
+  const won = Object.keys(gameScores).length;
+  const totalXP = Object.values(gameScores).reduce((a,b) => a + (b.xp||0), 0);
+  const best = Object.values(gameScores).reduce((a,b) => Math.max(a, b.score||0), 0);
+
+  document.getElementById('gamesWon').textContent = won;
+  document.getElementById('gameXP').textContent = totalXP;
+  document.getElementById('bestScore').textContent = best > 0 ? best : '-';
+});
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

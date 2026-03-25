@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Not Defteri — EduPlay</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.notes-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;min-height:calc(100vh - 180px)}
+.sidebar{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;display:flex;flex-direction:column;gap:12px;height:fit-content;position:sticky;top:88px}
+.note-list{display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow-y:auto}
+.note-item{padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;border:1px solid transparent;transition:all var(--t-fast)}
+.note-item:hover{background:rgba(99,219,255,.06);border-color:var(--border)}
+.note-item.active{background:rgba(99,219,255,.1);border-color:var(--cyan)}
+.note-item-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-item-meta{font-size:11px;color:var(--text-2);margin-top:2px;display:flex;justify-content:space-between}
+.note-item-tag{font-size:10px;padding:1px 6px;border-radius:999px}
+.editor-area{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;display:flex;flex-direction:column;gap:16px}
+.editor-toolbar{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.tb-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-2);cursor:pointer;font-size:13px;font-family:var(--f-body);transition:all var(--t-fast)}
+.tb-btn:hover{background:rgba(99,219,255,.08);border-color:var(--cyan);color:var(--cyan)}
+.note-title-inp{background:transparent;border:none;outline:none;font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--text);width:100%;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.note-body{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;min-height:320px;font-family:var(--f-body);font-size:14.5px;line-height:1.8;color:var(--text);resize:vertical;outline:none;width:100%}
+.note-body:focus{border-color:rgba(99,219,255,.3)}
+.tag-select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-sm);padding:6px 12px;color:var(--text);font-family:var(--f-body);font-size:13px;outline:none;cursor:pointer}
+.tag-select:focus{border-color:var(--cyan)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-2)}
+.tag-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px}
+@media(max-width:768px){.notes-layout{grid-template-columns:1fr}.sidebar{position:static;max-height:240px;overflow-y:auto}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+    <a href="test.html">✏️ Testler</a><a href="notes.html" class="active">📓 Notlar</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="test.html">✏️ Testler</a><a href="notes.html">📓 Notlarım</a>
+  <a href="dashboard.html">📊 Dashboard</a><a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:24px 20px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div><div class="section-label">Kişisel</div><h1 class="section-title">📓 Not Defteri</h1></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <input id="searchNotes" class="form-input" style="width:200px" placeholder="Not ara..." oninput="filterNotes(this.value)">
+      <button class="btn btn-primary" onclick="newNote()">+ Yeni Not</button>
+    </div>
+  </div>
+
+  <div class="notes-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2)">NOTLARIM (<span id="noteCount">0</span>)</div>
+      <div class="note-list" id="noteList">
+        <div class="empty-state" style="padding:20px 0">
+          <div style="font-size:28px;margin-bottom:8px">📝</div>
+          <p style="font-size:12.5px">Henüz not yok</p>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="newNote()" style="margin-top:4px">+ Not Ekle</button>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor-area">
+      <div id="editorEmpty" class="empty-state">
+        <div style="font-size:56px;margin-bottom:16px">📓</div>
+        <div style="font-family:var(--f-display);font-size:18px;font-weight:700;margin-bottom:8px">Not defterine hoş geldin</div>
+        <p style="max-width:320px;margin:0 auto">Ders notlarını buraya kaydet. Konuya göre etiketle, istediğin zaman bul.</p>
+        <button class="btn btn-primary" style="margin-top:20px" onclick="newNote()">📝 İlk Notunu Yaz</button>
+      </div>
+
+      <div id="editorActive" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <input class="note-title-inp" id="noteTitle" placeholder="Not başlığı..." oninput="saveCurrentNote()">
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="tag-select" id="noteTag" onchange="saveCurrentNote()">
+              <option value="general">📌 Genel</option>
+              <option value="math">🔢 Matematik</option>
+              <option value="science">🔬 Fen</option>
+              <option value="history">📜 Tarih</option>
+              <option value="turkish">📝 Türkçe</option>
+              <option value="english">🌍 İngilizce</option>
+              <option value="geo">🌏 Coğrafya</option>
+              <option value="lgs">🎯 LGS</option>
+            </select>
+            <button class="btn btn-danger btn-sm" onclick="deleteNote()">🗑️</button>
+          </div>
+        </div>
+
+        <div class="editor-toolbar">
+          <button class="tb-btn" onclick="formatText('bold')"><b>K</b></button>
+          <button class="tb-btn" onclick="formatText('italic')"><i>İ</i></button>
+          <button class="tb-btn" onclick="insertTemplate('header')">H1</button>
+          <button class="tb-btn" onclick="insertTemplate('list')">• Liste</button>
+          <button class="tb-btn" onclick="insertTemplate('formula')">∑ Formül</button>
+          <button class="tb-btn" onclick="insertTemplate('table')">⊞ Tablo</button>
+          <button class="tb-btn" onclick="insertTemplate('date')">📅 Tarih</button>
+        </div>
+
+        <textarea class="note-body" id="noteBody" placeholder="Notunu buraya yaz... (Markdown desteklenir)" oninput="saveCurrentNote()"></textarea>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-2)">
+          <span id="noteLastSaved">Kaydedilmedi</span>
+          <span id="noteWordCount">0 kelime</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+const STORAGE_KEY = 'eduplay_notes';
+const TAG_COLORS = {general:'#8fa3bf',math:'#63dbff',science:'#00c896',history:'#ffd166',turkish:'#a29bfe',english:'#ff6b6b',geo:'#63dbff',lgs:'#ffd166'};
+
+let notes = [], currentId = null;
+
+function loadNotes(){try{notes=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch{notes=[]}}
+function saveNotes(){localStorage.setItem(STORAGE_KEY,JSON.stringify(notes))}
+
+function newNote(){
+  const note = {id:Date.now()+'',title:'Yeni Not',body:'',tag:'general',updated:new Date().toISOString()};
+  notes.unshift(note);
+  saveNotes();
+  openNote(note.id);
+  renderList();
+}
+
+function openNote(id){
+  currentId = id;
+  const n = notes.find(x=>x.id===id);
+  if(!n) return;
+  document.getElementById('editorEmpty').classList.add('hidden');
+  document.getElementById('editorActive').classList.remove('hidden');
+  document.getElementById('noteTitle').value = n.title;
+  document.getElementById('noteBody').value = n.body;
+  document.getElementById('noteTag').value = n.tag||'general';
+  updateWordCount();
+  renderList();
+}
+
+function saveCurrentNote(){
+  if(!currentId) return;
+  const n = notes.find(x=>x.id===currentId);
+  if(!n) return;
+  n.title = document.getElementById('noteTitle').value||'Yeni Not';
+  n.body = document.getElementById('noteBody').value;
+  n.tag = document.getElementById('noteTag').value;
+  n.updated = new Date().toISOString();
+  saveNotes();
+  renderList();
+  document.getElementById('noteLastSaved').textContent = 'Kaydedildi ✓';
+  updateWordCount();
+}
+
+function deleteNote(){
+  if(!currentId) return;
+  if(!confirm('Bu notu silmek istiyor musun?')) return;
+  notes = notes.filter(x=>x.id!==currentId);
+  saveNotes();
+  currentId = null;
+  document.getElementById('editorEmpty').classList.remove('hidden');
+  document.getElementById('editorActive').classList.add('hidden');
+  renderList();
+}
+
+function updateWordCount(){
+  const body = document.getElementById('noteBody').value;
+  const wc = body.trim() ? body.trim().split(/\s+/).length : 0;
+  document.getElementById('noteWordCount').textContent = wc+' kelime';
+}
+
+function renderList(filter=''){
+  const list = document.getElementById('noteList');
+  const filtered = notes.filter(n=>!filter||n.title.toLowerCase().includes(filter)||n.body.toLowerCase().includes(filter));
+  document.getElementById('noteCount').textContent = filtered.length;
+  if(!filtered.length){list.innerHTML='<div style="padding:20px 0;text-align:center;font-size:12.5px;color:var(--text-2)">Sonuç yok</div>';return;}
+  list.innerHTML = filtered.map(n=>`
+    <div class="note-item ${n.id===currentId?'active':''}" onclick="openNote('${n.id}')">
+      <div class="note-item-title">${n.title}</div>
+      <div class="note-item-meta">
+        <span>${new Date(n.updated).toLocaleDateString('tr-TR')}</span>
+        <span class="tag-chip" style="background:${TAG_COLORS[n.tag]||'#8fa3bf'}22;color:${TAG_COLORS[n.tag]||'#8fa3bf'}">${document.querySelector(`option[value="${n.tag}"]`)?.textContent||n.tag}</span>
+      </div>
+    </div>`).join('');
+}
+
+function filterNotes(v){renderList(v.toLowerCase());}
+
+function formatText(cmd){
+  const ta = document.getElementById('noteBody');
+  const s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.substring(s,e);
+  let wrap=sel;
+  if(cmd==='bold') wrap=`**${sel}**`;
+  if(cmd==='italic') wrap=`*${sel}*`;
+  ta.value=ta.value.substring(0,s)+wrap+ta.value.substring(e);
+  saveCurrentNote();
+}
+
+function insertTemplate(t){
+  const ta=document.getElementById('noteBody');
+  const pos=ta.selectionStart;
+  const templates={
+    header:'\n## Başlık\n',
+    list:'\n- Madde 1\n- Madde 2\n- Madde 3\n',
+    formula:'\n```\nFormül: \n```\n',
+    table:'\n| Başlık 1 | Başlık 2 |\n|----------|----------|\n| Veri 1   | Veri 2   |\n',
+    date:'\n📅 '+new Date().toLocaleDateString('tr-TR')+'\n',
+  };
+  const ins=templates[t]||'';
+  ta.value=ta.value.substring(0,pos)+ins+ta.value.substring(pos);
+  saveCurrentNote();
+}
+
+// Init
+loadNotes();
+renderList();
+try{const u=JSON.parse(localStorage.getItem('eduplay_user')||'{}');document.getElementById('navXP').textContent=(u.xp||0).toLocaleString();if(u.name)document.getElementById('navAvatar').textContent=u.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}catch(e){}
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+</script>
+</body>
+</html>

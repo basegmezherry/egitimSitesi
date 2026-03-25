@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Çalışma Takvimi — EduPlay</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.cal-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.cal-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:24px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.cal-nav{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text-2);cursor:pointer;font-size:16px;transition:all var(--t-fast)}
+.cal-nav:hover{border-color:var(--cyan);color:var(--cyan)}
+.cal-month{font-family:var(--f-display);font-size:18px;font-weight:800}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px}
+.cdh{text-align:center;font-size:11px;font-weight:700;color:var(--text-2);padding:6px 0;text-transform:uppercase;font-family:var(--f-mono)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:13.5px;font-family:var(--f-mono);font-weight:600;border:1px solid transparent;transition:all var(--t-fast);position:relative}
+.cal-day:hover:not(.empty){background:rgba(99,219,255,.08);border-color:var(--border)}
+.cal-day.today{background:rgba(99,219,255,.12);border-color:var(--cyan);color:var(--cyan)}
+.cal-day.has-event::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--lime)}
+.cal-day.active-day::after{background:var(--gold)}
+.cal-day.selected{background:rgba(184,255,78,.12);border-color:var(--lime);color:var(--lime)}
+.cal-day.other-month{color:var(--text-3)}
+.cal-day.empty{cursor:default}
+.sidebar-panel{display:flex;flex-direction:column;gap:16px}
+.event-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.event-title-row{font-family:var(--f-display);font-size:14px;font-weight:700;margin-bottom:12px}
+.event-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.event-item:last-child{border-bottom:none}
+.ev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.ev-text{font-size:13px;flex:1}
+.ev-time{font-family:var(--f-mono);font-size:11px;color:var(--text-2);margin-top:2px}
+.ev-del{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;padding:2px;border-radius:4px;transition:color var(--t-fast)}
+.ev-del:hover{color:var(--coral)}
+.add-event-form{display:flex;flex-direction:column;gap:10px}
+.upcoming-list{display:flex;flex-direction:column;gap:8px}
+.upc-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center}
+.upc-date{background:rgba(99,219,255,.1);border:1px solid rgba(99,219,255,.2);border-radius:8px;padding:6px 10px;text-align:center;min-width:44px}
+.upc-d{font-family:var(--f-display);font-size:18px;font-weight:800;color:var(--cyan);line-height:1}
+.upc-m{font-size:10px;color:var(--text-2);margin-top:2px;font-family:var(--f-mono)}
+@media(max-width:768px){.cal-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+    <a href="notes.html">📓 Notlar</a><a href="calendar.html" class="active">📅 Takvim</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="notes.html">📓 Notlar</a><a href="calendar.html">📅 Takvim</a>
+  <a href="dashboard.html">📊 Dashboard</a><a href="profile.html">👤 Profil</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:24px 20px 60px">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div><div class="section-label">Planlama</div><h1 class="section-title">📅 Çalışma Takvimi</h1></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="goToday()">Bugün</button>
+      <button class="btn btn-primary btn-sm" onclick="showAddForm()">+ Etkinlik Ekle</button>
+    </div>
+  </div>
+
+  <div class="cal-layout">
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+        <div class="cal-month" id="calMonth"></div>
+        <button class="cal-nav" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-days-header">
+        <div class="cdh">Pzt</div><div class="cdh">Sal</div><div class="cdh">Çar</div>
+        <div class="cdh">Per</div><div class="cdh">Cum</div>
+        <div class="cdh" style="color:var(--coral)">Cmt</div>
+        <div class="cdh" style="color:var(--coral)">Paz</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <div class="sidebar-panel">
+      <!-- Seçili günün etkinlikleri -->
+      <div class="event-card">
+        <div class="event-title-row">📋 <span id="selectedDateLabel">Bugün</span></div>
+        <div id="dayEvents"><p style="font-size:12.5px;color:var(--text-2)">Bu gün için etkinlik yok.</p></div>
+      </div>
+
+      <!-- Etkinlik ekleme formu -->
+      <div class="event-card" id="addForm" style="display:none">
+        <div class="event-title-row">+ Etkinlik Ekle</div>
+        <div class="add-event-form">
+          <input class="form-input" id="evTitle" placeholder="Etkinlik başlığı (ör: Matematik çalış)">
+          <input class="form-input" id="evTime" type="time" value="09:00">
+          <select class="form-select" id="evType">
+            <option value="study">📚 Ders çalışma</option>
+            <option value="test">✏️ Test çözme</option>
+            <option value="game">🎮 Oyun vakti</option>
+            <option value="revision">🔁 Tekrar</option>
+            <option value="exam">📝 Sınav</option>
+            <option value="other">📌 Diğer</option>
+          </select>
+          <textarea class="form-input" id="evNote" placeholder="Not (isteğe bağlı)" rows="2" style="resize:none"></textarea>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" style="flex:1" onclick="addEvent()">Kaydet</button>
+            <button class="btn btn-ghost btn-sm" onclick="hideAddForm()">İptal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yaklaşan etkinlikler -->
+      <div class="event-card">
+        <div class="event-title-row">📆 Yaklaşan Etkinlikler</div>
+        <div class="upcoming-list" id="upcomingList"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const EV_COLORS = {study:'#63dbff',test:'#b8ff4e',game:'#c77dff',revision:'#ffd166',exam:'#ff6b6b',other:'#8fa3bf'};
+const EV_ICONS = {study:'📚',test:'✏️',game:'🎮',revision:'🔁',exam:'📝',other:'📌'};
+
+let viewYear = new Date().getFullYear();
+let viewMonth = new Date().getMonth();
+let selectedDate = todayKey();
+let events = {};
+
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+function dateKey(y,m,d){return `${y}-${m+1}-${d}`;}
+function loadEvents(){try{events=JSON.parse(localStorage.getItem('eduplay_calendar')||'{}')}catch{events={}}}
+function saveEvents(){localStorage.setItem('eduplay_calendar',JSON.stringify(events))}
+
+function renderCalendar(){
+  document.getElementById('calMonth').textContent = `${MONTHS[viewMonth]} ${viewYear}`;
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML='';
+  const first = new Date(viewYear,viewMonth,1).getDay(); // 0=Sun
+  const startOffset = first===0?6:first-1;
+  const daysInMonth = new Date(viewYear,viewMonth+1,0).getDate();
+  const today = new Date();
+  const todayStr = todayKey();
+
+  // Empty cells
+  for(let i=0;i<startOffset;i++){
+    const d=document.createElement('div');
+    d.className='cal-day empty'; grid.appendChild(d);
+  }
+
+  for(let day=1;day<=daysInMonth;day++){
+    const key=dateKey(viewYear,viewMonth,day);
+    const div=document.createElement('div');
+    const isToday=key===todayStr;
+    const isSel=key===selectedDate;
+    const hasEv=(events[key]||[]).length>0;
+    let cls='cal-day';
+    if(isToday) cls+=' today';
+    if(isSel&&!isToday) cls+=' selected';
+    if(hasEv) cls+=' has-event';
+    div.className=cls;
+    div.textContent=day;
+    div.onclick=()=>selectDay(viewYear,viewMonth,day);
+    grid.appendChild(div);
+  }
+}
+
+function selectDay(y,m,d){
+  selectedDate=dateKey(y,m,d);
+  renderCalendar();
+  renderDayEvents();
+}
+
+function renderDayEvents(){
+  const [y,m,d]=selectedDate.split('-').map(Number);
+  const dateObj=new Date(y,m-1,d);
+  document.getElementById('selectedDateLabel').textContent=dateObj.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  const evs=events[selectedDate]||[];
+  const cont=document.getElementById('dayEvents');
+  if(!evs.length){cont.innerHTML='<p style="font-size:12.5px;color:var(--text-2)">Bu gün için etkinlik yok. <a href="#" onclick="showAddForm();return false" style="color:var(--cyan)">Ekle →</a></p>';return;}
+  cont.innerHTML=evs.map((ev,i)=>`
+    <div class="event-item">
+      <div class="ev-dot" style="background:${EV_COLORS[ev.type]||'#8fa3bf'}"></div>
+      <div style="flex:1">
+        <div class="ev-text">${EV_ICONS[ev.type]} ${ev.title}</div>
+        <div class="ev-time">${ev.time}${ev.note?` • ${ev.note}`:''}</div>
+      </div>
+      <button class="ev-del" onclick="deleteEvent(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addEvent(){
+  const title=document.getElementById('evTitle').value.trim();
+  if(!title){alert('Başlık giriniz');return;}
+  const ev={title,time:document.getElementById('evTime').value,type:document.getElementById('evType').value,note:document.getElementById('evNote').value.trim()};
+  if(!events[selectedDate]) events[selectedDate]=[];
+  events[selectedDate].push(ev);
+  saveEvents();
+  document.getElementById('evTitle').value='';
+  document.getElementById('evNote').value='';
+  hideAddForm();
+  renderCalendar();
+  renderDayEvents();
+  renderUpcoming();
+  if(window.showToast) showToast('Etkinlik eklendi!','success');
+}
+
+function deleteEvent(idx){
+  events[selectedDate].splice(idx,1);
+  if(!events[selectedDate].length) delete events[selectedDate];
+  saveEvents();
+  renderCalendar();
+  renderDayEvents();
+  renderUpcoming();
+}
+
+function showAddForm(){document.getElementById('addForm').style.display='block';document.getElementById('evTitle').focus();}
+function hideAddForm(){document.getElementById('addForm').style.display='none';}
+function goToday(){viewYear=new Date().getFullYear();viewMonth=new Date().getMonth();selectedDate=todayKey();renderCalendar();renderDayEvents();}
+function changeMonth(d){viewMonth+=d;if(viewMonth>11){viewMonth=0;viewYear++;}if(viewMonth<0){viewMonth=11;viewYear--;}renderCalendar();}
+
+function renderUpcoming(){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const upcoming=[];
+  for(const [key,evs] of Object.entries(events)){
+    const [y,m,d]=key.split('-').map(Number);
+    const date=new Date(y,m-1,d);
+    if(date>=now) upcoming.push({key,date,evs});
+  }
+  upcoming.sort((a,b)=>a.date-b.date);
+  const ul=document.getElementById('upcomingList');
+  if(!upcoming.length){ul.innerHTML='<p style="font-size:12.5px;color:var(--text-2)">Yaklaşan etkinlik yok.</p>';return;}
+  ul.innerHTML=upcoming.slice(0,5).map(u=>`
+    <div class="upc-item" onclick="viewYear=${u.date.getFullYear()};viewMonth=${u.date.getMonth()};selectDay(${u.date.getFullYear()},${u.date.getMonth()},${u.date.getDate()})" style="cursor:pointer">
+      <div class="upc-date"><div class="upc-d">${u.date.getDate()}</div><div class="upc-m">${MONTHS[u.date.getMonth()].substring(0,3).toUpperCase()}</div></div>
+      <div><div style="font-size:13px;font-weight:600">${u.evs[0].title}${u.evs.length>1?` +${u.evs.length-1}`:''}</div><div style="font-size:11px;color:var(--text-2)">${u.evs[0].time}</div></div>
+    </div>`).join('');
+}
+
+loadEvents();
+renderCalendar();
+renderDayEvents();
+renderUpcoming();
+try{const u=JSON.parse(localStorage.getItem('eduplay_user')||'{}');document.getElementById('navXP').textContent=(u.xp||0).toLocaleString();if(u.name)document.getElementById('navAvatar').textContent=u.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}catch(e){}
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+</script>
+</body>
+</html>

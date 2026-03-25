@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPlay — Eğlenirken Öğren, Oynayarak Kazan</title>
+  <meta name="description" content="EduPlay ile Türkçe eğitim platformunda oyunlar oyna, testler çöz, liderlik tablosunda yerini al! Ortaokul öğrencilerine özel ücretsiz eğitim.">
+  <meta name="keywords" content="eğitim, oyun, test, ortaokul, matematik, fen, tarih, türkçe, ücretsiz">
+  <meta property="og:title" content="EduPlay — Eğlenirken Öğren">
+  <meta property="og:description" content="Türkiye'nin en eğlenceli eğitim platformu. Ücretsiz, reklamsız, çocuk dostu.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#63dbff">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Hero ── */
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      padding: 80px 0 60px;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      background: rgba(99,219,255,.08);
+      border: 1px solid rgba(99,219,255,.2);
+      border-radius: 999px;
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      letter-spacing: .1em;
+      color: var(--cyan);
+      margin-bottom: 24px;
+      animation: fadeUp .5s var(--ease) both;
+    }
+
+    .hero-eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      animation: pulse-ring 2s ease infinite;
+    }
+
+    .hero-title {
+      font-family: var(--f-display);
+      font-size: clamp(34px, 5.5vw, 62px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      animation: fadeUp .5s var(--ease) .08s both;
+    }
+
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--lime) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title .accent2 {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--coral) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 16.5px;
+      color: var(--text-2);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 32px;
+      animation: fadeUp .5s var(--ease) .16s both;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      animation: fadeUp .5s var(--ease) .24s both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 28px;
+      margin-top: 40px;
+      animation: fadeUp .5s var(--ease) .32s both;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-num {
+      font-family: var(--f-display);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .hero-divider {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative;
+      height: 480px;
+      animation: fadeIn .8s var(--ease) .3s both;
+    }
+
+    .hv-orbit {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hv-center {
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      box-shadow: 0 0 60px rgba(99,219,255,.35), 0 0 120px rgba(99,219,255,.15);
+      z-index: 2;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .hv-ring {
+      position: absolute;
+      border: 1px solid;
+      border-radius: 50%;
+    }
+
+    .hv-ring-1 {
+      width: 220px; height: 220px;
+      border-color: rgba(99,219,255,.15);
+      animation: spin 18s linear infinite;
+    }
+
+    .hv-ring-2 {
+      width: 320px; height: 320px;
+      border-color: rgba(199,125,255,.1);
+      animation: spin 28s linear infinite reverse;
+    }
+
+    .hv-ring-3 {
+      width: 420px; height: 420px;
+      border-color: rgba(184,255,78,.07);
+      animation: spin 40s linear infinite;
+    }
+
+    .hv-card {
+      position: absolute;
+      background: rgba(16,27,48,.95);
+      border: 1px solid var(--border-h);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      backdrop-filter: blur(16px);
+      white-space: nowrap;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hv-card-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; font-family: var(--f-mono); }
+    .hv-card-value { font-family: var(--f-display); font-size: 18px; font-weight: 700; }
+
+    .hv-card:nth-child(1) { top: 48px; left: 0;   animation: float 4s ease-in-out infinite .3s; }
+    .hv-card:nth-child(2) { top: 80px; right: 0;  animation: float 4s ease-in-out infinite 1.2s; }
+    .hv-card:nth-child(3) { bottom: 100px; left: 10px; animation: float 4s ease-in-out infinite 2.1s; }
+    .hv-card:nth-child(4) { bottom: 60px; right: 10px; animation: float 4s ease-in-out infinite .8s; }
+
+    /* ── Feature Strip ── */
+    .feature-strip {
+      padding: 80px 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      transition: all var(--t-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--lime));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--t-mid);
+    }
+
+    .feature-item:hover {
+      border-color: var(--border-h);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-item:hover::after { transform: scaleX(1); }
+
+    .fi-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .fi-title {
+      font-family: var(--f-display);
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .fi-desc {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── Games Section ── */
+    .games-section { padding: 60px 0; }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      transition: all var(--t-mid);
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      border-color: var(--border-h);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md), 0 0 40px rgba(99,219,255,.07);
+    }
+
+    .game-thumb {
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: .7;
+    }
+
+    .game-thumb.t-math   { background: linear-gradient(135deg,#0d1e3c,#1a2e4a); }
+    .game-thumb.t-word   { background: linear-gradient(135deg,#1a0d2a,#2a1a3a); }
+    .game-thumb.t-memory { background: linear-gradient(135deg,#0d2a1e,#1a3a2a); }
+    .game-thumb.t-quiz   { background: linear-gradient(135deg,#2a1a0d,#3a2a1a); }
+    .game-thumb.t-chain  { background: linear-gradient(135deg,#0d0d2a,#1a1a3a); }
+
+    .game-body { padding: 16px 18px; }
+
+    .game-name {
+      font-family: var(--f-display);
+      font-size: 14.5px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .game-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    /* ── Stats Banner ── */
+    .stats-banner {
+      background: linear-gradient(135deg, rgba(99,219,255,.06), rgba(184,255,78,.04));
+      border: 1px solid rgba(99,219,255,.12);
+      border-radius: var(--r-xl);
+      padding: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 24px;
+      text-align: center;
+      margin: 60px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(99,219,255,.04), transparent);
+    }
+
+    .sb-num {
+      font-family: var(--f-display);
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--lime));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      position: relative;
+    }
+
+    .sb-label {
+      font-size: 12.5px;
+      color: var(--text-2);
+      margin-top: 6px;
+      position: relative;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(99,219,255,.07), rgba(199,125,255,.05));
+      border: 1px solid rgba(99,219,255,.15);
+      border-radius: var(--r-xl);
+      padding: 64px 48px;
+      text-align: center;
+      margin: 40px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(99,219,255,.04), transparent);
+    }
+
+    .cta-title {
+      font-family: var(--f-display);
+      font-size: clamp(26px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .cta-sub {
+      color: var(--text-2);
+      font-size: 16px;
+      max-width: 500px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { height: 320px; }
+      .hv-center { width: 90px; height: 90px; font-size: 38px; border-radius: 22px; }
+      .hv-ring-1 { width: 160px; height: 160px; }
+      .hv-ring-2 { width: 240px; height: 240px; }
+      .hv-ring-3 { width: 310px; height: 310px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 40px 0; }
+      .hero-visual { display: none; }
+      .stats-banner { padding: 28px 20px; }
+      .cta-section { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">🎓</div>
+    <span class="nav-logo-text">EduPlay</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Ana Sayfa</a>
+    <a href="pages/learn.html">📚 Öğren</a>
+    <a href="pages/test.html">✏️ Testler</a>
+    <a href="pages/games.html">🎮 Oyunlar</a>
+    <a href="pages/leaderboard.html">🏆 Sıralama</a>
+    <a href="pages/apk.html">📱 APK</a>
+    <a href="pages/about.html">Hakkında</a>
+    <a href="pages/search.html">🔍 Ara</a>
+    <a href="pages/dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="pages/profile.html" class="nav-avatar" id="navAvatar" title="Profil">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="toggleDrawer()" aria-label="Menü">☰</button>
+</nav>
+
+<!-- ── Mobil Drawer ── -->
+<nav class="nav-drawer" id="navDrawer">
+  <a href="index.html">🏠 Ana Sayfa</a>
+  <a href="pages/learn.html">📚 Öğren</a>
+  <a href="pages/test.html">✏️ Testler</a>
+  <a href="pages/games.html">🎮 Oyunlar</a>
+  <a href="pages/leaderboard.html">🏆 Sıralama</a>
+  <a href="pages/apk.html">📱 APK İndir</a>
+  <a href="pages/about.html">ℹ️ Hakkında</a>
+  <a href="pages/profile.html">👤 Profil</a>
+  <a href="pages/settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <!-- ── Üst Reklam ── -->
+    <div class="ad-slot ad-slot--top" data-ad-slot="index-top" data-ad-platform="ezoic"></div>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="dot"></span>
+          <span>Türkiye'nin #1 Eğitim Oyun Platformu</span>
+        </div>
+
+        <h1 class="hero-title">
+          Öğrenmek<br>
+          <span class="accent">Hiç Bu Kadar</span><br>
+          <span class="accent2">Eğlenceli</span> Olmamıştı
+        </h1>
+
+        <p class="hero-desc">
+          Oyunlar oyna, testler çöz, rozetler kazan — EduPlay ile bilgi
+          edinmeyi bir maceraya dönüştür. Ortaokul öğrencilerine özel,
+          tamamen ücretsiz ve KVKK uyumlu.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="pages/learn.html" class="btn btn-primary btn-lg">🎓 Öğrenmeye Başla</a>
+          <a href="pages/games.html" class="btn btn-ghost btn-lg">🎮 Oyunları Keşfet</a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num" id="counterStudents">5.000+</div>
+            <div class="hero-stat-label">Aktif Öğrenci</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div>
+            <div class="hero-stat-num">200+</div>
+            <div class="hero-stat-label">Ders & Test</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div>
+            <div class="hero-stat-num">5</div>
+            <div class="hero-stat-label">Mini Oyun</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div>
+            <div class="hero-stat-num">%100</div>
+            <div class="hero-stat-label">Ücretsiz</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hv-orbit">
+          <div class="hv-ring hv-ring-1"></div>
+          <div class="hv-ring hv-ring-2"></div>
+          <div class="hv-ring hv-ring-3"></div>
+          <div class="hv-center">🎓</div>
+        </div>
+
+        <div class="hv-card">
+          <div class="hv-card-label">GÜNLÜK SERİ</div>
+          <div class="hv-card-value" style="color:var(--gold)">🔥 7 Gün</div>
+        </div>
+
+        <div class="hv-card">
+          <div class="hv-card-label">XP KAZANILDI</div>
+          <div class="hv-card-value" style="color:var(--cyan)">+250 ⚡</div>
+        </div>
+
+        <div class="hv-card">
+          <div class="hv-card-label">LİDERLİK</div>
+          <div class="hv-card-value" style="color:var(--lime)">🏆 #3</div>
+        </div>
+
+        <div class="hv-card">
+          <div class="hv-card-label">YENİ ROZET</div>
+          <div class="hv-card-value">🎖️ Uzman</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Özellikler ── -->
+    <section class="feature-strip">
+      <div style="text-align:center;margin-bottom:48px">
+        <div class="section-label">Neden EduPlay?</div>
+        <div class="section-title">Her Şey Düşünülmüş</div>
+        <p class="section-sub" style="margin:12px auto 0">Öğrenmeyi kolaylaştıran, eğlenceli kılan ve motive eden özellikler.</p>
+      </div>
+
+      <div class="feature-grid stagger">
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(99,219,255,.1)">🎮</div>
+          <div class="fi-title">Oyunlaştırılmış Öğrenme</div>
+          <p class="fi-desc">5 farklı oyun ile matematik, Türkçe, fen ve tarih konularını eğlenceli öğren. XP kazan, seviyeleri geç!</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(184,255,78,.1)">🧠</div>
+          <div class="fi-title">Akıllı Test Sistemi</div>
+          <p class="fi-desc">Anlık geri bildirim, detaylı açıklama ve sınırsız soru çözme imkânı. Gerçek sınav simülasyonu.</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(255,209,102,.1)">🏆</div>
+          <div class="fi-title">Canlı Liderlik Tablosu</div>
+          <p class="fi-desc">Firebase destekli gerçek zamanlı sıralama. Arkadaşlarınla yarış, zirvede kalma!</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(199,125,255,.1)">🎖️</div>
+          <div class="fi-title">Rozet & Başarım Sistemi</div>
+          <p class="fi-desc">15 farklı rozet, XP seviyeleri ve özel unvanlar. Her başarın kayıt altında.</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(255,107,107,.1)">🔥</div>
+          <div class="fi-title">Günlük Seri Takibi</div>
+          <p class="fi-desc">Her gün giriş yap, serisini kır. Streak bonusları ile ekstra XP kazan.</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(99,219,255,.1)">📱</div>
+          <div class="fi-title">Android Uygulaması</div>
+          <p class="fi-desc">APK ile istediğin yerden öğren. Çevrimdışı mod, bildirimler, otomatik senkronizasyon.</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(184,255,78,.1)">☁️</div>
+          <div class="fi-title">Bulut Senkronizasyon</div>
+          <p class="fi-desc">Firebase ile verileriniz güvende. Tüm cihazlardan aynı ilerlemeyle devam et.</p>
+        </div>
+        <div class="feature-item">
+          <div class="fi-icon" style="background:rgba(255,209,102,.1)">🔒</div>
+          <div class="fi-title">KVKK & COPPA Uyumlu</div>
+          <p class="fi-desc">Ortaokul kitlesi için özel tasarım. Kişisel veri toplamaz, kişiselleştirilmemiş reklam.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Oyunlar ── -->
+    <section class="games-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="section-label">Mini Oyunlar</div>
+          <div class="section-title">Oyna & Öğren</div>
+        </div>
+        <a href="pages/games.html" class="btn btn-ghost btn-sm">Tümünü Gör →</a>
+      </div>
+
+      <div class="grid-auto-220 stagger">
+        <a href="pages/games/math-rush.html" class="game-card">
+          <div class="game-thumb t-math">🔢</div>
+          <div class="game-body">
+            <div class="game-name">Matematik Koşusu</div>
+            <div class="game-meta">
+              <span style="color:var(--gold)">★ 4.8</span>
+              <span class="badge badge-lime">Kolay</span>
+            </div>
+          </div>
+        </a>
+        <a href="pages/games/word-hunt.html" class="game-card">
+          <div class="game-thumb t-word">🔤</div>
+          <div class="game-body">
+            <div class="game-name">Kelime Avı</div>
+            <div class="game-meta">
+              <span style="color:var(--gold)">★ 4.7</span>
+              <span class="badge badge-gold">Orta</span>
+            </div>
+          </div>
+        </a>
+        <a href="pages/games/memory-match.html" class="game-card">
+          <div class="game-thumb t-memory">🧩</div>
+          <div class="game-body">
+            <div class="game-name">Hafıza Oyunu</div>
+            <div class="game-meta">
+              <span style="color:var(--gold)">★ 4.9</span>
+              <span class="badge badge-lime">Kolay</span>
+            </div>
+          </div>
+        </a>
+        <a href="pages/games/quiz-blitz.html" class="game-card">
+          <div class="game-thumb t-quiz">⚡</div>
+          <div class="game-body">
+            <div class="game-name">Quiz Blitz</div>
+            <div class="game-meta">
+              <span style="color:var(--gold)">★ 4.6</span>
+              <span class="badge badge-gold">Orta</span>
+            </div>
+          </div>
+        </a>
+        <a href="pages/games/word-chain.html" class="game-card">
+          <div class="game-thumb t-chain">🔗</div>
+          <div class="game-body">
+            <div class="game-name">Kelime Zinciri</div>
+            <div class="game-meta">
+              <span style="color:var(--gold)">★ 4.5</span>
+              <span class="badge badge-coral">Zor</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── Orta Reklam ── -->
+    <div class="ad-slot ad-slot--mid" data-ad-slot="index-mid" data-ad-platform="ezoic"></div>
+
+    <!-- ── Stats Banner ── -->
+    <div class="stats-banner stagger">
+      <div>
+        <div class="sb-num" id="sb1">5.000</div>
+        <div class="sb-label">Aktif Öğrenci</div>
+      </div>
+      <div>
+        <div class="sb-num">50+</div>
+        <div class="sb-label">Ders İçeriği</div>
+      </div>
+      <div>
+        <div class="sb-num">200+</div>
+        <div class="sb-label">Test Sorusu</div>
+      </div>
+      <div>
+        <div class="sb-num">5</div>
+        <div class="sb-label">Mini Oyun</div>
+      </div>
+      <div>
+        <div class="sb-num">%100</div>
+        <div class="sb-label">Ücretsiz</div>
+      </div>
+    </div>
+
+    <!-- ── CTA ── -->
+    <div class="cta-section">
+      <h2 class="cta-title">
+        Hemen Başla,<br>
+        <span style="color:var(--cyan)">Ücretsiz!</span>
+      </h2>
+      <p class="cta-sub">
+        Binlerce öğrenciye katıl. Kayıt gerekmez,
+        hemen oynamaya başlayabilirsin.
+      </p>
+      <div class="cta-btns">
+        <a href="pages/learn.html" class="btn btn-primary btn-xl">📚 Öğrenmeye Başla</a>
+        <a href="pages/apk.html"   class="btn btn-ghost btn-xl">📱 APK İndir</a>
+      </div>
+    </div>
+
+    <!-- ── Alt Reklam ── -->
+    <div class="ad-slot ad-slot--bottom" data-ad-slot="index-bottom" data-ad-platform="ezoic"></div>
+
+  </div><!-- /container -->
+</div><!-- /page-wrapper -->
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">🎓 EduPlay</div>
+        <p class="footer-brand-desc">
+          Eğlenirken öğren, öğrenirken kazan.
+          Türkiye'nin en yenilikçi eğitim platformu.
+          Ortaokul öğrencilerine özel, tamamen ücretsiz.
+        </p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social-btn" title="Instagram">📷</a>
+          <a href="#" class="footer-social-btn" title="Twitter/X">𝕏</a>
+          <a href="#" class="footer-social-btn" title="YouTube">▶️</a>
+          <a href="#" class="footer-social-btn" title="Discord">💬</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Platform</div>
+        <ul class="footer-links">
+          <li><a href="pages/learn.html">Dersler</a></li>
+          <li><a href="pages/test.html">Testler</a></li>
+          <li><a href="pages/games.html">Oyunlar</a></li>
+          <li><a href="pages/leaderboard.html">Liderlik Tablosu</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Hesap</div>
+        <ul class="footer-links">
+          <li><a href="pages/profile.html">Profilim</a></li>
+          <li><a href="pages/settings.html">Ayarlar</a></li>
+          <li><a href="pages/apk.html">APK İndir</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Bilgi</div>
+        <ul class="footer-links">
+          <li><a href="pages/about.html">Hakkında</a></li>
+          <li><a href="pages/about.html#kvkk">KVKK / Gizlilik</a></li>
+          <li><a href="pages/about.html#faq">SSS</a></li>
+          <li><a href="pages/about.html">İletişim</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 EduPlay — Tüm hakları saklıdır.</span>
+      <span>
+        <a href="pages/about.html">Gizlilik</a> ·
+        <a href="pages/about.html">Kullanım Şartları</a> ·
+        🔥 Firebase ile güçlendirilmiştir
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Toast Root ── -->
+<div id="toast-root"></div>
+
+<!-- ── Firebase ── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="js/main.js"></script>
+<script src="js/ads.js"></script>
+
+<script>
+  // Mobil drawer
+  function toggleDrawer() {
+    document.getElementById('navDrawer').classList.toggle('open');
+  }
+
+  // XP göster
+  try {
+    const u = JSON.parse(localStorage.getItem('eduplay_user') || '{}');
+    if (u.xp) document.getElementById('navXP').textContent = u.xp.toLocaleString();
+    if (u.name) {
+      const initials = u.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('navAvatar').textContent = initials;
+    }
+  } catch(e) {}
+
+  // Scroll-triggered counter animation
+  function animCount(el, target, suffix='') {
+    let n = 0;
+    const step = target / 50;
+    const iv = setInterval(() => {
+      n = Math.min(n + step, target);
+      el.textContent = Math.round(n).toLocaleString('tr-TR') + suffix;
+      if (n >= target) clearInterval(iv);
+    }, 30);
+  }
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animCount(document.getElementById('sb1'), 5000, '+');
+        obs.disconnect();
+      }
+    });
+  }, { threshold: .3 });
+
+  const sb = document.querySelector('.stats-banner');
+  if (sb) obs.observe(sb);
+
+  // Drawer dışına tıklayınca kapat
+  document.addEventListener('click', e => {
+    const drawer = document.getElementById('navDrawer');
+    if (drawer.classList.contains('open') && !drawer.contains(e.target) && !e.target.closest('.nav-hamburger')) {
+      drawer.classList.remove('open');
+    }
+  });
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js')
+      .then(r=>console.log('[SW] Kayıtlı:',r.scope))
+      .catch(e=>console.log('[SW] Hata:',e));
+  });
+}
+</script>
+</body>
+</html>

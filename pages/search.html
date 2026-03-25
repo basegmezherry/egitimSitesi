@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Arama — EduPlay</title>
+<meta name="description" content="EduPlay'de arama yap. Dersler, testler, oyunlar, sayfalar.">
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.search-hero{padding:60px 0 32px;text-align:center}
+.search-box-wrap{max-width:600px;margin:0 auto;position:relative}
+.search-box{width:100%;background:var(--card);border:2px solid var(--border-h);border-radius:16px;padding:16px 56px 16px 20px;font-family:var(--f-body);font-size:16px;color:var(--text);outline:none;transition:border-color var(--t-fast)}
+.search-box:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(99,219,255,.1)}
+.search-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-2);pointer-events:none}
+.search-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.s-tag{padding:5px 14px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text-2);cursor:pointer;font-size:12.5px;font-weight:500;transition:all var(--t-fast)}
+.s-tag:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:32px}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;text-decoration:none;color:var(--text);display:flex;gap:14px;align-items:flex-start;transition:all var(--t-mid)}
+.result-card:hover{border-color:var(--border-h);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.rc-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rc-title{font-family:var(--f-display);font-size:14px;font-weight:700;margin-bottom:4px}
+.rc-desc{font-size:12.5px;color:var(--text-2);line-height:1.5}
+.rc-type{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;margin-top:6px}
+.no-results{text-align:center;padding:60px 20px;color:var(--text-2)}
+.search-stats{font-size:13px;color:var(--text-2);margin-top:8px}
+mark{background:rgba(99,219,255,.2);color:var(--cyan);border-radius:3px;padding:0 2px}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a>
+    <a href="learn.html">📚 Öğren</a><a href="test.html">✏️ Testler</a>
+    <a href="games.html">🎮 Oyunlar</a><a href="dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="test.html">✏️ Testler</a><a href="games.html">🎮 Oyunlar</a>
+  <a href="dashboard.html">📊 Dashboard</a><a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="search-hero">
+      <div class="section-label">Arama</div>
+      <h1 class="section-title" style="margin-bottom:24px">Ne arıyorsun?</h1>
+      <div class="search-box-wrap">
+        <input class="search-box" id="searchInput" type="text" placeholder="Matematik, Tarih, Oyun..." autocomplete="off" oninput="doSearch(this.value)">
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="search-tags">
+        <button class="s-tag" onclick="quickSearch('matematik')">Matematik</button>
+        <button class="s-tag" onclick="quickSearch('fen')">Fen Bilimleri</button>
+        <button class="s-tag" onclick="quickSearch('tarih')">Tarih</button>
+        <button class="s-tag" onclick="quickSearch('türkçe')">Türkçe</button>
+        <button class="s-tag" onclick="quickSearch('oyun')">Oyunlar</button>
+        <button class="s-tag" onclick="quickSearch('lgs')">LGS</button>
+      </div>
+    </div>
+
+    <div id="searchStats" class="search-stats hidden"></div>
+    <div class="results-grid" id="resultsGrid"></div>
+    <div class="no-results hidden" id="noResults">
+      <div style="font-size:48px;margin-bottom:12px">🔍</div>
+      <div style="font-family:var(--f-display);font-size:18px;font-weight:700;margin-bottom:8px">Sonuç bulunamadı</div>
+      <p>Farklı anahtar kelimeler dene</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+// Tüm içerik indexi
+const INDEX = [
+  // Sayfalar
+  {type:'page', icon:'🏠', title:'Ana Sayfa', desc:'EduPlay ana sayfası', url:'../index.html', tags:['ana sayfa','başlangıç'], bg:'rgba(99,219,255,.1)', badge:'Sayfa', badgeColor:'#63dbff'},
+  {type:'page', icon:'📊', title:'Dashboard', desc:'Kişisel ilerleme ve istatistikler', url:'dashboard.html', tags:['dashboard','istatistik','ilerleme'], bg:'rgba(99,219,255,.1)', badge:'Sayfa', badgeColor:'#63dbff'},
+  {type:'page', icon:'🏆', title:'Liderlik Tablosu', desc:'En yüksek puanlı öğrenciler', url:'leaderboard.html', tags:['liderlik','sıralama','puanlama'], bg:'rgba(255,209,102,.1)', badge:'Sayfa', badgeColor:'#ffd166'},
+  {type:'page', icon:'📱', title:'APK İndir', desc:'Android uygulamasını indir', url:'apk.html', tags:['apk','android','indir','uygulama'], bg:'rgba(184,255,78,.1)', badge:'Sayfa', badgeColor:'#b8ff4e'},
+  {type:'page', icon:'🎯', title:'Günlük Görevler', desc:'Her gün yeni görevler tamamla', url:'daily.html', tags:['günlük','görev','mission','xp'], bg:'rgba(255,107,107,.1)', badge:'Sayfa', badgeColor:'#ff6b6b'},
+  {type:'page', icon:'🛒', title:'Mağaza', desc:'Altınlarınla avatar ve tema al', url:'shop.html', tags:['mağaza','shop','avatar','tema','coin'], bg:'rgba(255,209,102,.1)', badge:'Sayfa', badgeColor:'#ffd166'},
+  {type:'page', icon:'👤', title:'Profil', desc:'Profilinizi görüntüleyin', url:'profile.html', tags:['profil','hesap'], bg:'rgba(199,125,255,.1)', badge:'Sayfa', badgeColor:'#c77dff'},
+  {type:'page', icon:'⚙️', title:'Ayarlar', desc:'Tema, ses ve bildirim ayarları', url:'settings.html', tags:['ayar','tema','ses','bildirim'], bg:'rgba(99,219,255,.1)', badge:'Sayfa', badgeColor:'#63dbff'},
+  {type:'page', icon:'📓', title:'Notlarım', desc:'Ders notları al ve yönet', url:'notes.html', tags:['not','not defteri','yazı'], bg:'rgba(184,255,78,.1)', badge:'Sayfa', badgeColor:'#b8ff4e'},
+  {type:'page', icon:'📅', title:'Çalışma Takvimi', desc:'Çalışma planın ve hatırlatıcılar', url:'calendar.html', tags:['takvim','plan','hatırlatıcı'], bg:'rgba(99,219,255,.1)', badge:'Sayfa', badgeColor:'#63dbff'},
+  {type:'page', icon:'🛠️', title:'Araçlar', desc:'Hesap makinesi, birim çevirici, zamanlayıcı', url:'tools/index.html', tags:['araç','hesap makinesi','birim','zamanlayıcı'], bg:'rgba(199,125,255,.1)', badge:'Sayfa', badgeColor:'#c77dff'},
+  // Ders kategorileri
+  {type:'lesson', icon:'🔢', title:'Matematik 5. Sınıf', desc:'Kesirler, çarpma, bölme ve daha fazlası', url:'learn.html', tags:['matematik','5.sınıf','kesir','çarpma','bölme'], bg:'rgba(99,219,255,.1)', badge:'Ders', badgeColor:'#63dbff'},
+  {type:'lesson', icon:'📐', title:'Matematik 6. Sınıf', desc:'Oran, orantı ve geometri', url:'learn.html', tags:['matematik','6.sınıf','oran','orantı','geometri'], bg:'rgba(99,219,255,.1)', badge:'Ders', badgeColor:'#63dbff'},
+  {type:'lesson', icon:'🧮', title:'Matematik 7. Sınıf', desc:'Cebirsel ifadeler ve denklemler', url:'learn.html', tags:['matematik','7.sınıf','cebir','denklem'], bg:'rgba(99,219,255,.1)', badge:'Ders', badgeColor:'#63dbff'},
+  {type:'lesson', icon:'🔬', title:'Fen Bilimleri 5. Sınıf', desc:'Madde, ısı ve insan vücudu', url:'learn.html', tags:['fen','fen bilimleri','5.sınıf','madde','ısı','vücut'], bg:'rgba(0,200,150,.1)', badge:'Ders', badgeColor:'#00c896'},
+  {type:'lesson', icon:'⚗️', title:'Fen Bilimleri 7. Sınıf', desc:'Kuvvet, hareket ve kimya', url:'learn.html', tags:['fen','fen bilimleri','7.sınıf','kuvvet','hareket','kimya'], bg:'rgba(0,200,150,.1)', badge:'Ders', badgeColor:'#00c896'},
+  {type:'lesson', icon:'📜', title:'Tarih', desc:'Osmanlı ve Kurtuluş Savaşı', url:'learn.html', tags:['tarih','osmanlı','kurtuluş savaşı','atatürk','lozan'], bg:'rgba(255,209,102,.1)', badge:'Ders', badgeColor:'#ffd166'},
+  {type:'lesson', icon:'📝', title:'Türkçe', desc:'Dil bilgisi ve sözcük anlamı', url:'learn.html', tags:['türkçe','dil bilgisi','sözcük','cümle'], bg:'rgba(162,155,254,.1)', badge:'Ders', badgeColor:'#a29bfe'},
+  {type:'lesson', icon:'🌍', title:'İngilizce', desc:'Temel İngilizce kelimeler ve gramer', url:'learn.html', tags:['ingilizce','english','kelime','gramer'], bg:'rgba(255,107,107,.1)', badge:'Ders', badgeColor:'#ff6b6b'},
+  {type:'lesson', icon:'🌏', title:'Coğrafya', desc:'Türkiye ve dünya coğrafyası', url:'learn.html', tags:['coğrafya','türkiye','bölge','nehir','göl'], bg:'rgba(99,219,255,.1)', badge:'Ders', badgeColor:'#63dbff'},
+  {type:'lesson', icon:'🎯', title:'LGS Hazırlık', desc:'8. sınıf LGS sınav soruları', url:'test.html', tags:['lgs','8.sınıf','sınav','hazırlık'], bg:'rgba(255,209,102,.1)', badge:'Test', badgeColor:'#ffd166'},
+  // Oyunlar
+  {type:'game', icon:'🔢', title:'Matematik Koşusu', desc:'Hızlı matematik soruları çöz, zaman yarışı', url:'games/math-rush.html', tags:['oyun','matematik','hız','çarpma'], bg:'rgba(99,219,255,.1)', badge:'Oyun', badgeColor:'#63dbff'},
+  {type:'game', icon:'🧩', title:'Hafıza Oyunu', desc:'Kartları eşleştir, hafızanı güçlendir', url:'games/memory-match.html', tags:['oyun','hafıza','eşleştirme'], bg:'rgba(199,125,255,.1)', badge:'Oyun', badgeColor:'#c77dff'},
+  {type:'game', icon:'⚡', title:'Quiz Blitz', desc:'Hızlı genel kültür soruları', url:'games/quiz-blitz.html', tags:['oyun','quiz','genel kültür','soru'], bg:'rgba(255,209,102,.1)', badge:'Oyun', badgeColor:'#ffd166'},
+  {type:'game', icon:'🔤', title:'Kelime Avı', desc:'Gizli kelimeleri bul', url:'games/word-hunt.html', tags:['oyun','kelime','türkçe','bulmaca'], bg:'rgba(162,155,254,.1)', badge:'Oyun', badgeColor:'#a29bfe'},
+  {type:'game', icon:'🔗', title:'Kelime Zinciri', desc:'Zincirleme kelime oyunu', url:'games/word-chain.html', tags:['oyun','kelime','zincir','türkçe'], bg:'rgba(255,107,107,.1)', badge:'Oyun', badgeColor:'#ff6b6b'},
+  {type:'game', icon:'🧩', title:'Sudoku', desc:'9×9 sudoku, 3 zorluk seviyesi', url:'games/sudoku.html', tags:['oyun','sudoku','bulmaca','mantık'], bg:'rgba(99,219,255,.1)', badge:'Oyun', badgeColor:'#63dbff'},
+  {type:'game', icon:'⌨️', title:'Yazma Yarışı', desc:'Yazma hızını ve doğruluğunu test et', url:'games/typing-race.html', tags:['oyun','yazma','hız','klavye'], bg:'rgba(184,255,78,.1)', badge:'Oyun', badgeColor:'#b8ff4e'},
+  {type:'game', icon:'🔤', title:'Bulmaca', desc:'Türkçe çapraz bulmaca', url:'games/crossword.html', tags:['oyun','bulmaca','türkçe','çapraz'], bg:'rgba(255,107,107,.1)', badge:'Oyun', badgeColor:'#ff6b6b'},
+  {type:'game', icon:'😮', title:'Adam Asmaca', desc:'Kelimeyi bulmadan önce asılma!', url:'games/hangman.html', tags:['oyun','adam asmaca','kelime','tahmin'], bg:'rgba(255,209,102,.1)', badge:'Oyun', badgeColor:'#ffd166'},
+  {type:'game', icon:'🔢', title:'2048', desc:'Karoları kaydır, 2048\'i bul!', url:'games/game-2048.html', tags:['oyun','2048','mantık','sayı'], bg:'rgba(99,219,255,.1)', badge:'Oyun', badgeColor:'#63dbff'},
+];
+
+let debounceTimer;
+
+function doSearch(q) {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => runSearch(q), 200);
+}
+
+function quickSearch(q) {
+  document.getElementById('searchInput').value = q;
+  runSearch(q);
+}
+
+function runSearch(q) {
+  const grid = document.getElementById('resultsGrid');
+  const noRes = document.getElementById('noResults');
+  const stats = document.getElementById('searchStats');
+
+  if (!q.trim()) {
+    grid.innerHTML = renderDefaults();
+    noRes.classList.add('hidden');
+    stats.classList.add('hidden');
+    return;
+  }
+
+  const ql = q.toLowerCase().trim();
+  const results = INDEX.filter(item =>
+    item.title.toLowerCase().includes(ql) ||
+    item.desc.toLowerCase().includes(ql) ||
+    item.tags.some(t => t.toLowerCase().includes(ql))
+  );
+
+  stats.textContent = `"${q}" için ${results.length} sonuç bulundu`;
+  stats.classList.remove('hidden');
+
+  if (!results.length) {
+    grid.innerHTML = '';
+    noRes.classList.remove('hidden');
+    return;
+  }
+
+  noRes.classList.add('hidden');
+  grid.innerHTML = results.map(r => renderCard(r, ql)).join('');
+}
+
+function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q})`, 'gi');
+  return text.replace(re, '<mark>$1</mark>');
+}
+
+function renderCard(r, q='') {
+  return `
+  <a href="${r.url}" class="result-card">
+    <div class="rc-icon" style="background:${r.bg}">${r.icon}</div>
+    <div>
+      <div class="rc-title">${highlight(r.title, q)}</div>
+      <div class="rc-desc">${highlight(r.desc, q)}</div>
+      <span class="rc-type" style="background:${r.badgeColor}22;color:${r.badgeColor};border:1px solid ${r.badgeColor}44">${r.badge}</span>
+    </div>
+  </a>`;
+}
+
+function renderDefaults() {
+  // Popular content
+  const popular = INDEX.filter(i => ['Matematik Koşusu','LGS Hazırlık','Dashboard','Günlük Görevler','Sudoku','Yazma Yarışı'].includes(i.title));
+  return popular.map(r => renderCard(r)).join('');
+}
+
+// Init
+document.getElementById('resultsGrid').innerHTML = renderDefaults();
+try{const u=JSON.parse(localStorage.getItem('eduplay_user')||'{}');document.getElementById('navXP').textContent=(u.xp||0).toLocaleString();if(u.name)document.getElementById('navAvatar').textContent=u.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}catch(e){}
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+// Autofocus search
+window.addEventListener('load',()=>document.getElementById('searchInput').focus());
+</script>
+</body>
+</html>

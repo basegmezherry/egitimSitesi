@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayarlar — EduPlay</title>
+<link rel="stylesheet" href="../css/style.css">
+    
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.settings-layout{display:grid;grid-template-columns:240px 1fr;gap:1.5rem;align-items:start}
+.settings-sidebar{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:1rem;position:sticky;top:5rem}
+.sidebar-item{display:flex;align-items:center;gap:.75rem;padding:.65rem 1rem;border-radius:10px;cursor:pointer;color:var(--text-secondary);font-size:.9rem;transition:all .3s;border:1px solid transparent}
+.sidebar-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sidebar-item.active{color:var(--primary);background:rgba(0,245,212,.08);border-color:rgba(0,245,212,.2)}
+.sidebar-item i{width:18px;text-align:center}
+.settings-panel{display:none}
+.settings-panel.active{display:block}
+.settings-section{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;margin-bottom:1rem}
+.settings-section-title{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--primary);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;text-transform:uppercase;letter-spacing:.05em}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.setting-row:last-child{border-bottom:none;padding-bottom:0}
+.setting-row:first-of-type{padding-top:0}
+.setting-info{flex:1;margin-right:1rem}
+.setting-label{font-size:.9rem;font-weight:600;margin-bottom:.15rem}
+.setting-desc{font-size:.78rem;color:var(--text-secondary)}
+/* Toggle */
+.toggle{position:relative;width:48px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:999px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-slider{background:var(--primary)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(22px);background:#000}
+/* Select */
+.setting-select{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:8px;padding:.5rem 1rem;font-family:'Exo 2',sans-serif;font-size:.85rem;cursor:pointer;outline:none;transition:border .3s;min-width:140px}
+.setting-select:focus{border-color:var(--primary)}
+/* Range */
+.setting-range{width:140px;accent-color:var(--primary);cursor:pointer}
+/* Color swatches */
+.color-swatches{display:flex;gap:.5rem;flex-wrap:wrap}
+.swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .3s;flex-shrink:0}
+.swatch.active{border-color:#fff;transform:scale(1.2)}
+/* Danger zone */
+.danger-zone{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.2)}
+.danger-zone .settings-section-title{color:#ef4444}
+.danger-btn{background:transparent;border:1px solid #ef4444;color:#ef4444;padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.85rem;transition:all .3s}
+.danger-btn:hover{background:rgba(239,68,68,.1)}
+/* Page title */
+.page-title{font-family:'Orbitron',sans-serif;font-size:1.6rem;color:var(--primary);margin-bottom:.3rem}
+.page-sub{color:var(--text-secondary);font-size:.9rem;margin-bottom:1.5rem}
+@media(max-width:700px){.settings-layout{grid-template-columns:1fr}.settings-sidebar{position:static;display:flex;flex-wrap:wrap;gap:.3rem;padding:.75rem}}
+@media(max-width:700px){.sidebar-item{padding:.5rem .75rem;font-size:.8rem}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">Edu<span>Play</span></a>
+    <div class="nav-links">
+      <a href="learn.html"><i class="fas fa-book"></i> Öğren</a>
+      <a href="test.html"><i class="fas fa-tasks"></i> Test</a>
+      <a href="games.html"><i class="fas fa-gamepad"></i> Oyunlar</a>
+      <a href="leaderboard.html"><i class="fas fa-trophy"></i> Sıralama</a>
+      <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:5rem">
+  <div class="ad-banner ad-placeholder" data-ad-slot="settings-top">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+
+  <div class="page-title"><i class="fas fa-cog"></i> Ayarlar</div>
+  <div class="page-sub">Deneyimini kişiselleştir</div>
+
+  <div class="settings-layout">
+    <!-- Sidebar -->
+    <div class="settings-sidebar">
+      <div class="sidebar-item active" onclick="switchPanel('appearance')"><i class="fas fa-palette"></i> Görünüm</div>
+      <div class="sidebar-item" onclick="switchPanel('audio')"><i class="fas fa-volume-up"></i> Ses</div>
+      <div class="sidebar-item" onclick="switchPanel('notifications')"><i class="fas fa-bell"></i> Bildirimler</div>
+      <div class="sidebar-item" onclick="switchPanel('gameplay')"><i class="fas fa-gamepad"></i> Oyun</div>
+      <div class="sidebar-item" onclick="switchPanel('language')"><i class="fas fa-language"></i> Dil</div>
+      <div class="sidebar-item" onclick="switchPanel('account')"><i class="fas fa-user-shield"></i> Hesap</div>
+    </div>
+
+    <!-- Panels -->
+    <div>
+      <!-- Appearance -->
+      <div class="settings-panel active" id="panel-appearance">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-moon"></i> Tema</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Karanlık Mod</div><div class="setting-desc">Göz dostu koyu tema</div></div>
+            <label class="toggle"><input type="checkbox" id="darkMode" checked onchange="saveSetting('darkMode',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Animasyonlar</div><div class="setting-desc">Geçiş ve efekt animasyonları</div></div>
+            <label class="toggle"><input type="checkbox" id="animations" checked onchange="saveSetting('animations',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Parçacık Efektleri</div><div class="setting-desc">Arka plan parçacık animasyonları</div></div>
+            <label class="toggle"><input type="checkbox" id="particles" checked onchange="saveSetting('particles',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-paint-brush"></i> Renk Teması</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Ana Renk</div><div class="setting-desc">Vurgu rengini seç</div></div>
+            <div class="color-swatches" id="colorSwatches">
+              <div class="swatch active" style="background:#00f5d4" data-color="#00f5d4" onclick="setColor(this)"></div>
+              <div class="swatch" style="background:#3b82f6" data-color="#3b82f6" onclick="setColor(this)"></div>
+              <div class="swatch" style="background:#8b5cf6" data-color="#8b5cf6" onclick="setColor(this)"></div>
+              <div class="swatch" style="background:#ec4899" data-color="#ec4899" onclick="setColor(this)"></div>
+              <div class="swatch" style="background:#f59e0b" data-color="#f59e0b" onclick="setColor(this)"></div>
+              <div class="swatch" style="background:#10b981" data-color="#10b981" onclick="setColor(this)"></div>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Yazı Boyutu</div><div class="setting-desc">Metin boyutunu ayarla</div></div>
+            <select class="setting-select" id="fontSize" onchange="saveSetting('fontSize',this.value)">
+              <option value="small">Küçük</option>
+              <option value="medium" selected>Orta</option>
+              <option value="large">Büyük</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio -->
+      <div class="settings-panel" id="panel-audio">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-music"></i> Ses Ayarları</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Ses Efektleri</div><div class="setting-desc">Oyun içi ses efektleri</div></div>
+            <label class="toggle"><input type="checkbox" id="sfx" checked onchange="saveSetting('sfx',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Arka Plan Müziği</div><div class="setting-desc">Oyun sırasında müzik çal</div></div>
+            <label class="toggle"><input type="checkbox" id="bgMusic" onchange="saveSetting('bgMusic',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Ses Seviyesi</div><div class="setting-desc" id="volumeLabel">%80</div></div>
+            <input type="range" class="setting-range" id="volume" min="0" max="100" value="80" oninput="updateVolume(this.value)" onchange="saveSetting('volume',this.value)">
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Doğru Cevap Sesi</div><div class="setting-desc">Tamamlama bildirimi</div></div>
+            <label class="toggle"><input type="checkbox" id="correctSound" checked onchange="saveSetting('correctSound',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-panel" id="panel-notifications">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-bell"></i> Bildirim Ayarları</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Günlük Hatırlatıcı</div><div class="setting-desc">Her gün çalışma hatırlatması</div></div>
+            <label class="toggle"><input type="checkbox" id="dailyReminder" onchange="saveSetting('dailyReminder',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Seri Uyarısı</div><div class="setting-desc">Serin kırılmadan önce uyar</div></div>
+            <label class="toggle"><input type="checkbox" id="streakAlert" checked onchange="saveSetting('streakAlert',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Rozet Kazanımı</div><div class="setting-desc">Yeni rozet kazanınca bildir</div></div>
+            <label class="toggle"><input type="checkbox" id="badgeNotif" checked onchange="saveSetting('badgeNotif',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Liderlik Değişimi</div><div class="setting-desc">Sıranda değişiklik olunca bildir</div></div>
+            <label class="toggle"><input type="checkbox" id="leaderNotif" onchange="saveSetting('leaderNotif',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Hatırlatıcı Saati</div><div class="setting-desc">Günlük bildirim zamanı</div></div>
+            <select class="setting-select" id="reminderTime" onchange="saveSetting('reminderTime',this.value)">
+              <option value="08:00">08:00</option>
+              <option value="12:00">12:00</option>
+              <option value="18:00" selected>18:00</option>
+              <option value="20:00">20:00</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gameplay -->
+      <div class="settings-panel" id="panel-gameplay">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-sliders-h"></i> Oyun Ayarları</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Varsayılan Zorluk</div><div class="setting-desc">Oyunlar için başlangıç zorluğu</div></div>
+            <select class="setting-select" id="defaultDiff" onchange="saveSetting('defaultDiff',this.value)">
+              <option value="easy">Kolay</option>
+              <option value="medium" selected>Orta</option>
+              <option value="hard">Zor</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Otomatik Kaydet</div><div class="setting-desc">İlerlemeyi otomatik kaydet</div></div>
+            <label class="toggle"><input type="checkbox" id="autoSave" checked onchange="saveSetting('autoSave',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Zamanlayıcı Göster</div><div class="setting-desc">Test ve oyun süresini göster</div></div>
+            <label class="toggle"><input type="checkbox" id="showTimer" checked onchange="saveSetting('showTimer',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Cevap Sonrası Açıklama</div><div class="setting-desc">Test cevabı sonrası açıklama göster</div></div>
+            <label class="toggle"><input type="checkbox" id="showExplanation" checked onchange="saveSetting('showExplanation',this.checked)"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <div class="settings-panel" id="panel-language">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-globe"></i> Dil & Bölge</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Arayüz Dili</div><div class="setting-desc">Platform dili</div></div>
+            <select class="setting-select" id="uiLanguage" onchange="saveSetting('uiLanguage',this.value)">
+              <option value="tr" selected>🇹🇷 Türkçe</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="ar">🇸🇦 العربية</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">İçerik Dili</div><div class="setting-desc">Ders ve test içerik dili</div></div>
+            <select class="setting-select" id="contentLanguage" onchange="saveSetting('contentLanguage',this.value)">
+              <option value="tr" selected>🇹🇷 Türkçe</option>
+              <option value="en">🇬🇧 English</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account -->
+      <div class="settings-panel" id="panel-account">
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-user-cog"></i> Hesap</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Veri Dışa Aktarma</div><div class="setting-desc">Tüm verilerini JSON olarak indir</div></div>
+            <button class="btn btn-outline btn-sm" onclick="exportData()"><i class="fas fa-download"></i> İndir</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Profil Sayfası</div><div class="setting-desc">Profil ve rozet yönetimi</div></div>
+            <a href="profile.html" class="btn btn-outline btn-sm"><i class="fas fa-user"></i> Profil</a>
+          </div>
+        </div>
+        <div class="settings-section danger-zone">
+          <div class="settings-section-title"><i class="fas fa-exclamation-triangle"></i> Tehlikeli Bölge</div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">İlerlemeyi Sıfırla</div><div class="setting-desc">Tüm XP, rozet ve ilerleme silinir</div></div>
+            <button class="danger-btn" onclick="resetProgress()"><i class="fas fa-redo"></i> Sıfırla</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Tüm Ayarları Sıfırla</div><div class="setting-desc">Ayarlar varsayılana döner</div></div>
+            <button class="danger-btn" onclick="resetSettings()"><i class="fas fa-trash"></i> Sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-banner ad-placeholder" style="margin-top:1rem" data-ad-slot="settings-bottom">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:2rem;color:var(--text-secondary);font-size:.85rem;margin-top:2rem;border-top:1px solid rgba(255,255,255,.05)">
+  <p>© 2025 EduPlay</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+function switchPanel(id){
+  document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function getSettings(){try{return JSON.parse(localStorage.getItem('eduplay_settings'))||{}}catch{return{}}}
+function saveSetting(key,val){const s=getSettings();s[key]=val;localStorage.setItem('eduplay_settings',JSON.stringify(s));applySettings()}
+
+function setColor(el){
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  const color=el.dataset.color;
+  document.documentElement.style.setProperty('--primary',color);
+  saveSetting('primaryColor',color);
+}
+
+function updateVolume(val){
+  document.getElementById('volumeLabel').textContent='%'+val;
+}
+
+function applySettings(){
+  const s=getSettings();
+  if(s.primaryColor) document.documentElement.style.setProperty('--primary',s.primaryColor);
+  if(s.fontSize){
+    const sizes={small:'14px',medium:'16px',large:'18px'};
+    document.documentElement.style.fontSize=sizes[s.fontSize]||'16px';
+  }
+}
+
+function loadSettings(){
+  const s=getSettings();
+  // Checkboxes
+  ['darkMode','animations','particles','sfx','bgMusic','correctSound','dailyReminder','streakAlert','badgeNotif','leaderNotif','autoSave','showTimer','showExplanation'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&s[id]!==undefined) el.checked=s[id];
+  });
+  // Selects
+  ['fontSize','defaultDiff','reminderTime','uiLanguage','contentLanguage'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&s[id]) el.value=s[id];
+  });
+  // Volume
+  if(s.volume!==undefined){
+    document.getElementById('volume').value=s.volume;
+    document.getElementById('volumeLabel').textContent='%'+s.volume;
+  }
+  // Color
+  if(s.primaryColor){
+    document.querySelectorAll('.swatch').forEach(sw=>{
+      sw.classList.toggle('active',sw.dataset.color===s.primaryColor);
+    });
+  }
+  applySettings();
+}
+
+function exportData(){
+  const data={settings:getSettings(),user:JSON.parse(localStorage.getItem('eduplay_user')||'{}')};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='eduplay-data.json';a.click();
+  if(window.showToast)showToast('Veriler indirildi!','success');
+}
+
+function resetProgress(){
+  if(confirm('Tüm ilerleme silinecek. Emin misin?')){
+    localStorage.removeItem('eduplay_user');
+    if(window.showToast)showToast('İlerleme sıfırlandı.','info');
+  }
+}
+
+function resetSettings(){
+  if(confirm('Tüm ayarlar sıfırlanacak. Devam?')){
+    localStorage.removeItem('eduplay_settings');
+    location.reload();
+  }
+}
+
+function toggleNav(){document.querySelector('.nav-links').classList.toggle('open')}
+loadSettings();
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

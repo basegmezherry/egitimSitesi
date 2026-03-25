@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil — EduPlay</title>
+<link rel="stylesheet" href="../css/style.css">
+    
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.profile-header{background:linear-gradient(135deg,rgba(0,245,212,.08),rgba(255,107,53,.08));border:1px solid rgba(0,245,212,.2);border-radius:20px;padding:2rem;margin-bottom:1.5rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap}
+.avatar-wrap{position:relative;flex-shrink:0}
+.big-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;font-family:'Orbitron',sans-serif;color:#000;border:3px solid var(--primary);box-shadow:0 0 20px rgba(0,245,212,.4)}
+.avatar-level{position:absolute;bottom:-4px;right:-4px;background:var(--secondary);color:#fff;font-family:'Orbitron',sans-serif;font-size:.7rem;font-weight:700;padding:.2rem .5rem;border-radius:999px;border:2px solid var(--dark)}
+.profile-info{flex:1;min-width:200px}
+.profile-name{font-family:'Orbitron',sans-serif;font-size:1.5rem;color:var(--primary);margin-bottom:.3rem}
+.profile-title{color:var(--text-secondary);font-size:.9rem;margin-bottom:1rem}
+.xp-bar-wrap{background:rgba(255,255,255,.05);border-radius:999px;height:10px;overflow:hidden;margin-bottom:.3rem}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:999px;transition:width 1s ease}
+.xp-label{font-size:.75rem;color:var(--text-secondary);font-family:'Space Mono',monospace}
+.profile-actions{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-box{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:1.2rem;text-align:center;transition:all .3s}
+.stat-box:hover{border-color:rgba(0,245,212,.3);transform:translateY(-2px)}
+.stat-icon{font-size:1.5rem;margin-bottom:.5rem}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;color:var(--primary)}
+.stat-lbl{font-size:.75rem;color:var(--text-secondary);margin-top:.2rem}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:.75rem;margin-top:1rem}
+.badge-item{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:1rem .75rem;text-align:center;transition:all .3s;cursor:default}
+.badge-item.earned{border-color:rgba(0,245,212,.3)}
+.badge-item.locked{opacity:.4;filter:grayscale(1)}
+.badge-item:hover.earned{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,245,212,.15)}
+.badge-icon{font-size:2rem;margin-bottom:.4rem}
+.badge-name{font-size:.75rem;font-weight:600;color:var(--text)}
+.badge-desc{font-size:.65rem;color:var(--text-secondary);margin-top:.2rem}
+.activity-list{display:flex;flex-direction:column;gap:.5rem;margin-top:1rem}
+.activity-item{display:flex;align-items:center;gap:1rem;padding:.75rem 1rem;background:var(--card);border-radius:10px;border:1px solid rgba(255,255,255,.05)}
+.activity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.activity-text{flex:1;font-size:.85rem}
+.activity-xp{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--primary)}
+.activity-time{font-size:.75rem;color:var(--text-secondary)}
+.section-card{background:var(--card-dark,#111827);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.section-title{font-family:'Orbitron',sans-serif;font-size:.95rem;color:var(--primary);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.edit-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.edit-modal.open{display:flex}
+.edit-box{background:#1a2235;border:1px solid rgba(0,245,212,.3);border-radius:16px;padding:2rem;width:90%;max-width:400px}
+.edit-box h3{font-family:'Orbitron',sans-serif;color:var(--primary);margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.85rem;color:var(--text-secondary);margin-bottom:.4rem}
+.form-group input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.65rem 1rem;color:var(--text);font-family:'Exo 2',sans-serif;font-size:.9rem;outline:none;transition:border .3s;box-sizing:border-box}
+.form-group input:focus{border-color:var(--primary)}
+.game-scores{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;margin-top:1rem}
+.game-score-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.9rem;text-align:center}
+.game-score-card .game-icon{font-size:1.8rem;margin-bottom:.4rem}
+.game-score-card .game-name{font-size:.8rem;color:var(--text-secondary);margin-bottom:.3rem}
+.game-score-card .game-best{font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--primary)}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">Edu<span>Play</span></a>
+    <div class="nav-links">
+      <a href="learn.html"><i class="fas fa-book"></i> Öğren</a>
+      <a href="test.html"><i class="fas fa-tasks"></i> Test</a>
+      <a href="games.html"><i class="fas fa-gamepad"></i> Oyunlar</a>
+      <a href="leaderboard.html"><i class="fas fa-trophy"></i> Sıralama</a>
+      <a href="profile.html" class="active"><i class="fas fa-user"></i> Profil</a>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:5rem">
+  <div class="ad-banner ad-placeholder" data-ad-slot="profile-top">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      <div class="big-avatar" id="avatarDisplay">EP</div>
+      <div class="avatar-level" id="levelBadge">Sev. 1</div>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name" id="displayName">EduPlay Kullanıcısı</div>
+      <div class="profile-title" id="displayTitle">🌱 Başlangıç Seviyesi</div>
+      <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpBar" style="width:0%"></div></div>
+      <div class="xp-label" id="xpLabel">0 / 500 XP — Seviye 2'ye</div>
+      <div class="profile-actions">
+        <button class="btn btn-primary btn-sm" onclick="openEdit()"><i class="fas fa-edit"></i> Düzenle</button>
+        <button class="btn btn-outline btn-sm" onclick="shareProfile()"><i class="fas fa-share-alt"></i> Paylaş</button>
+        <button class="btn btn-outline btn-sm" style="border-color:#ef4444;color:#ef4444" onclick="resetProgress()"><i class="fas fa-redo"></i> Sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-icon">⭐</div><div class="stat-num" id="statXP">0</div><div class="stat-lbl">Toplam XP</div></div>
+    <div class="stat-box"><div class="stat-icon">📚</div><div class="stat-num" id="statLessons">0</div><div class="stat-lbl">Ders Tamamlandı</div></div>
+    <div class="stat-box"><div class="stat-icon">✅</div><div class="stat-num" id="statTests">0</div><div class="stat-lbl">Test Çözüldü</div></div>
+    <div class="stat-box"><div class="stat-icon">🎮</div><div class="stat-num" id="statGames">0</div><div class="stat-lbl">Oyun Oynandı</div></div>
+    <div class="stat-box"><div class="stat-icon">🔥</div><div class="stat-num" id="statStreak">0</div><div class="stat-lbl">Gün Serisi</div></div>
+    <div class="stat-box"><div class="stat-icon">💰</div><div class="stat-num" id="statCoins">0</div><div class="stat-lbl">Altın</div></div>
+  </div>
+
+  <!-- Badges -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-medal"></i> Rozetler</div>
+    <div class="badges-grid" id="badgesGrid"></div>
+  </div>
+
+  <!-- Game Scores -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-gamepad"></i> En Yüksek Oyun Skorları</div>
+    <div class="game-scores" id="gameScores"></div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="section-card">
+    <div class="section-title"><i class="fas fa-history"></i> Son Aktiviteler</div>
+    <div class="activity-list" id="activityList"></div>
+  </div>
+
+  <div class="ad-banner ad-placeholder" style="margin-top:1.5rem" data-ad-slot="profile-bottom">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="edit-modal" id="editModal">
+  <div class="edit-box">
+    <h3><i class="fas fa-user-edit"></i> Profili Düzenle</h3>
+    <div class="form-group">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="editName" placeholder="Adın" maxlength="24">
+    </div>
+    <div class="form-group">
+      <label>Başlık</label>
+      <input type="text" id="editTitle" placeholder="Örn: Matematik Sever" maxlength="30">
+    </div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem">
+      <button class="btn btn-primary" onclick="saveEdit()" style="flex:1">Kaydet</button>
+      <button class="btn btn-outline" onclick="closeEdit()" style="flex:1">İptal</button>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:2rem;color:var(--text-secondary);font-size:.85rem;margin-top:2rem;border-top:1px solid rgba(255,255,255,.05)">
+  <p>© 2025 EduPlay</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const TITLES=[
+  {min:0,title:'🌱 Başlangıç Seviyesi'},
+  {min:5,title:'📖 Öğrenci'},
+  {min:10,title:'🎯 Çalışkan'},
+  {min:15,title:'⭐ Yıldız Öğrenci'},
+  {min:20,title:'🚀 Uzman'},
+  {min:25,title:'💡 Deha'},
+  {min:30,title:'🔥 Efsane'},
+  {min:40,title:'👑 Grandmaster'}
+];
+
+const ALL_BADGES=[
+  {id:'first_lesson',icon:'📖',name:'İlk Ders',desc:'İlk dersini tamamladın'},
+  {id:'lesson_5',icon:'📚',name:'Okuyucu',desc:'5 ders tamamla'},
+  {id:'lesson_20',icon:'🎓',name:'Mezun',desc:'20 ders tamamla'},
+  {id:'first_test',icon:'✏️',name:'İlk Test',desc:'İlk testini çözdün'},
+  {id:'test_perfect',icon:'💯',name:'Mükemmel',desc:'Testi hatasız bitir'},
+  {id:'streak_3',icon:'🔥',name:'Ateş',desc:'3 günlük seri'},
+  {id:'streak_7',icon:'⚡',name:'Yıldırım',desc:'7 günlük seri'},
+  {id:'streak_30',icon:'🌟',name:'Efsane Seri',desc:'30 günlük seri'},
+  {id:'xp_500',icon:'⭐',name:'XP Toplayıcı',desc:'500 XP kazan'},
+  {id:'xp_5000',icon:'💎',name:'Elmas',desc:'5000 XP kazan'},
+  {id:'first_game',icon:'🎮',name:'Oyuncu',desc:'İlk oyunu oyna'},
+  {id:'game_10',icon:'🏆',name:'Oyun Ustası',desc:'10 oyun oyna'},
+  {id:'level_10',icon:'🚀',name:'Uzman',desc:'Seviye 10\'a ulaş'},
+  {id:'level_25',icon:'👑',name:'Grandmaster',desc:'Seviye 25\'e ulaş'},
+  {id:'coins_100',icon:'💰',name:'Zengin',desc:'100 altın kazan'},
+];
+
+const GAMES=[
+  {id:'math_rush',icon:'🧮',name:'Matematik Koşusu'},
+  {id:'memory_match',icon:'🧠',name:'Hafıza Oyunu'},
+  {id:'quiz_blitz',icon:'⚡',name:'Quiz Blitz'},
+  {id:'word_hunt',icon:'🔍',name:'Kelime Avı'},
+  {id:'word_chain',icon:'🔗',name:'Kelime Zinciri'},
+];
+
+function getState(){
+  try{return JSON.parse(localStorage.getItem('eduplay_user'))||{}}catch{return{}}
+}
+
+function getTitle(level){
+  let t=TITLES[0];
+  for(const ti of TITLES){if(level>=ti.min)t=ti;}
+  return t.title;
+}
+
+function xpForLevel(l){return l*l*100}
+
+function loadProfile(){
+  const s=getState();
+  const level=s.level||1;
+  const xp=s.xp||0;
+  const name=s.name||'EduPlay Kullanıcısı';
+
+  // Initials
+  const initials=name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('avatarDisplay').textContent=initials;
+  document.getElementById('displayName').textContent=name;
+  document.getElementById('levelBadge').textContent='Sev. '+level;
+  document.getElementById('displayTitle').textContent=s.customTitle||getTitle(level);
+
+  // XP bar
+  const xpNeeded=xpForLevel(level+1);
+  const xpCurrent=xp-xpForLevel(level);
+  const xpRange=xpNeeded-xpForLevel(level);
+  const pct=Math.min(100,Math.max(0,(xpCurrent/xpRange)*100));
+  document.getElementById('xpBar').style.width=pct+'%';
+  document.getElementById('xpLabel').textContent=`${xp.toLocaleString()} XP — Seviye ${level+1} için ${(xpNeeded-xp).toLocaleString()} XP kaldı`;
+
+  // Stats
+  document.getElementById('statXP').textContent=(xp||0).toLocaleString();
+  document.getElementById('statLessons').textContent=(s.completedLessons||[]).length;
+  document.getElementById('statTests').textContent=s.testsCompleted||0;
+  document.getElementById('statGames').textContent=s.gamesPlayed||0;
+  document.getElementById('statStreak').textContent=s.streak||0;
+  document.getElementById('statCoins').textContent=s.coins||0;
+
+  // Badges
+  const earned=s.badges||[];
+  const grid=document.getElementById('badgesGrid');
+  grid.innerHTML=ALL_BADGES.map(b=>{
+    const isEarned=earned.includes(b.id);
+    return `<div class="badge-item ${isEarned?'earned':'locked'}" title="${b.desc}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${isEarned?b.desc:'???'}</div>
+    </div>`;
+  }).join('');
+
+  // Game scores
+  const scores=s.gameScores||{};
+  document.getElementById('gameScores').innerHTML=GAMES.map(g=>`
+    <div class="game-score-card">
+      <div class="game-icon">${g.icon}</div>
+      <div class="game-name">${g.name}</div>
+      <div class="game-best">${scores[g.id]||0}</div>
+    </div>`).join('');
+
+  // Activity
+  const activities=s.activities||[
+    {text:'EduPlay\'e katıldın!',xp:'+10 XP',time:'Bugün',color:'#00f5d4'},
+  ];
+  document.getElementById('activityList').innerHTML=activities.slice(-10).reverse().map(a=>`
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color||'#00f5d4'}"></div>
+      <div class="activity-text">${a.text}</div>
+      <div class="activity-xp">${a.xp||''}</div>
+      <div class="activity-time">${a.time||''}</div>
+    </div>`).join('');
+}
+
+function openEdit(){
+  const s=getState();
+  document.getElementById('editName').value=s.name||'';
+  document.getElementById('editTitle').value=s.customTitle||'';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('open')}
+function saveEdit(){
+  const s=getState();
+  s.name=document.getElementById('editName').value.trim()||s.name;
+  s.customTitle=document.getElementById('editTitle').value.trim();
+  localStorage.setItem('eduplay_user',JSON.stringify(s));
+  closeEdit();
+  loadProfile();
+  if(window.showToast)showToast('Profil güncellendi!','success');
+}
+function shareProfile(){
+  if(navigator.share){
+    navigator.share({title:'EduPlay Profilim',text:'EduPlay\'de öğreniyorum!',url:location.href});
+  }else{
+    navigator.clipboard.writeText(location.href);
+    if(window.showToast)showToast('Link kopyalandı!','success');
+  }
+}
+function resetProgress(){
+  if(confirm('Tüm ilerleme silinecek. Emin misin?')){
+    localStorage.removeItem('eduplay_user');
+    loadProfile();
+    if(window.showToast)showToast('İlerleme sıfırlandı.','info');
+  }
+}
+function toggleNav(){document.querySelector('.nav-links').classList.toggle('open')}
+
+loadProfile();
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

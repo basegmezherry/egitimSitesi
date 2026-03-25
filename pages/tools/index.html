@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Araçlar — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../../index.html">Ana Sayfa</a>
+    <a href="../lessons/index.html">📚 Öğren</a>
+    <a href="../test.html">✏️ Testler</a>
+    <a href="index.html" class="active">🔧 Araçlar</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="../profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="toggleDrawer()">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../../index.html">🏠 Ana Sayfa</a>
+  <a href="../lessons/index.html">📚 Öğren</a>
+  <a href="../test.html">✏️ Testler</a>
+  <a href="index.html">🔧 Araçlar</a>
+  <a href="../profile.html">👤 Profil</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:32px 20px">
+  <div class="ad-slot ad-slot--top" data-ad-slot="tools-top" data-ad-platform="ezoic"></div>
+
+  <div style="margin-bottom:32px">
+    <div class="section-label">Ücretsiz Araçlar</div>
+    <div class="section-title">🔧 Öğrenci Araçları</div>
+    <p class="section-sub">Ödevini, testini ve çalışmalarını kolaylaştıracak araçlar.</p>
+  </div>
+
+  <div class="grid-auto-280">
+    <a href="calculator.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">🔢</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Hesap Makinesi</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Bilimsel hesap makinesi. Geçmiş tutma, klavye desteği.</p>
+      <div class="badge badge-lime" style="margin-top:12px">Çevrimdışı Çalışır</div>
+    </a>
+    <a href="fraction.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">½</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Kesir Hesaplayıcı</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Kesirleri topla, çıkar, çarp, böl. Adım adım çözüm gösterir.</p>
+      <div class="badge badge-cyan" style="margin-top:12px">Adım Adım</div>
+    </a>
+    <a href="timer.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">⏱️</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Ders Sayacı</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Pomodoro tekniğiyle çalış. 25 dk çalış, 5 dk mola.</p>
+      <div class="badge badge-gold" style="margin-top:12px">Pomodoro</div>
+    </a>
+    <a href="notepad.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">📓</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Not Defteri</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Konu notlarını yaz, kaydet ve organize et. Otomatik kaydeder.</p>
+      <div class="badge badge-purple" style="margin-top:12px">Otomatik Kayıt</div>
+    </a>
+    <a href="unit-converter.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">🔄</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Birim Çevirici</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Uzunluk, kütle, sıcaklık, alan, hacim birim dönüşümleri.</p>
+      <div class="badge badge-cyan" style="margin-top:12px">20+ Birim</div>
+    </a>
+    <a href="periodic.html" class="card" style="text-decoration:none;color:var(--text)">
+      <div style="font-size:36px;margin-bottom:12px">⚗️</div>
+      <div style="font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:6px">Periyodik Tablo</div>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">118 element, bilgileri, elektron dizilimi ve grupları.</p>
+      <div class="badge badge-lime" style="margin-top:12px">118 Element</div>
+    </a>
+  </div>
+
+  <div class="ad-slot ad-slot--bottom" data-ad-slot="tools-bottom" data-ad-platform="ezoic"></div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../../js/router.js"></script>
+<script src="../../js/ads.js"></script>
+</body>
+</html>

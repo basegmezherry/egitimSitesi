@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liderlik Tablosu — EduPlay</title>
+<link rel="stylesheet" href="../css/style.css">
+    
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.leaderboard-hero{background:linear-gradient(135deg,rgba(0,245,212,.08),rgba(255,107,53,.08));border:1px solid rgba(0,245,212,.2);border-radius:16px;padding:2rem;text-align:center;margin-bottom:2rem}
+.leaderboard-hero h1{font-family:'Orbitron',sans-serif;font-size:2rem;color:var(--primary);margin-bottom:.5rem}
+.leaderboard-hero p{color:var(--text-secondary)}
+.lb-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.lb-tab{padding:.6rem 1.2rem;border-radius:8px;border:1px solid rgba(0,245,212,.3);background:transparent;color:var(--text-secondary);cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.9rem;transition:all .3s}
+.lb-tab.active{background:var(--primary);color:#000;border-color:var(--primary);font-weight:700}
+.lb-tab:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+.top3-grid{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:1rem;margin-bottom:2rem;align-items:end}
+.top3-card{background:var(--card);border-radius:16px;padding:1.5rem 1rem;text-align:center;border:1px solid rgba(255,255,255,.05);position:relative;transition:transform .3s}
+.top3-card:hover{transform:translateY(-4px)}
+.top3-card.rank-1{border-color:rgba(255,215,0,.4);background:linear-gradient(135deg,rgba(255,215,0,.05),var(--card))}
+.top3-card.rank-2{border-color:rgba(192,192,192,.3)}
+.top3-card.rank-3{border-color:rgba(205,127,50,.3)}
+.top3-rank{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-bottom:.5rem}
+.rank-1 .top3-rank{color:#ffd700;font-size:2rem}
+.rank-2 .top3-rank{color:#c0c0c0}
+.rank-3 .top3-rank{color:#cd7f32}
+.top3-avatar{width:64px;height:64px;border-radius:50%;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;font-family:'Orbitron',sans-serif}
+.rank-1 .top3-avatar{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;width:80px;height:80px;font-size:2rem}
+.rank-2 .top3-avatar{background:linear-gradient(135deg,#c0c0c0,#808080);color:#000}
+.rank-3 .top3-avatar{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff}
+.top3-name{font-weight:700;font-size:1rem;margin-bottom:.3rem}
+.top3-score{color:var(--primary);font-family:'Space Mono',monospace;font-size:.9rem}
+.top3-level{color:var(--text-secondary);font-size:.8rem;margin-top:.2rem}
+.lb-list{display:flex;flex-direction:column;gap:.5rem}
+.lb-row{display:grid;grid-template-columns:50px 1fr auto;gap:1rem;align-items:center;background:var(--card);border-radius:12px;padding:.75rem 1rem;border:1px solid rgba(255,255,255,.05);transition:all .3s}
+.lb-row:hover{border-color:rgba(0,245,212,.2);transform:translateX(4px)}
+.lb-row.mine{border-color:rgba(0,245,212,.4);background:linear-gradient(135deg,rgba(0,245,212,.05),var(--card))}
+.lb-rank-num{font-family:'Orbitron',sans-serif;font-weight:700;color:var(--text-secondary);text-align:center;font-size:.9rem}
+.lb-rank-num.top{color:var(--primary)}
+.lb-user{display:flex;align-items:center;gap:.75rem}
+.lb-avatar-sm{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.lb-user-info{display:flex;flex-direction:column}
+.lb-username{font-weight:600;font-size:.9rem}
+.lb-badge{font-size:.7rem;color:var(--text-secondary)}
+.lb-score-col{text-align:right}
+.lb-xp{font-family:'Space Mono',monospace;color:var(--primary);font-size:.9rem;font-weight:700}
+.lb-level{font-size:.75rem;color:var(--text-secondary)}
+.my-rank-banner{background:linear-gradient(135deg,rgba(0,245,212,.1),rgba(255,107,53,.1));border:1px solid rgba(0,245,212,.3);border-radius:12px;padding:1rem 1.5rem;margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.refresh-btn{background:transparent;border:1px solid rgba(0,245,212,.4);color:var(--primary);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:.85rem;transition:all .3s;display:flex;align-items:center;gap:.5rem}
+.refresh-btn:hover{background:rgba(0,245,212,.1)}
+.loading-state{text-align:center;padding:3rem;color:var(--text-secondary)}
+.loading-state .spinner{width:40px;height:40px;border:3px solid rgba(0,245,212,.2);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.period-badge{font-size:.75rem;padding:.2rem .6rem;border-radius:999px;background:rgba(0,245,212,.1);color:var(--primary);border:1px solid rgba(0,245,212,.3)}
+@media(max-width:600px){.top3-grid{grid-template-columns:1fr 1fr 1fr}.top3-avatar{width:48px;height:48px;font-size:1.1rem}.rank-1 .top3-avatar{width:60px;height:60px}.top3-card{padding:1rem .5rem}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">Edu<span>Play</span></a>
+    <div class="nav-links">
+      <a href="learn.html"><i class="fas fa-book"></i> Öğren</a>
+      <a href="test.html"><i class="fas fa-tasks"></i> Test</a>
+      <a href="games.html"><i class="fas fa-gamepad"></i> Oyunlar</a>
+      <a href="leaderboard.html" class="active"><i class="fas fa-trophy"></i> Sıralama</a>
+      <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:5rem">
+  <!-- Ad Banner Top -->
+  <div class="ad-banner ad-placeholder" data-ad-slot="leaderboard-top">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+
+  <div class="leaderboard-hero">
+    <h1><i class="fas fa-trophy"></i> Liderlik Tablosu</h1>
+    <p>En iyi öğrenciler burada! Sen de zirvede yerini al.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchTab('weekly')"><i class="fas fa-calendar-week"></i> Bu Hafta</button>
+      <button class="lb-tab" onclick="switchTab('monthly')"><i class="fas fa-calendar-alt"></i> Bu Ay</button>
+      <button class="lb-tab" onclick="switchTab('alltime')"><i class="fas fa-infinity"></i> Tüm Zamanlar</button>
+      <button class="lb-tab" onclick="switchTab('games')"><i class="fas fa-gamepad"></i> Oyunlar</button>
+    </div>
+    <button class="refresh-btn" onclick="loadLeaderboard()">
+      <i class="fas fa-sync-alt" id="refresh-icon"></i> Yenile
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" id="loading-state">
+    <div class="spinner"></div>
+    <p>Sıralama yükleniyor...</p>
+  </div>
+
+  <!-- Content -->
+  <div id="lb-content" style="display:none">
+    <!-- Top 3 -->
+    <div class="top3-grid" id="top3-grid"></div>
+    <!-- Rest -->
+    <div class="lb-list" id="lb-list"></div>
+    <!-- My Rank -->
+    <div class="my-rank-banner" id="my-rank-banner" style="display:none">
+      <div>
+        <div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:.25rem">Senin Sıralaман</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--primary)" id="my-rank-text">—</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.85rem;color:var(--text-secondary)">Toplam XP</div>
+        <div style="font-family:'Space Mono',monospace;color:var(--primary);font-size:1.1rem" id="my-xp-text">0 XP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ad Banner Bottom -->
+  <div class="ad-banner ad-placeholder" style="margin-top:2rem" data-ad-slot="leaderboard-bottom">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:2rem;color:var(--text-secondary);font-size:.85rem;margin-top:4rem;border-top:1px solid rgba(255,255,255,.05)">
+  <p>© 2025 EduPlay — Tüm hakları saklıdır.</p>
+</footer>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const COLORS = ['#00f5d4','#ff6b35','#7c3aed','#f59e0b','#10b981','#3b82f6','#ec4899','#ef4444'];
+const ICONS = ['🎯','⭐','🚀','🔥','💡','🏆','⚡','🎮'];
+let currentTab = 'weekly';
+let lbData = [];
+
+const demoData = {
+  weekly: [
+    {name:'Ahmet Y.',xp:4820,level:12,streak:7,badge:'🔥 Seri'},
+    {name:'Zeynep K.',xp:4210,level:11,streak:5,badge:'⭐ Yıldız'},
+    {name:'Mert A.',xp:3980,level:10,streak:3,badge:'🚀 Hızlı'},
+    {name:'Elif S.',xp:3560,level:10,streak:6,badge:'💡 Zeki'},
+    {name:'Burak T.',xp:3120,level:9,streak:2,badge:'🎯 Keskin'},
+    {name:'Selin M.',xp:2890,level:8,streak:4,badge:'🏆 Kahraman'},
+    {name:'Emre D.',xp:2650,level:8,streak:1,badge:'⚡ Hızlı'},
+    {name:'Aslı B.',xp:2340,level:7,streak:3,badge:'🎮 Oyuncu'},
+    {name:'Kerem Ö.',xp:2100,level:7,streak:2,badge:'🌟 Parlak'},
+    {name:'Deniz C.',xp:1980,level:6,streak:1,badge:'📚 Çalışkan'},
+  ],
+  monthly: [
+    {name:'Zeynep K.',xp:18500,level:14,streak:12,badge:'👑 Şampiyon'},
+    {name:'Ahmet Y.',xp:16800,level:13,streak:9,badge:'🔥 Efsane'},
+    {name:'Elif S.',xp:15200,level:12,streak:8,badge:'⭐ Ustası'},
+    {name:'Mert A.',xp:13400,level:11,streak:5,badge:'🚀 Pro'},
+    {name:'Selin M.',xp:12100,level:10,streak:7,badge:'💡 Dahisi'},
+    {name:'Burak T.',xp:11500,level:10,streak:3,badge:'🎯 Nişancı'},
+    {name:'Aslı B.',xp:9800,level:9,streak:6,badge:'🏆 Kahraman'},
+    {name:'Emre D.',xp:8900,level:8,streak:4,badge:'⚡ Titan'},
+    {name:'Deniz C.',xp:7600,level:8,streak:2,badge:'🎮 Oyuncu'},
+    {name:'Kerem Ö.',xp:6500,level:7,streak:1,badge:'📖 Bilgin'},
+  ],
+  alltime: [
+    {name:'Zeynep K.',xp:94200,level:25,streak:30,badge:'👑 Efsane'},
+    {name:'Mert A.',xp:88600,level:23,streak:20,badge:'🔥 Titan'},
+    {name:'Ahmet Y.',xp:81400,level:22,streak:15,badge:'⭐ Grandmaster'},
+    {name:'Burak T.',xp:74300,level:20,streak:18,badge:'🚀 Pro'},
+    {name:'Selin M.',xp:68900,level:19,streak:22,badge:'💡 Dahisi'},
+    {name:'Elif S.',xp:62100,level:18,streak:10,badge:'🎯 Nişancı'},
+    {name:'Aslı B.',xp:55400,level:17,streak:14,badge:'🏆 Kahraman'},
+    {name:'Kerem Ö.',xp:49800,level:16,streak:8,badge:'⚡ Hızlı'},
+    {name:'Emre D.',xp:43200,level:15,streak:6,badge:'🎮 Oyuncu'},
+    {name:'Deniz C.',xp:38700,level:14,streak:5,badge:'📚 Çalışkan'},
+  ],
+  games: [
+    {name:'Burak T.',xp:38200,level:16,streak:5,badge:'🎮 Oyun Efsanesi'},
+    {name:'Ahmet Y.',xp:34600,level:15,streak:8,badge:'⚡ Hız Canavarı'},
+    {name:'Mert A.',xp:31400,level:14,streak:3,badge:'🎯 Keskin Nişancı'},
+    {name:'Zeynep K.',xp:28900,level:13,streak:7,badge:'🔥 Ateş Topu'},
+    {name:'Emre D.',xp:25300,level:12,streak:4,badge:'🚀 Roket'},
+    {name:'Selin M.',xp:22100,level:11,streak:2,badge:'💡 Strateji'},
+    {name:'Elif S.',xp:18800,level:10,streak:6,badge:'⭐ Yıldız'},
+    {name:'Aslı B.',xp:15600,level:9,streak:1,badge:'🏆 Mücadeleci'},
+    {name:'Kerem Ö.',xp:12400,level:8,streak:3,badge:'🌟 Yükselen'},
+    {name:'Deniz C.',xp:9800,level:7,streak:2,badge:'📖 Öğrenen'},
+  ]
+};
+
+function getInitials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+function getColor(i){return COLORS[i%COLORS.length]}
+function formatXP(n){return n>=1000?(n/1000).toFixed(1)+'K XP':n+' XP'}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.lb-tab').forEach((t,i)=>{
+    const tabs=['weekly','monthly','alltime','games'];
+    t.classList.toggle('active',tabs[i]===tab);
+  });
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  document.getElementById('loading-state').style.display='block';
+  document.getElementById('lb-content').style.display='none';
+  const icon=document.getElementById('refresh-icon');
+  icon.classList.add('fa-spin');
+
+  // Simulate async (Firebase or demo)
+  await new Promise(r=>setTimeout(r,600));
+
+  let data=demoData[currentTab]||demoData.weekly;
+
+  // Try Firebase
+  try{
+    if(window.db){
+      const period=currentTab==='games'?'games_score':'xp_'+currentTab;
+      const snap=await window.db.collection('leaderboard').orderBy(period,'desc').limit(10).get();
+      if(!snap.empty){
+        data=snap.docs.map(d=>({...d.data(),id:d.id}));
+      }
+    }
+  }catch(e){/* use demo */}
+
+  lbData=data;
+  renderLeaderboard(data);
+  icon.classList.remove('fa-spin');
+}
+
+function renderLeaderboard(data){
+  // Top 3
+  const top3=document.getElementById('top3-grid');
+  const order=[1,0,2]; // 2nd, 1st, 3rd visually
+  top3.innerHTML='';
+  const positions=[
+    {rank:2,cls:'rank-2'},
+    {rank:1,cls:'rank-1'},
+    {rank:3,cls:'rank-3'}
+  ];
+  positions.forEach(({rank,cls})=>{
+    const u=data[rank-1];
+    if(!u) return;
+    const medals=['🥇','🥈','🥉'];
+    top3.innerHTML+=`
+      <div class="top3-card ${cls}">
+        <div class="top3-rank">${medals[rank-1]}</div>
+        <div class="top3-avatar" style="background:linear-gradient(135deg,${getColor(rank-1)},${getColor(rank+2)})">${getInitials(u.name)}</div>
+        <div class="top3-name">${u.name}</div>
+        <div class="top3-score">${formatXP(u.xp)}</div>
+        <div class="top3-level">Seviye ${u.level} • ${u.badge}</div>
+      </div>`;
+  });
+
+  // Rest (4-10)
+  const list=document.getElementById('lb-list');
+  list.innerHTML='';
+  data.slice(3).forEach((u,i)=>{
+    const rank=i+4;
+    list.innerHTML+=`
+      <div class="lb-row">
+        <div class="lb-rank-num">${rank}</div>
+        <div class="lb-user">
+          <div class="lb-avatar-sm" style="background:linear-gradient(135deg,${getColor(rank)},${getColor(rank+3)})">${getInitials(u.name)}</div>
+          <div class="lb-user-info">
+            <div class="lb-username">${u.name}</div>
+            <div class="lb-badge">${u.badge} • 🔥 ${u.streak} gün seri</div>
+          </div>
+        </div>
+        <div class="lb-score-col">
+          <div class="lb-xp">${formatXP(u.xp)}</div>
+          <div class="lb-level">Sev. ${u.level}</div>
+        </div>
+      </div>`;
+  });
+
+  // My rank
+  const myBanner=document.getElementById('my-rank-banner');
+  const state=JSON.parse(localStorage.getItem('eduplay_user')||'{}');
+  if(state&&state.xp){
+    const myRank=data.findIndex(u=>u.xp<=state.xp)+1||data.length+1;
+    document.getElementById('my-rank-text').textContent=`#${myRank} Sıra`;
+    document.getElementById('my-xp-text').textContent=formatXP(state.xp||0);
+    myBanner.style.display='flex';
+  }else{
+    myBanner.style.display='none';
+  }
+
+  document.getElementById('loading-state').style.display='none';
+  document.getElementById('lb-content').style.display='block';
+}
+
+function toggleNav(){
+  document.querySelector('.nav-links').classList.toggle('open');
+}
+
+loadLeaderboard();
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

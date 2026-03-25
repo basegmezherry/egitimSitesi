@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bulmaca — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{background:var(--ink);min-height:100vh}
+.game-wrap{max-width:860px;margin:0 auto;padding:80px 20px 40px;display:flex;flex-direction:column;gap:20px}
+.game-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.game-header a{color:var(--text-2);text-decoration:none;font-size:13px}
+.game-title{font-family:var(--f-display);font-size:20px;font-weight:800}
+.game-body{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.cw-grid{display:inline-grid;gap:2px;background:rgba(255,255,255,.05);padding:4px;border-radius:10px;border:1px solid var(--border)}
+.cw-cell{width:36px;height:36px;background:var(--ink2);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;position:relative;border-radius:4px}
+.cw-cell.black{background:var(--ink);border-color:rgba(255,255,255,.04)}
+.cw-cell.active{border-color:var(--cyan);background:rgba(99,219,255,.1)}
+.cw-cell.highlighted{border-color:rgba(99,219,255,.3);background:rgba(99,219,255,.05)}
+.cw-cell.correct{border-color:var(--lime);background:rgba(184,255,78,.1)}
+.cw-cell.error{border-color:var(--coral);background:rgba(255,107,107,.08)}
+.cw-cell input{width:100%;height:100%;background:transparent;border:none;outline:none;text-align:center;font-family:var(--f-mono);font-size:14px;font-weight:700;color:var(--text);text-transform:uppercase;caret-color:transparent;cursor:pointer}
+.cell-num{position:absolute;top:2px;left:3px;font-size:7px;font-family:var(--f-mono);color:var(--text-2);line-height:1}
+.clues-panel{display:flex;flex-direction:column;gap:16px}
+.clue-section{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
+.clue-title{font-family:var(--f-display);font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase}
+.clue-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all var(--t-fast);border-radius:4px}
+.clue-item:last-child{border-bottom:none}
+.clue-item:hover,.clue-item.active{background:rgba(99,219,255,.06);padding-left:6px}
+.clue-num{font-family:var(--f-mono);font-size:12px;color:var(--cyan);min-width:20px;font-weight:700}
+.clue-text{font-size:12.5px;color:var(--text-2);line-height:1.5}
+.clue-item.solved .clue-text{text-decoration:line-through;color:var(--text-3)}
+.score-row{display:flex;gap:12px;flex-wrap:wrap}
+.score-pill{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 16px;text-align:center}
+.sp2-val{font-family:var(--f-mono);font-size:16px;font-weight:700;color:var(--gold)}
+.sp2-lbl{font-size:10px;color:var(--text-2);margin-top:1px}
+@media(max-width:700px){.game-body{grid-template-columns:1fr}.cw-cell{width:30px;height:30px}}
+</style>
+</head>
+<body>
+<div class="game-wrap">
+  <div class="game-header">
+    <a href="../games.html">← Oyunlar</a>
+    <div class="game-title">🔤 Bulmaca</div>
+    <button class="btn btn-primary btn-sm" onclick="newPuzzle()">↺ Yeni Bulmaca</button>
+  </div>
+
+  <div class="score-row">
+    <div class="score-pill"><div class="sp2-val" id="solvedVal">0</div><div class="sp2-lbl">Çözüldü</div></div>
+    <div class="score-pill"><div class="sp2-val" id="totalVal">0</div><div class="sp2-lbl">Toplam</div></div>
+    <div class="score-pill"><div class="sp2-val" id="scoreVal">0</div><div class="sp2-lbl">Puan</div></div>
+    <div class="score-pill" style="cursor:pointer" onclick="checkAll()"><div class="sp2-val">✓</div><div class="sp2-lbl">Kontrol</div></div>
+  </div>
+
+  <div class="game-body">
+    <div>
+      <div class="cw-grid" id="cwGrid"></div>
+    </div>
+    <div class="clues-panel">
+      <div class="clue-section">
+        <div class="clue-title">→ Yatay</div>
+        <div id="acrossClues"></div>
+      </div>
+      <div class="clue-section">
+        <div class="clue-title">↓ Aşağı</div>
+        <div id="downClues"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="revealAll()">💡 Tümünü Göster</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 10×10 bulmaca şablonları
+const PUZZLES = [
+  {
+    size: 10,
+    words: [
+      {word:'OKUL',   dir:'across', row:0, col:0, clue:'Öğrencilerin gittiği yer', num:1},
+      {word:'KALEM',  dir:'across', row:2, col:1, clue:'Yazı yazmak için kullanılan araç', num:3},
+      {word:'KİTAP',  dir:'across', row:4, col:0, clue:'Sayfalara yazılmış bilgi kaynağı', num:5},
+      {word:'MATEMATİK',dir:'across',row:6,col:0, clue:'Sayılar ve hesaplamalar dersi', num:7},
+      {word:'ÖDEV',   dir:'across', row:8, col:2, clue:'Evde yapılan çalışma', num:9},
+      {word:'ODA',    dir:'down',   row:0, col:0, clue:'Evin bölmesi', num:1},
+      {word:'KAR',    dir:'down',   row:0, col:2, clue:'Kışın yağan beyaz şey', num:2},
+      {word:'KALE',   dir:'down',   row:2, col:1, clue:'Futbolda top atılan yer', num:3},
+      {word:'İLK',    dir:'down',   row:0, col:3, clue:'Birincisi, başlangıç', num:4},
+      {word:'MASA',   dir:'down',   row:4, col:4, clue:'Üzerinde yemek yenen mobilya', num:6},
+    ]
+  },
+  {
+    size: 10,
+    words: [
+      {word:'TARİH',   dir:'across', row:0, col:0, clue:'Geçmiş olayları inceleyen ders', num:1},
+      {word:'COĞRAFİ', dir:'across', row:2, col:0, clue:'Yer bilimi ile ilgili (sıfat)', num:3},
+      {word:'FENOMEN',  dir:'across', row:4, col:0, clue:'Çok ünlü olan kişi', num:5},
+      {word:'ATOM',     dir:'across', row:6, col:0, clue:'Maddenin en küçük yapı taşı', num:7},
+      {word:'DENİZ',    dir:'across', row:8, col:0, clue:'Geniş tuzlu su kütlesi', num:9},
+      {word:'TAHT',     dir:'down',   row:0, col:0, clue:'Hükümdarın oturduğu koltuk', num:1},
+      {word:'ARI',      dir:'down',   row:0, col:2, clue:'Bal yapan böcek', num:2},
+      {word:'COMET',    dir:'down',   row:0, col:4, clue:'Kuyruklu yıldız (İngilizce)', num:4},
+      {word:'FEN',      dir:'down',   row:4, col:0, clue:'Doğa bilimleri dersi', num:5},
+      {word:'NİL',      dir:'down',   row:0, col:6, clue:'Mısır\'dan geçen nehir', num:6},
+    ]
+  }
+];
+
+let currentPuzzle = null, grid = [], selectedCell = null, selectedDir = 'across', score = 0;
+
+function newPuzzle(){
+  currentPuzzle = PUZZLES[Math.floor(Math.random()*PUZZLES.length)];
+  const size = currentPuzzle.size;
+  grid = Array.from({length:size},()=>Array.from({length:size},()=>({black:true,letter:'',answer:'',num:null,across:null,down:null})));
+
+  // Kelimeleri yerleştir
+  for(const w of currentPuzzle.words){
+    for(let i=0;i<w.word.length;i++){
+      const r = w.dir==='across' ? w.row : w.row+i;
+      const c = w.dir==='across' ? w.col+i : w.col;
+      if(r<size&&c<size){
+        grid[r][c].black = false;
+        grid[r][c].answer = w.word[i];
+        if(w.dir==='across') grid[r][c].across = w.num;
+        else grid[r][c].down = w.num;
+      }
+    }
+    // Numara
+    const nr = w.row, nc = w.col;
+    if(nr<size&&nc<size) grid[nr][nc].num = w.num;
+  }
+
+  score = 0;
+  document.getElementById('scoreVal').textContent = 0;
+  document.getElementById('totalVal').textContent = currentPuzzle.words.length;
+  document.getElementById('solvedVal').textContent = 0;
+  renderGrid();
+  renderClues();
+}
+
+function renderGrid(){
+  const el = document.getElementById('cwGrid');
+  const size = currentPuzzle.size;
+  el.style.gridTemplateColumns = `repeat(${size},36px)`;
+  el.innerHTML = '';
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    const cell = grid[r][c];
+    const div = document.createElement('div');
+    div.className = 'cw-cell'+(cell.black?' black':'');
+    div.dataset.r=r; div.dataset.c=c;
+    if(!cell.black){
+      if(cell.num) div.innerHTML=`<span class="cell-num">${cell.num}</span>`;
+      const inp = document.createElement('input');
+      inp.maxLength=1; inp.type='text'; inp.value=cell.letter;
+      inp.addEventListener('focus',()=>selectCell(r,c,div,inp));
+      inp.addEventListener('input',e=>handleInput(e,r,c,inp));
+      inp.addEventListener('keydown',e=>handleKey(e,r,c));
+      div.appendChild(inp);
+    }
+    el.appendChild(div);
+  }
+}
+
+function selectCell(r,c,div,inp){
+  selectedCell={r,c};
+  highlightWord(r,c,selectedDir);
+}
+
+function highlightWord(r,c,dir){
+  document.querySelectorAll('.cw-cell').forEach(el=>el.classList.remove('active','highlighted'));
+  const active = document.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+  if(active) active.classList.add('active');
+  // Highlight word
+  const wNum = dir==='across' ? grid[r][c].across : grid[r][c].down;
+  if(!wNum) return;
+  const word = currentPuzzle.words.find(w=>w.num===wNum&&w.dir===dir);
+  if(!word) return;
+  for(let i=0;i<word.word.length;i++){
+    const wr=word.dir==='across'?word.row:word.row+i;
+    const wc=word.dir==='across'?word.col+i:word.col;
+    const el=document.querySelector(`[data-r="${wr}"][data-c="${wc}"]`);
+    if(el&&!(wr===r&&wc===c)) el.classList.add('highlighted');
+  }
+  // Highlight clue
+  document.querySelectorAll('.clue-item').forEach(ci=>ci.classList.remove('active'));
+  const clueEl=document.querySelector(`[data-num="${wNum}"][data-dir="${dir}"]`);
+  if(clueEl) clueEl.classList.add('active');
+}
+
+function handleInput(e,r,c,inp){
+  const val = inp.value.toUpperCase().slice(-1);
+  inp.value = val;
+  grid[r][c].letter = val;
+  if(val) moveNext(r,c);
+}
+
+function handleKey(e,r,c){
+  if(e.key==='Tab'){e.preventDefault();selectedDir=selectedDir==='across'?'down':'across';highlightWord(r,c,selectedDir);}
+  if(e.key==='Backspace'&&!grid[r][c].letter) movePrev(r,c);
+  if(e.key==='ArrowRight') focusCell(r,c+1);
+  if(e.key==='ArrowLeft') focusCell(r,c-1);
+  if(e.key==='ArrowDown') focusCell(r+1,c);
+  if(e.key==='ArrowUp') focusCell(r-1,c);
+}
+
+function moveNext(r,c){
+  if(selectedDir==='across') focusCell(r,c+1);
+  else focusCell(r+1,c);
+}
+
+function movePrev(r,c){
+  if(selectedDir==='across') focusCell(r,c-1);
+  else focusCell(r-1,c);
+}
+
+function focusCell(r,c){
+  const size=currentPuzzle.size;
+  if(r<0||r>=size||c<0||c>=size) return;
+  if(grid[r][c].black) return;
+  const el=document.querySelector(`[data-r="${r}"][data-c="${c}"] input`);
+  if(el){el.focus();selectCell(r,c,el.parentNode,el);}
+}
+
+function renderClues(){
+  const across = currentPuzzle.words.filter(w=>w.dir==='across').sort((a,b)=>a.num-b.num);
+  const down = currentPuzzle.words.filter(w=>w.dir==='down').sort((a,b)=>a.num-b.num);
+  document.getElementById('acrossClues').innerHTML = across.map(w=>`
+    <div class="clue-item" data-num="${w.num}" data-dir="across" onclick="focusClue(${w.row},${w.col},'across')">
+      <span class="clue-num">${w.num}</span>
+      <span class="clue-text">${w.clue}</span>
+    </div>`).join('');
+  document.getElementById('downClues').innerHTML = down.map(w=>`
+    <div class="clue-item" data-num="${w.num}" data-dir="down" onclick="focusClue(${w.row},${w.col},'down')">
+      <span class="clue-num">${w.num}</span>
+      <span class="clue-text">${w.clue}</span>
+    </div>`).join('');
+}
+
+function focusClue(r,c,dir){
+  selectedDir=dir; focusCell(r,c); highlightWord(r,c,dir);
+}
+
+function checkAll(){
+  let solved=0;
+  for(const w of currentPuzzle.words){
+    let wordCorrect=true;
+    for(let i=0;i<w.word.length;i++){
+      const r=w.dir==='across'?w.row:w.row+i;
+      const c=w.dir==='across'?w.col+i:w.col;
+      const cell=grid[r][c];
+      const el=document.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+      if(cell.letter!==cell.answer){wordCorrect=false;if(el)el.classList.add('error');}
+      else{if(el){el.classList.remove('error');el.classList.add('correct');}}
+    }
+    if(wordCorrect){
+      solved++;
+      const clueEl=document.querySelector(`[data-num="${w.num}"][data-dir="${w.dir}"]`);
+      if(clueEl) clueEl.classList.add('solved');
+    }
+  }
+  score = solved * 30;
+  document.getElementById('solvedVal').textContent = solved;
+  document.getElementById('scoreVal').textContent = score;
+  if(solved===currentPuzzle.words.length){
+    try{const u=JSON.parse(localStorage.getItem('eduplay_user')||'{}');u.xp=(u.xp||0)+score;u.gamesPlayed=(u.gamesPlayed||0)+1;localStorage.setItem('eduplay_user',JSON.stringify(u));}catch(e){}
+    setTimeout(()=>alert('Tebrikler! Bulmacayı tamamladın! 🎉'),100);
+  }
+}
+
+function revealAll(){
+  for(const w of currentPuzzle.words){
+    for(let i=0;i<w.word.length;i++){
+      const r=w.dir==='across'?w.row:w.row+i;
+      const c=w.dir==='across'?w.col+i:w.col;
+      grid[r][c].letter=w.word[i];
+      const inp=document.querySelector(`[data-r="${r}"][data-c="${c}"] input`);
+      if(inp) inp.value=w.word[i];
+    }
+  }
+  checkAll();
+}
+
+newPuzzle();
+</script>
+</body>
+</html>

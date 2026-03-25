@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelime Avı — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <style>
+    .game-container { max-width:600px; margin:0 auto; padding:24px; }
+    .word-grid {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+    .grid-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: clamp(12px, 3vw, 18px);
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .grid-cell:hover { background: rgba(0,245,212,0.08); border-color: rgba(0,245,212,0.3); }
+    .grid-cell.selected { background: rgba(0,245,212,0.2); border-color: var(--primary); color: var(--primary); }
+    .grid-cell.found { background: rgba(0,200,150,0.15); border-color: var(--success); color: var(--success); }
+
+    .word-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+    .word-chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: var(--transition);
+      font-family: var(--font-mono);
+    }
+    .word-chip.found { background: rgba(0,200,150,0.1); border-color: var(--success); color: var(--success); text-decoration: line-through; }
+
+    .game-screen { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:48px; text-align:center; }
+    .big-emoji { font-size:64px; margin-bottom:16px; animation:float 3s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="game-container">
+
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">🔤</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:12px">Kelime Avı</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Izgarada gizlenmiş kelimeleri bul! Harflere sırayla tıklayarak seç.</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">🚀 Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <span style="font-family:var(--font-display);font-size:14px;color:var(--text-muted)">Bulunan: <span style="color:var(--success)" id="foundCount">0</span> / <span id="totalCount">0</span></span>
+        <span style="font-family:var(--font-display);font-size:16px;color:var(--warning)">⚡ <span id="scoreD">0</span></span>
+        <span style="font-family:var(--font-display);font-size:16px;color:var(--primary)">⏱️ <span id="timeD">0:00</span></span>
+      </div>
+      <div class="word-list" id="wordList"></div>
+      <div class="word-grid" id="wordGrid" style="grid-template-columns:repeat(10, 1fr)"></div>
+      <div style="text-align:center;margin-top:12px">
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:8px" id="selectedDisplay">Seçili: —</div>
+        <button class="btn btn-secondary btn-sm" onclick="clearSelection()">✕ Seçimi Temizle</button>
+        <button class="btn btn-secondary btn-sm" onclick="quitGame()" style="margin-left:8px">Çık</button>
+      </div>
+    </div>
+
+    <div id="endScreen" style="display:none" class="game-screen">
+      <div class="big-emoji">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:8px">Tebrikler!</h2>
+      <p style="color:var(--text-muted)">Tüm kelimeleri buldun!</p>
+      <div style="font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--primary);margin:16px 0" id="finalXPD">+0 XP</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Yeni Oyun</button>
+        <a href="../games.html" class="btn btn-secondary">🎮 Oyunlar</a>
+      </div>
+    </div>
+
+    <div class="ad-banner ad-placeholder" data-ad-size="300x250" style="margin-top:24px"><span class="ad-label">Reklam</span></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+const WORD_SETS = [
+  ['MATEMATIK', 'FEN', 'TARIH', 'DERSLER', 'OKUL', 'KITAP'],
+  ['BILIM', 'DENEY', 'ATOM', 'HUCRE', 'ENERJI', 'KUVVET'],
+  ['TURKCE', 'DIGER', 'KELIME', 'CUMLE', 'SIIR', 'ROMAN'],
+];
+
+const GRID_SIZE = 10;
+let grid = [], words = [], found = [], selected = [], gameTimer, elapsed = 0, score = 0;
+
+function startGame() {
+  found = []; selected = []; score = 0; elapsed = 0;
+  words = shuffleArray(WORD_SETS[Math.floor(Math.random() * WORD_SETS.length)]).slice(0, 5);
+  grid = buildGrid();
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+
+  renderGrid();
+  renderWords();
+  clearInterval(gameTimer);
+  gameTimer = setInterval(() => {
+    elapsed++;
+    document.getElementById('timeD').textContent = formatTime(elapsed);
+  }, 1000);
+}
+
+function buildGrid() {
+  const g = Array.from({length:GRID_SIZE}, () => Array(GRID_SIZE).fill(''));
+  const letters = 'ABCDEFGHIJKLMNOPRSTUVYZÇĞİÖŞÜ';
+  const placed = [];
+
+  words.forEach(word => {
+    let tries = 0;
+    while(tries++ < 100) {
+      const dir = Math.floor(Math.random()*2); // 0=horiz, 1=vert
+      const row = Math.floor(Math.random() * GRID_SIZE);
+      const col = Math.floor(Math.random() * GRID_SIZE);
+      const canPlace = word.split('').every((ch, i) => {
+        const r = dir===0 ? row : row+i;
+        const c = dir===0 ? col+i : col;
+        return r < GRID_SIZE && c < GRID_SIZE && (g[r][c] === '' || g[r][c] === ch);
+      });
+      if (canPlace) {
+        const cells = [];
+        word.split('').forEach((ch, i) => {
+          const r = dir===0 ? row : row+i;
+          const c = dir===0 ? col+i : col;
+          g[r][c] = ch;
+          cells.push(`${r}-${c}`);
+        });
+        placed.push({ word, cells });
+        break;
+      }
+    }
+  });
+
+  // Fill blanks
+  for(let r=0;r<GRID_SIZE;r++) for(let c=0;c<GRID_SIZE;c++) {
+    if(!g[r][c]) g[r][c] = letters[Math.floor(Math.random()*letters.length)];
+  }
+  return { grid: g, placed };
+}
+
+function renderGrid() {
+  const container = document.getElementById('wordGrid');
+  const g = grid.grid;
+  container.innerHTML = '';
+  for(let r=0;r<GRID_SIZE;r++) for(let c=0;c<GRID_SIZE;c++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    cell.dataset.r = r; cell.dataset.c = c;
+    cell.dataset.key = `${r}-${c}`;
+    cell.textContent = g[r][c];
+    cell.onclick = () => toggleCell(cell);
+    container.appendChild(cell);
+  }
+  document.getElementById('totalCount').textContent = grid.placed.length;
+  document.getElementById('foundCount').textContent = 0;
+}
+
+function renderWords() {
+  document.getElementById('wordList').innerHTML = grid.placed.map(p =>
+    `<div class="word-chip" id="chip-${p.word}">${p.word}</div>`
+  ).join('');
+}
+
+function toggleCell(cell) {
+  const key = cell.dataset.key;
+  if(cell.classList.contains('found')) return;
+
+  if(cell.classList.contains('selected')) {
+    cell.classList.remove('selected');
+    selected = selected.filter(k => k !== key);
+  } else {
+    cell.classList.add('selected');
+    selected.push(key);
+  }
+
+  const selectedLetters = selected.map(k => {
+    return document.querySelector(`[data-key="${k}"]`)?.textContent || '';
+  }).join('');
+  document.getElementById('selectedDisplay').textContent = `Seçili: ${selectedLetters}`;
+  checkWord();
+}
+
+function checkWord() {
+  const selectedLetters = selected.map(k => document.querySelector(`[data-key="${k}"]`)?.textContent||'').join('');
+  const match = grid.placed.find(p => p.word === selectedLetters && !found.includes(p.word));
+  if(match) {
+    found.push(match.word);
+    score += match.word.length * 10;
+    // Mark cells
+    selected.forEach(k => {
+      const el = document.querySelector(`[data-key="${k}"]`);
+      if(el) { el.classList.remove('selected'); el.classList.add('found'); }
+    });
+    const chip = document.getElementById(`chip-${match.word}`);
+    if(chip) chip.classList.add('found');
+    selected = [];
+    document.getElementById('selectedDisplay').textContent = `✅ ${match.word} bulundu!`;
+    document.getElementById('foundCount').textContent = found.length;
+    document.getElementById('scoreD').textContent = score;
+    showToast(`✅ "${match.word}" bulundu! +${match.word.length*10} puan`, 'success');
+
+    if(found.length === grid.placed.length) endGame();
+  }
+}
+
+function clearSelection() {
+  selected.forEach(k => {
+    const el = document.querySelector(`[data-key="${k}"]`);
+    if(el) el.classList.remove('selected');
+  });
+  selected = [];
+  document.getElementById('selectedDisplay').textContent = 'Seçili: —';
+}
+
+function endGame() {
+  clearInterval(gameTimer);
+  const xp = Math.floor(score / 5 + 30);
+  UserState.addXP(xp);
+  document.getElementById('finalXPD').textContent = `+${xp} XP`;
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'block';
+  showToast(`🔤 Tamamlandı! +${xp} XP`, 'success');
+}
+
+function quitGame() { clearInterval(gameTimer); document.getElementById('gameScreen').style.display='none'; document.getElementById('startScreen').style.display='block'; }
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

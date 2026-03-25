@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hafıza Oyunu — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <style>
+    .game-container { max-width:640px; margin:0 auto; padding:24px; }
+    .game-hud { display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px 24px; margin-bottom:24px; }
+    .hud-val { font-family:var(--font-display); font-size:20px; font-weight:700; }
+    .hud-lbl { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+
+    .board {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .board.size4 { grid-template-columns: repeat(4, 1fr); }
+    .board.size6 { grid-template-columns: repeat(6, 1fr); }
+
+    .card {
+      aspect-ratio: 1;
+      cursor: pointer;
+      perspective: 600px;
+      border-radius: var(--radius-sm);
+      user-select: none;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s ease;
+      border-radius: var(--radius-sm);
+    }
+
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .card.matched .card-inner { transform: rotateY(180deg); }
+    .card.matched .card-front { border-color: var(--success); background: rgba(0,200,150,0.15); }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      font-size: clamp(20px, 4vw, 32px);
+      backface-visibility: hidden;
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #1a2235, #0d1520);
+      border: 2px solid var(--border);
+      font-size: clamp(16px, 3vw, 24px);
+      color: rgba(0,245,212,0.3);
+    }
+
+    .card-front {
+      background: var(--card);
+      border: 2px solid rgba(0,245,212,0.3);
+      transform: rotateY(180deg);
+    }
+
+    .card:not(.flipped):not(.matched):hover .card-inner { transform: rotateY(20deg); }
+
+    .game-screen { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:48px; text-align:center; }
+    .big-emoji { font-size:72px; margin-bottom:20px; animation:float 3s ease-in-out infinite; }
+    .final-stats { display:flex; justify-content:center; gap:28px; margin:24px 0; }
+    .final-stat .value { font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--primary); }
+    .final-stat .label { font-size:12px; color:var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">EduPlay</span>
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="../../index.html">🏠 Ana Sayfa</a></li>
+    <li><a href="../games.html" class="active">🎮 Oyunlar</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <div style="font-size:13px;color:var(--warning)">⚡ <span data-user-xp>0</span></div>
+    <a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a>
+  </div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="game-container">
+
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">🧩</div>
+      <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin-bottom:12px">Hafıza Oyunu</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Eşleşen kartları bul! Daha az hamlede bitir, daha fazla puan kazan.</p>
+      <div style="margin-bottom:24px">
+        <label class="form-label" style="text-align:center;display:block">Izgara Boyutu</label>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <button class="btn btn-primary btn-sm" onclick="setSize(4,this)" id="sizeBtn4">4×4 (Kolay)</button>
+          <button class="btn btn-secondary btn-sm" onclick="setSize(6,this)" id="sizeBtn6">6×6 (Zor)</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">🚀 Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div class="game-hud">
+        <div><div class="hud-lbl">Hamle</div><div class="hud-val" id="movesDisplay">0</div></div>
+        <div style="text-align:center"><div class="hud-lbl">Çift</div><div class="hud-val" style="color:var(--success)" id="matchDisplay">0 / 0</div></div>
+        <div style="text-align:right"><div class="hud-lbl">Süre</div><div class="hud-val" style="color:var(--warning)" id="timeDisplay">0:00</div></div>
+      </div>
+      <div class="board" id="board"></div>
+      <div style="text-align:center">
+        <button class="btn btn-secondary btn-sm" onclick="quitGame()">✕ Çık</button>
+      </div>
+    </div>
+
+    <div id="endScreen" style="display:none" class="game-screen">
+      <div class="big-emoji">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px">Tebrikler!</h2>
+      <p style="color:var(--text-muted);margin-bottom:0">Tüm çiftleri buldun!</p>
+      <div class="final-stats">
+        <div class="final-stat"><div class="value" id="finalMoves">0</div><div class="label">Hamle</div></div>
+        <div class="final-stat"><div class="value" id="finalTime">0:00</div><div class="label">Süre</div></div>
+        <div class="final-stat"><div class="value" id="finalXP">0</div><div class="label">XP</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="restartGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn btn-secondary">🎮 Oyunlar</a>
+      </div>
+    </div>
+
+    <div class="ad-banner ad-placeholder" data-ad-size="300x250" style="margin-top:24px">
+      <span class="ad-label">Reklam</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+const EMOJIS = ['🐶','🐱','🐸','🦊','🐺','🦋','🐬','🦄','🐉','🦩','🌸','🍎','🍕','🎸','🚀','🏆','🌈','⚡'];
+let gridSize = 4, moves = 0, matched = 0, gameTimer, elapsed = 0;
+let flipped = [], locked = false, startTime;
+
+function setSize(n, btn) {
+  gridSize = n;
+  document.querySelectorAll('[id^=sizeBtn]').forEach(b => b.className = 'btn btn-secondary btn-sm');
+  btn.className = 'btn btn-primary btn-sm';
+}
+
+function startGame() {
+  moves = 0; matched = 0; elapsed = 0; flipped = []; locked = false;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  document.getElementById('endScreen').style.display = 'none';
+
+  const total = gridSize * gridSize;
+  const pairs = total / 2;
+  const emojis = shuffleArray(EMOJIS.slice(0, pairs));
+  const cards = shuffleArray([...emojis, ...emojis]);
+
+  const board = document.getElementById('board');
+  board.className = `board size${gridSize}`;
+  board.innerHTML = cards.map((em, i) => `
+    <div class="card" data-emoji="${em}" data-index="${i}" onclick="flipCard(this)">
+      <div class="card-inner">
+        <div class="card-face card-back">🔮</div>
+        <div class="card-face card-front">${em}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('matchDisplay').textContent = `0 / ${pairs}`;
+  document.getElementById('movesDisplay').textContent = '0';
+
+  startTime = Date.now();
+  clearInterval(gameTimer);
+  gameTimer = setInterval(() => {
+    elapsed = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timeDisplay').textContent = formatTime(elapsed);
+  }, 500);
+}
+
+function flipCard(card) {
+  if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.classList.add('flipped');
+  flipped.push(card);
+
+  if (flipped.length === 2) {
+    moves++;
+    document.getElementById('movesDisplay').textContent = moves;
+    locked = true;
+
+    const [a, b] = flipped;
+    if (a.dataset.emoji === b.dataset.emoji) {
+      a.classList.add('matched');
+      b.classList.add('matched');
+      matched++;
+      const total = gridSize * gridSize / 2;
+      document.getElementById('matchDisplay').textContent = `${matched} / ${total}`;
+      flipped = [];
+      locked = false;
+      if (matched === total) endGame();
+    } else {
+      setTimeout(() => {
+        a.classList.remove('flipped');
+        b.classList.remove('flipped');
+        flipped = [];
+        locked = false;
+      }, 900);
+    }
+  }
+}
+
+function endGame() {
+  clearInterval(gameTimer);
+  const total = gridSize * gridSize / 2;
+  const efficiency = Math.max(0, 1 - (moves - total) / total);
+  const xpEarned = Math.round(50 + efficiency * 100 + (gridSize === 6 ? 50 : 0));
+
+  UserState.addXP(xpEarned);
+
+  document.getElementById('finalMoves').textContent = moves;
+  document.getElementById('finalTime').textContent = formatTime(elapsed);
+  document.getElementById('finalXP').textContent = `+${xpEarned}`;
+
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'block';
+  showToast(`🧩 Tamamlandı! +${xpEarned} XP`, 'success');
+}
+
+function quitGame() { clearInterval(gameTimer); document.getElementById('gameScreen').style.display = 'none'; document.getElementById('startScreen').style.display = 'block'; }
+function restartGame() { document.getElementById('endScreen').style.display = 'none'; document.getElementById('startScreen').style.display = 'block'; }
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

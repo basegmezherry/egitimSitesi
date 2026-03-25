@@ -1,0 +1,353 @@
+{
+  "version": "4.0",
+  "subjects": [
+    {
+      "id": "matematik",
+      "name": "Matematik",
+      "icon": "🔢",
+      "color": "#63dbff",
+      "units": [
+        {
+          "id": "mat_sayilar",
+          "title": "Doğal Sayılar",
+          "grade": 5,
+          "xp": 60,
+          "lessons": [
+            {
+              "id": "mat_dogal_1",
+              "title": "Doğal Sayılar ve Basamak Değerleri",
+              "duration": 8,
+              "xp": 60,
+              "content": [
+                { "type": "text", "text": "Doğal sayılar, saymada kullandığımız 0, 1, 2, 3, 4, ... şeklinde devam eden sayılardır. Bu sayılar sonsuzdur." },
+                { "type": "highlight", "text": "💡 En küçük doğal sayı 0'dır. En büyük doğal sayı yoktur (sonsuz gider)." },
+                { "type": "text", "text": "Her basamağın bir değeri vardır. Örneğin 4.567 sayısında: 4 binler basamağı (4.000), 5 yüzler basamağı (500), 6 onlar basamağı (60), 7 birler basamağı (7)." },
+                { "type": "example", "title": "Örnek", "text": "6.842 sayısının basamak değerleri:\n• 6 → Binler: 6.000\n• 8 → Yüzler: 800\n• 4 → Onlar: 40\n• 2 → Birler: 2" },
+                { "type": "quiz", "question": "15.736 sayısında yüzler basamağındaki rakam kaçtır?", "options": ["7","5","3","6"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "mat_dogal_2",
+              "title": "Dört İşlem ve Öncelik",
+              "duration": 10,
+              "xp": 70,
+              "content": [
+                { "type": "text", "text": "Bir aritmetik ifadede işlem önceliği şu sıraya göre uygulanır: Önce parantez içi, sonra çarpma/bölme (soldan sağa), en son toplama/çıkarma (soldan sağa)." },
+                { "type": "highlight", "text": "📌 Kural: Parantez → Çarpma/Bölme → Toplama/Çıkarma" },
+                { "type": "example", "title": "Örnek: 3 + 4 × 2 = ?", "text": "Önce çarpma: 4 × 2 = 8\nSonra toplama: 3 + 8 = 11\n✅ Sonuç: 11 (NOT: 14 değil!)" },
+                { "type": "example", "title": "Örnek: (3 + 4) × 2 = ?", "text": "Önce parantez: 3 + 4 = 7\nSonra çarpma: 7 × 2 = 14\n✅ Sonuç: 14" },
+                { "type": "quiz", "question": "20 - 4 × 3 + 6 işleminin sonucu nedir?", "options": ["14","54","18","12"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mat_kesirler",
+          "title": "Kesirler",
+          "grade": 5,
+          "xp": 80,
+          "lessons": [
+            {
+              "id": "mat_kesir_1",
+              "title": "Kesirleri Tanıyalım",
+              "duration": 9,
+              "xp": 70,
+              "content": [
+                { "type": "text", "text": "Kesir, bir bütünün eşit parçalara bölünmüş halinin gösterimidir. a/b yazımında 'a' pay, 'b' paydadır." },
+                { "type": "highlight", "text": "📌 Payda, bütünün kaça bölündüğünü; pay ise kaç parçanın alındığını gösterir." },
+                { "type": "example", "title": "3/8 Kesri", "text": "Bir pizzayı 8 eşit dilime böldük ve 3 dilimini yedik.\n• Payda = 8 (toplam dilim sayısı)\n• Pay = 3 (yenen dilim sayısı)" },
+                { "type": "text", "text": "Denk kesirler: Farklı görünümlü ama aynı değerdeki kesirlerdir. 1/2 = 2/4 = 3/6 = 4/8 hepsi aynı değeri gösterir." },
+                { "type": "quiz", "question": "2/5 kesrinin denk kesirleri arasında hangisi vardır?", "options": ["4/10","3/8","6/12","5/12"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "mat_kesir_2",
+              "title": "Kesirlerle Toplama ve Çıkarma",
+              "duration": 12,
+              "xp": 80,
+              "content": [
+                { "type": "text", "text": "Aynı paydalı kesirleri toplamak için payları toplayıp paydayı aynı bırakırız: a/c + b/c = (a+b)/c" },
+                { "type": "highlight", "text": "⚠️ Farklı paydaları olan kesirleri toplamak için önce ortak payda bulunmalıdır!" },
+                { "type": "example", "title": "Aynı Paydada Toplama", "text": "3/7 + 2/7 = (3+2)/7 = 5/7" },
+                { "type": "example", "title": "Farklı Paydada Toplama: 1/3 + 1/4", "text": "Ortak payda = 12\n1/3 = 4/12\n1/4 = 3/12\n4/12 + 3/12 = 7/12" },
+                { "type": "quiz", "question": "2/5 + 3/10 = ?", "options": ["7/10","5/15","1/2","7/15"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "mat_kesir_3",
+              "title": "Kesirlerle Çarpma ve Bölme",
+              "duration": 10,
+              "xp": 85,
+              "content": [
+                { "type": "text", "text": "Kesirleri çarparken pay × pay, payda × paydayı çarparız: (a/b) × (c/d) = (a×c)/(b×d)" },
+                { "type": "example", "title": "Kesir Çarpımı", "text": "2/3 × 3/4 = (2×3)/(3×4) = 6/12 = 1/2" },
+                { "type": "text", "text": "Kesirleri bölerken böleni ters çevirip çarparız (ters çevir-çarp kuralı): (a/b) ÷ (c/d) = (a/b) × (d/c)" },
+                { "type": "example", "title": "Kesir Bölmesi", "text": "3/4 ÷ 1/2 = 3/4 × 2/1 = 6/4 = 3/2 = 1½" },
+                { "type": "quiz", "question": "2/3 ÷ 4/9 = ?", "options": ["3/2","8/27","2/3","1"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mat_geometri",
+          "title": "Geometri",
+          "grade": 6,
+          "xp": 90,
+          "lessons": [
+            {
+              "id": "mat_geo_1",
+              "title": "Çokgenler ve Özellikler",
+              "duration": 11,
+              "xp": 75,
+              "content": [
+                { "type": "text", "text": "Çokgen, birbirini izleyen doğru parçalarıyla (kenarlarla) çevrilmiş kapalı düzlemsel bir şekildir. Kenar sayısına göre üçgen (3), dörtgen (4), beşgen (5)... olarak adlandırılır." },
+                { "type": "highlight", "text": "📐 Düzgün çokgenlerde tüm kenarlar ve açılar eşittir." },
+                { "type": "example", "title": "Önemli Formüller", "text": "Üçgen alanı = (taban × yükseklik) / 2\nDikdörtgen alanı = uzunluk × genişlik\nKare alanı = kenar²\nTrapez alanı = ((a+b) × h) / 2" },
+                { "type": "quiz", "question": "Taban 6 cm, yükseklik 8 cm olan üçgenin alanı?", "options": ["24 cm²","48 cm²","14 cm²","16 cm²"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "mat_geo_2",
+              "title": "Daire ve Çevre Hesabı",
+              "duration": 9,
+              "xp": 80,
+              "content": [
+                { "type": "text", "text": "Daire, bir merkezden eşit uzaklıktaki noktaların oluşturduğu şekildir. Bu eşit uzaklığa yarıçap (r) denir. Merkezi geçen kirişe çap (d = 2r) denir." },
+                { "type": "highlight", "text": "🔵 Daire Formülleri:\n• Çevre = 2πr\n• Alan = πr²\n(π ≈ 3,14)" },
+                { "type": "example", "title": "r = 7 cm Daire", "text": "Çevre = 2 × 3,14 × 7 = 43,96 cm\nAlan = 3,14 × 7² = 3,14 × 49 = 153,86 cm²" },
+                { "type": "quiz", "question": "Yarıçapı 5 cm olan dairenin alanı? (π≈3,14)", "options": ["78,5 cm²","31,4 cm²","25 cm²","15,7 cm²"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mat_cebir",
+          "title": "Cebir",
+          "grade": 7,
+          "xp": 100,
+          "lessons": [
+            {
+              "id": "mat_cebir_1",
+              "title": "Değişkenler ve Cebirsel İfadeler",
+              "duration": 10,
+              "xp": 80,
+              "content": [
+                { "type": "text", "text": "Cebirde sayı yerine harf kullanırız. Bu harflere değişken denir. Örneğin 'x', 'y', 'a' gibi harfler bilinmeyen bir sayıyı temsil eder." },
+                { "type": "highlight", "text": "📌 3x + 5 ifadesinde:\n• 3 → katsayı\n• x → değişken\n• 5 → sabit terim" },
+                { "type": "example", "title": "Örnek: x = 4 iken 2x + 3 = ?", "text": "2(4) + 3 = 8 + 3 = 11" },
+                { "type": "text", "text": "Benzer terimleri (aynı değişkene sahip) toplayabiliriz: 3x + 5x = 8x, ancak 3x + 5y toplanamaz (farklı değişkenler)." },
+                { "type": "quiz", "question": "a = 3 iken 4a² - 2a + 1 = ?", "options": ["31","25","37","13"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "mat_cebir_2",
+              "title": "Denklemler",
+              "duration": 12,
+              "xp": 90,
+              "content": [
+                { "type": "text", "text": "Denklem, iki tarafı eşit olan ifadedir. Birinci dereceden bir bilinmeyenli denklemlerde amacımız bilinmeyenin değerini bulmaktır." },
+                { "type": "highlight", "text": "⚖️ Denge Prensibi: Denklemin iki tarafına aynı işlemi yaparsak denklem bozulmaz!" },
+                { "type": "example", "title": "3x + 7 = 22 çözelim", "text": "Her iki taraftan 7 çıkar: 3x = 15\nHer iki tarafı 3'e böl: x = 5\n✅ Kontrol: 3(5) + 7 = 22 ✓" },
+                { "type": "example", "title": "2(x - 3) = 8 çözelim", "text": "Parantezi aç: 2x - 6 = 8\nHer iki tarafa 6 ekle: 2x = 14\nHer iki tarafı 2'ye böl: x = 7" },
+                { "type": "quiz", "question": "5x - 8 = 17 denkleminde x = ?", "options": ["5","3","7","4"], "answer": 0 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fen",
+      "name": "Fen Bilimleri",
+      "icon": "🔬",
+      "color": "#b8ff4e",
+      "units": [
+        {
+          "id": "fen_madde",
+          "title": "Madde ve Özellikleri",
+          "grade": 5,
+          "xp": 70,
+          "lessons": [
+            {
+              "id": "fen_madde_1",
+              "title": "Maddenin Halleri",
+              "duration": 10,
+              "xp": 70,
+              "content": [
+                { "type": "text", "text": "Madde üç halde bulunabilir: katı, sıvı ve gaz. Her hal farklı özelliklere sahiptir ve sıcaklık değişimiyle birbirine dönüşebilir." },
+                { "type": "highlight", "text": "🧊→💧→💨 Isı artışı: Katı → Sıvı (erime) → Gaz (buharlaşma)\n💨→💧→🧊 Isı azalışı: Gaz → Sıvı (yoğunlaşma) → Katı (donma)" },
+                { "type": "example", "title": "Hal Değişim Noktaları (Su)", "text": "Donma noktası: 0°C (sıvı → katı)\nErime noktası: 0°C (katı → sıvı)\nKaynama noktası: 100°C (sıvı → gaz)\n(Normal basınçta)" },
+                { "type": "quiz", "question": "Sıvının gaz hale geçmesine ne denir?", "options": ["Buharlaşma","Erime","Yoğunlaşma","Donma"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "fen_madde_2",
+              "title": "Isı ve Sıcaklık",
+              "duration": 8,
+              "xp": 65,
+              "content": [
+                { "type": "text", "text": "Isı ve sıcaklık sık karıştırılan iki kavramdır. Sıcaklık maddenin ısınmışlık derecesini gösterirken, ısı bir madde tarafından alınan veya verilen enerji miktarıdır." },
+                { "type": "highlight", "text": "🌡️ Sıcaklık: Termometreyle ölçülür, birimi °C veya K\n🔥 Isı: Joule (J) veya kalori (cal) ile ölçülür" },
+                { "type": "text", "text": "Isı iletimi üç yolla olur: İletim (katılarda, temas yoluyla), Taşınım (sıvı ve gazlarda, akışkan hareketi ile), Işıma (boşlukta bile gerçekleşir, elektromanyetik dalgalar ile)." },
+                { "type": "quiz", "question": "Güneşten gelen ısı hangi yolla gelir?", "options": ["Işıma","İletim","Taşınım","Hepsi"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fen_canlilar",
+          "title": "Canlılar Dünyası",
+          "grade": 6,
+          "xp": 80,
+          "lessons": [
+            {
+              "id": "fen_hucre_1",
+              "title": "Hücre: Yaşamın Yapı Taşı",
+              "duration": 12,
+              "xp": 80,
+              "content": [
+                { "type": "text", "text": "Hücre, canlıların temel yapı ve işlev birimidir. İlk kez Robert Hooke tarafından 1665'te mikroskopla mantar dokusunda gözlemlenmiştir." },
+                { "type": "highlight", "text": "🔬 Hücre Teorisi:\n1. Tüm canlılar hücrelerden oluşur\n2. Hücre, yaşamın temel birimidir\n3. Hücreler yalnızca hücrelerden meydana gelir" },
+                { "type": "example", "title": "Temel Hücre Organelleri", "text": "• Çekirdek (nükleus): Genetik bilgiyi taşır, hücreyi yönetir\n• Mitokondri: Enerji (ATP) üretir, 'hücrenin enerji santrali'\n• Kloroplast: Bitkide fotosentez yapar (yeşil renk)\n• Ribozom: Protein sentezler\n• Hücre zarı: Madde geçişini kontrol eder" },
+                { "type": "quiz", "question": "Fotosentez hangi organelde gerçekleşir?", "options": ["Kloroplast","Mitokondri","Ribozom","Çekirdek"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "fen_bitki_1",
+              "title": "Fotosentez ve Solunum",
+              "duration": 11,
+              "xp": 75,
+              "content": [
+                { "type": "text", "text": "Fotosentez, bitkinin güneş ışığı enerjisini kullanarak su ve karbondioksiti glikoz ve oksijene dönüştürdüğü süreçtir." },
+                { "type": "highlight", "text": "🌱 Fotosentez Denklemi:\n6CO₂ + 6H₂O + Işık enerjisi → C₆H₁₂O₆ + 6O₂" },
+                { "type": "text", "text": "Solunum ise tam tersidir: glikoz ve oksijen kullanılarak su, karbondioksit ve enerji üretilir. Her canlı solunum yapar." },
+                { "type": "highlight", "text": "⚡ Solunum Denklemi:\nC₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + Enerji (ATP)" },
+                { "type": "quiz", "question": "Fotosentez için gerekli olan maddeler hangileridir?", "options": ["CO₂, H₂O ve ışık","O₂ ve glikoz","Sadece su","Sadece CO₂"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fen_kuvvet",
+          "title": "Kuvvet ve Hareket",
+          "grade": 7,
+          "xp": 90,
+          "lessons": [
+            {
+              "id": "fen_kuvvet_1",
+              "title": "Newton'un Hareket Yasaları",
+              "duration": 13,
+              "xp": 90,
+              "content": [
+                { "type": "text", "text": "Isaac Newton, 1687 yılında yayımladığı Principia Mathematica adlı eserinde hareketin üç temel yasasını açıkladı." },
+                { "type": "highlight", "text": "⚖️ 1. Yasa (Atalet): Net kuvvet sıfırsa cisim durumunu korur.\n🚀 2. Yasa (F=ma): Net kuvvet, kütle × ivmeye eşittir.\n🔄 3. Yasa (Etki-Tepki): Her etkiye eşit ve zıt bir tepki vardır." },
+                { "type": "example", "title": "2. Yasanın Uygulaması", "text": "Kütlesi 5 kg olan bir araca 20 N kuvvet uygulandığında:\na = F/m = 20/5 = 4 m/s²\nAraç 4 m/s² ivme kazanır." },
+                { "type": "quiz", "question": "10 kg kütleli cisme 30 N net kuvvet uygulanırsa ivmesi?", "options": ["3 m/s²","300 m/s²","0,3 m/s²","30 m/s²"], "answer": 0 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tarih",
+      "name": "Tarih",
+      "icon": "📜",
+      "color": "#ffd166",
+      "units": [
+        {
+          "id": "tarih_ilkçağ",
+          "title": "İlk Çağ Uygarlıkları",
+          "grade": 6,
+          "xp": 80,
+          "lessons": [
+            {
+              "id": "tarih_mezopotomya",
+              "title": "Mezopotamya Uygarlıkları",
+              "duration": 11,
+              "xp": 75,
+              "content": [
+                { "type": "text", "text": "Mezopotamya (Yunanca: 'iki nehir arası'), Fırat ve Dicle nehirleri arasındaki verimli topraklarda kurulan uygarlıkların beşiğidir. Günümüz Irak topraklarında yer alır." },
+                { "type": "highlight", "text": "🏺 Mezopotamya'nın Önemli Uygarlıkları:\n• Sümerler (MÖ 3000'ler) — yazıyı icat ettiler\n• Akadlar, Babiller, Asurlular\n• Persler" },
+                { "type": "example", "title": "Sümerler'in Katkıları", "text": "• Çivi yazısı (ilk yazı sistemi)\n• 60'lık sayı sistemi (bugün saatte 60 dakika, dairede 360 derece)\n• İlk takvim\n• Tekerlek\n• Ziggurat (tapınak kulesi)" },
+                { "type": "quiz", "question": "Yazıyı ilk icat eden uygarlık hangisidir?", "options": ["Sümerler","Mısırlılar","Babiller","Asurlular"], "answer": 0 }
+              ]
+            },
+            {
+              "id": "tarih_misir",
+              "title": "Eski Mısır Uygarlığı",
+              "duration": 10,
+              "xp": 70,
+              "content": [
+                { "type": "text", "text": "Eski Mısır uygarlığı, Nil nehrinin getirdiği verimli topraklar sayesinde yaklaşık MÖ 3100'den MS 641'e kadar kesintisiz sürdü. Bu durum tarihin en uzun ömürlü medeniyetini oluşturur." },
+                { "type": "highlight", "text": "🏛️ Eski Mısır'ın Katkıları:\n• Hiyeroglif yazısı\n• Güneş takvimi (365 gün)\n• Mimarlık (piramitler, sfenks)\n• Mumyalama sanatı\n• Papirüs" },
+                { "type": "text", "text": "Mısır'ı Firavun denilen hükümdarlar yönetirdi. Tanrısal kabul edilen Firavun hem siyasi hem dini liderdi. En ünlü firavunlar: Ramses II, Tutankamon, Kleopatra." },
+                { "type": "quiz", "question": "Mısır'da kullanılan yazı sistemine ne ad verilir?", "options": ["Hiyeroglif","Çivi yazısı","Latin alfabesi","Fenike alfabesi"], "answer": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tarih_osmanli",
+          "title": "Osmanlı Tarihi",
+          "grade": 7,
+          "xp": 90,
+          "lessons": [
+            {
+              "id": "tarih_osmanli_1",
+              "title": "Osmanlı'nın Kuruluşu ve Yükselişi",
+              "duration": 12,
+              "xp": 85,
+              "content": [
+                { "type": "text", "text": "Osmanlı Devleti, 1299 yılında Osman Gazi tarafından Söğüt'te kuruldu. Küçük bir beylik olarak başlayan devlet, zamanla dünya tarihinin en büyük imparatorluklarından birine dönüştü." },
+                { "type": "highlight", "text": "📅 Osmanlı'nın Önemli Tarihleri:\n• 1299: Kuruluş (Osman Gazi)\n• 1326: Bursa'nın fethı (Orhan Gazi)\n• 1453: İstanbul'un Fethi (Fatih Sultan Mehmet)\n• 1520-1566: Kanuni dönemi (en geniş topraklar)" },
+                { "type": "example", "title": "İstanbul'un Fethi (1453)", "text": "29 Mayıs 1453'te Fatih Sultan Mehmet, 53 günlük kuşatma sonrasında Konstantinopolis'i fethetti. Bu olay:\n• Orta Çağ'ın sonu, Yeni Çağ'ın başlangıcı kabul edilir\n• Bizans İmparatorluğu sona erdi\n• Ticaret yolları değişti, Coğrafi Keşifler hızlandı" },
+                { "type": "quiz", "question": "İstanbul hangi padişah döneminde fethedildi?", "options": ["Fatih Sultan Mehmet","Kanuni Sultan Süleyman","Orhan Gazi","Yıldırım Bayezid"], "answer": 0 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "turkce",
+      "name": "Türkçe",
+      "icon": "📝",
+      "color": "#c77dff",
+      "units": [
+        {
+          "id": "tc_dilbilgisi",
+          "title": "Dil Bilgisi",
+          "grade": 0,
+          "xp": 70,
+          "lessons": [
+            {
+              "id": "tc_sesler",
+              "title": "Türkçede Sesler ve Ünlü Uyumu",
+              "duration": 10,
+              "xp": 70,
+              "content": [
+                { "type": "text", "text": "Türkçede 29 harf vardır: 8 ünlü (a,e,ı,i,o,ö,u,ü) ve 21 ünsüz. Ünlüler sesli harfler olup boğaz, ağız veya dudak yardımıyla çıkarılır." },
+                { "type": "highlight", "text": "📌 Ünlü Uyumu (Büyük):\nBir sözcükteki ünlüler ya hep kalın (a,ı,o,u) ya da hep ince (e,i,ö,ü) olur.\n✅ araba (a,a,a — hepsi kalın)\n✅ gelmek (e,e — hepsi ince)\n❌ kalem (a kalın, e ince — YABANCI sözcük!)" },
+                { "type": "text", "text": "Küçük ünlü uyumunda ise e/a ve i/ı/u/ü düzenine dikkat edilir. Ekler sözcüğün son ünlüsüne göre şekillenir." },
+                { "type": "quiz", "question": "Hangisi büyük ünlü uyumuna uygundur?", "options": ["kalem","ördek","araba","telefon"], "answer": 2 }
+              ]
+            },
+            {
+              "id": "tc_cumle",
+              "title": "Cümle Ögeleri",
+              "duration": 13,
+              "xp": 85,
+              "content": [
+                { "type": "text", "text": "Cümle, yargı bildiren sözcük ya da sözcük grubudur. Cümlelerin 5 temel ögesi vardır." },
+                { "type": "highlight", "text": "📋 Cümle Ögeleri:\n• Yüklem: Ne yapıldığını/ne olduğunu söyler (fiil veya isim)\n• Özne: Yüklemi gerçekleştiren varlık\n• Nesne: Yüklemin etkisi altındaki varlık\n• Dolaylı Tümleç: Yere, yöne ilişkin bilgi\n• Zarf Tümleci: Zaman, durum, miktar bilgisi" },
+                { "type": "example", "title": "'Ali dün sabah kitabı okula getirdi.' cümlesi", "text": "• Ali → özne (kim getirdi?)\n• kitabı → nesne (neyi getirdi?)\n• okula → dolaylı tümleç (nereye getirdi?)\n• dün sabah → zarf tümleci (ne zaman?)\n• getirdi → yüklem" },
+                { "type": "quiz", "question": "'Ayşe marketten meyve aldı.' cümlesinde özne hangisi?", "options": ["Ayşe","marketten","meyve","aldı"], "answer": 0 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

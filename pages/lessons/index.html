@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ders Merkezi — EduPlay</title>
+<meta name="description" content="EduPlay ders merkezi. Matematik, Fen, Tarih, Türkçe konu anlatımları. 5-8. sınıf.">
+<meta name="keywords" content="konu anlatımı, 5. sınıf matematik, fen bilimleri, tarih, türkçe dersi">
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.subject-hero{background:linear-gradient(135deg,rgba(99,219,255,.08),rgba(184,255,78,.04));border:1px solid rgba(99,219,255,.15);border-radius:20px;padding:32px;margin-bottom:28px}
+.subject-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.subj-tab{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text-2);cursor:pointer;font-family:var(--f-body);font-size:13.5px;font-weight:600;transition:all var(--t-fast)}
+.subj-tab.active{border-color:var(--cyan);background:rgba(99,219,255,.08);color:var(--cyan)}
+.unit-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.unit-title{font-family:var(--f-display);font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.lesson-list{display:flex;flex-direction:column;gap:8px}
+.lesson-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;cursor:pointer;transition:all var(--t-fast);text-decoration:none;color:var(--text)}
+.lesson-item:hover{background:rgba(99,219,255,.06);border-color:rgba(99,219,255,.2)}
+.lesson-item.done{border-color:rgba(184,255,78,.2);background:rgba(184,255,78,.03)}
+.lesson-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.lesson-title{font-weight:600;font-size:14px}
+.lesson-meta{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.lesson-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.done-check{width:24px;height:24px;border-radius:50%;background:rgba(184,255,78,.15);border:1px solid var(--lime);display:flex;align-items:center;justify-content:center;color:var(--lime);font-size:13px}
+.subject-section{display:none}
+.subject-section.active{display:block}
+.progress-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.ps-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.ps-val{font-family:var(--f-display);font-size:22px;font-weight:800;color:var(--cyan)}
+.ps-label{font-size:11px;color:var(--text-2);margin-top:3px}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../../index.html">Ana Sayfa</a>
+    <a href="index.html" class="active">📚 Öğren</a>
+    <a href="../test.html">✏️ Testler</a>
+    <a href="../games.html">🎮 Oyunlar</a>
+    <a href="../leaderboard.html">🏆 Sıralama</a>
+    <a href="../dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="../profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="toggleDrawer()">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../../index.html">🏠 Ana Sayfa</a>
+  <a href="index.html">📚 Öğren</a><a href="../test.html">✏️ Testler</a>
+  <a href="../games.html">🎮 Oyunlar</a><a href="../dashboard.html">📊 Dashboard</a>
+  <a href="../profile.html">👤 Profil</a><a href="../settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:28px 20px">
+
+  <div class="ad-slot ad-slot--top" data-ad-slot="lessons-top" data-ad-platform="ezoic"></div>
+
+  <div class="subject-hero">
+    <div class="section-label">Konu Anlatımı</div>
+    <div class="section-title">📚 Ders Merkezi</div>
+    <p class="section-sub">5-8. sınıf konuları, adım adım açıklamalar, örnekler ve mini testler.</p>
+  </div>
+
+  <!-- İlerleme özeti -->
+  <div class="progress-summary" id="progressSummary"></div>
+
+  <!-- Ders tabları -->
+  <div class="subject-tabs" id="subjectTabs"></div>
+
+  <!-- Ders içeriği -->
+  <div id="subjectContent"></div>
+
+  <div class="ad-slot ad-slot--bottom" data-ad-slot="lessons-bottom" data-ad-platform="ezoic"></div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../../js/router.js"></script>
+<script src="../../js/ads.js"></script>
+<script>
+let LESSONS_DATA = null;
+let activeSubject = 0;
+
+async function loadData() {
+  try {
+    const res = await fetch('../../data/lessons.json');
+    LESSONS_DATA = await res.json();
+    render();
+  } catch(e) {
+    document.getElementById('subjectContent').innerHTML = '<p style="color:var(--text-2);padding:20px">Dersler yüklenemedi. Lütfen bağlantını kontrol et.</p>';
+  }
+}
+
+function getCompleted() {
+  try { return JSON.parse(localStorage.getItem('eduplay_user') || '{}').completedLessons || []; }
+  catch { return []; }
+}
+
+function render() {
+  if (!LESSONS_DATA) return;
+  const completed = getCompleted();
+  const subjects = LESSONS_DATA.subjects;
+
+  // Tabs
+  document.getElementById('subjectTabs').innerHTML = subjects.map((s, i) =>
+    `<button class="subj-tab ${i===activeSubject?'active':''}" onclick="switchSubject(${i})">${s.icon} ${s.name}</button>`
+  ).join('');
+
+  // Progress
+  let totalLessons = 0, doneLessons = 0;
+  subjects.forEach(s => s.units.forEach(u => { totalLessons += u.lessons.length; u.lessons.forEach(l => { if(completed.includes(l.id)) doneLessons++; }); }));
+  document.getElementById('progressSummary').innerHTML = `
+    <div class="ps-item"><div class="ps-val">${doneLessons}</div><div class="ps-label">Tamamlanan Ders</div></div>
+    <div class="ps-item"><div class="ps-val">${totalLessons}</div><div class="ps-label">Toplam Ders</div></div>
+    <div class="ps-item"><div class="ps-val">${Math.round(doneLessons/totalLessons*100)}%</div><div class="ps-label">İlerleme</div></div>
+    <div class="ps-item"><div class="ps-val">${subjects.length}</div><div class="ps-label">Ders Kategorisi</div></div>`;
+
+  // Content
+  const subj = subjects[activeSubject];
+  document.getElementById('subjectContent').innerHTML = subj.units.map(unit => `
+    <div class="unit-card">
+      <div class="unit-title">
+        <span style="background:rgba(99,219,255,.1);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">${subj.icon}</span>
+        ${unit.title}
+        <span class="badge badge-muted" style="margin-left:auto">${unit.grade > 0 ? unit.grade+'. Sınıf' : 'Tüm Sınıflar'}</span>
+      </div>
+      <div class="lesson-list">
+        ${unit.lessons.map(lesson => {
+          const done = completed.includes(lesson.id);
+          return `
+          <a href="lesson.html?id=${lesson.id}" class="lesson-item ${done?'done':''}">
+            <div class="lesson-icon" style="background:rgba(99,219,255,.1)">${done?'✅':'📖'}</div>
+            <div>
+              <div class="lesson-title">${lesson.title}</div>
+              <div class="lesson-meta">⏱ ${lesson.duration} dk · ⚡ +${lesson.xp} XP</div>
+            </div>
+            <div class="lesson-right">
+              ${done?'<div class="done-check">✓</div>':'<span style="font-size:12px;color:var(--text-3)">→</span>'}
+            </div>
+          </a>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function switchSubject(i) {
+  activeSubject = i;
+  render();
+}
+
+loadData();
+</script>
+</body>
+</html>

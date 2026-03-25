@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Günlük Görevler — EduPlay</title>
+<meta name="description" content="EduPlay günlük görevler. Her gün yeni görevler tamamla, XP ve altın kazan!">
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.daily-hero{background:linear-gradient(135deg,rgba(255,209,102,.1),rgba(255,107,107,.06));border:1px solid rgba(255,209,102,.2);border-radius:20px;padding:28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.daily-title{font-family:var(--f-display);font-size:22px;font-weight:800;margin-bottom:4px}
+.daily-reset{font-size:12px;color:var(--text-2);font-family:var(--f-mono)}
+.daily-progress{display:flex;align-items:center;gap:12px;min-width:200px}
+.dp-nums{font-family:var(--f-display);font-size:28px;font-weight:900;color:var(--gold)}
+.dp-label{font-size:12px;color:var(--text-2)}
+.mission-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;transition:all var(--t-mid)}
+.mission-card.done{border-color:rgba(184,255,78,.3);background:rgba(184,255,78,.04)}
+.mission-card.done .mission-name{text-decoration:line-through;color:var(--text-2)}
+.mission-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.mission-info{flex:1}
+.mission-name{font-weight:600;font-size:15px;margin-bottom:4px}
+.mission-desc{font-size:12.5px;color:var(--text-2)}
+.mission-progress{margin-top:8px}
+.mission-prog-nums{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--text-2);margin-bottom:4px}
+.mission-reward{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.reward-badge{display:flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px}
+.rb-xp{background:rgba(99,219,255,.1);color:var(--cyan);border:1px solid rgba(99,219,255,.2)}
+.rb-coin{background:rgba(255,209,102,.1);color:var(--gold);border:1px solid rgba(255,209,102,.2)}
+.claim-btn{background:linear-gradient(135deg,var(--lime),#9de63a);color:var(--ink);border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12.5px;cursor:pointer;transition:all var(--t-fast);font-family:var(--f-body)}
+.claim-btn:hover{transform:scale(1.05);box-shadow:0 4px 16px rgba(184,255,78,.3)}
+.claim-btn:disabled{background:rgba(255,255,255,.08);color:var(--text-3);cursor:not-allowed;transform:none;box-shadow:none}
+.done-check{width:32px;height:32px;border-radius:50%;background:rgba(184,255,78,.15);border:2px solid var(--lime);display:flex;align-items:center;justify-content:center;color:var(--lime);font-size:16px}
+.weekly-bonus{background:linear-gradient(135deg,rgba(199,125,255,.1),rgba(99,219,255,.06));border:1px solid rgba(199,125,255,.25);border-radius:20px;padding:24px;margin-top:24px;text-align:center}
+.bonus-title{font-family:var(--f-display);font-size:17px;font-weight:700;margin-bottom:8px;color:var(--purple)}
+.bonus-dots{display:flex;justify-content:center;gap:12px;margin:16px 0}
+.bonus-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid}
+.bonus-dot.done{border-color:var(--lime);background:rgba(184,255,78,.15)}
+.bonus-dot.active{border-color:var(--cyan);background:rgba(99,219,255,.1);animation:pulse-ring 2s ease infinite}
+.bonus-dot.future{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:13px;color:var(--text-3)}
+.countdown{font-family:var(--f-mono);font-size:20px;color:var(--coral);font-weight:700;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a>
+    <a href="learn.html">📚 Öğren</a><a href="test.html">✏️ Testler</a>
+    <a href="games.html">🎮 Oyunlar</a><a href="dashboard.html">📊 Dashboard</a>
+    <a href="daily.html" class="active">🎯 Görevler</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="test.html">✏️ Testler</a><a href="games.html">🎮 Oyunlar</a>
+  <a href="dashboard.html">📊 Dashboard</a><a href="daily.html">🎯 Görevler</a>
+  <a href="profile.html">👤 Profil</a><a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding:32px 20px">
+
+  <div class="ad-slot ad-slot--top" data-ad-slot="daily-top" data-ad-platform="ezoic"></div>
+
+  <!-- Hero -->
+  <div class="daily-hero">
+    <div>
+      <div class="daily-title">🎯 Günlük Görevler</div>
+      <div class="daily-reset">Yenileme: <span id="countdown" class="countdown">--:--:--</span></div>
+    </div>
+    <div class="daily-progress">
+      <div><div class="dp-nums"><span id="doneCount">0</span>/<span id="totalCount">5</span></div><div class="dp-label">Görev Tamamlandı</div></div>
+      <div style="flex:1;min-width:100px"><div class="progress progress-thick"><div class="progress-fill" id="dailyFill" style="width:0%"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Görevler -->
+  <div id="missionList"></div>
+
+  <!-- Haftalık Bonus -->
+  <div class="weekly-bonus">
+    <div class="bonus-title">🎁 Haftalık Kombo Ödülü</div>
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:4px">7 gün üst üste tüm günlük görevleri tamamla, büyük ödülü kazan!</p>
+    <div class="bonus-dots" id="bonusDots"></div>
+    <p style="font-size:12px;color:var(--text-2)">Bu hafta <strong id="weekDone" style="color:var(--purple)">0</strong>/7 gün tamamlandı</p>
+    <div style="margin-top:16px;padding:16px;background:rgba(199,125,255,.06);border-radius:12px;border:1px solid rgba(199,125,255,.15)">
+      <div style="font-size:13px;color:var(--purple);font-weight:600;margin-bottom:4px">7. Gün Ödülü</div>
+      <div style="display:flex;justify-content:center;gap:16px;font-family:var(--f-mono);font-size:14px">
+        <span style="color:var(--cyan)">⚡ +500 XP</span>
+        <span style="color:var(--gold)">💰 +100 Altın</span>
+        <span style="color:var(--purple)">🎖️ Özel Rozet</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-slot ad-slot--bottom" data-ad-slot="daily-bottom" data-ad-platform="ezoic"></div>
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+const MISSIONS_TEMPLATE = [
+  {id:'m1',icon:'📚',name:'Ders Çalış',desc:'Herhangi bir dersi tamamla',target:1,type:'lesson',xp:50,coin:10,bg:'rgba(99,219,255,.1)'},
+  {id:'m2',icon:'✏️',name:'Test Çöz',desc:'Herhangi bir test çöz',target:1,type:'test',xp:75,coin:15,bg:'rgba(184,255,78,.1)'},
+  {id:'m3',icon:'🎮',name:'Oyun Oyna',desc:'Herhangi bir oyunu bitir',target:1,type:'game',xp:60,coin:12,bg:'rgba(199,125,255,.1)'},
+  {id:'m4',icon:'🔢',name:'Matematik Koşusu',desc:"Matematik Koşusu'nda 50+ puan al",target:50,type:'math_score',xp:100,coin:20,bg:'rgba(255,209,102,.1)'},
+  {id:'m5',icon:'🔥',name:'Günlük Giriş',desc:'Bugün platforma giriş yap',target:1,type:'login',xp:25,coin:5,bg:'rgba(255,107,107,.1)'},
+];
+
+function getState(){try{return JSON.parse(localStorage.getItem('eduplay_user')||'{}')}catch{return{}}}
+function setState(s){localStorage.setItem('eduplay_user',JSON.stringify(s))}
+
+function getTodayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
+
+function loadMissions(){
+  const s = getState();
+  const key = getTodayKey();
+  if(!s.dailyKey || s.dailyKey !== key){
+    s.dailyKey = key;
+    s.dailyProgress = {};
+    s.dailyClaimed = {};
+    setState(s);
+  }
+
+  // Login görevi otomatik tamamla
+  if(!s.dailyProgress['m5']) s.dailyProgress['m5'] = 1;
+  setState(s);
+
+  const prog = s.dailyProgress||{};
+  const claimed = s.dailyClaimed||{};
+
+  const list = document.getElementById('missionList');
+  list.innerHTML = MISSIONS_TEMPLATE.map(m => {
+    const cur = prog[m.id]||0;
+    const pct = Math.min(100,(cur/m.target)*100);
+    const isDone = cur >= m.target;
+    const isClaimed = !!claimed[m.id];
+    return `
+    <div class="mission-card ${isClaimed?'done':''}" id="mc_${m.id}">
+      <div class="mission-icon" style="background:${m.bg}">${m.icon}</div>
+      <div class="mission-info">
+        <div class="mission-name">${m.name}</div>
+        <div class="mission-desc">${m.desc}</div>
+        ${m.target > 1 ? `
+        <div class="mission-progress">
+          <div class="mission-prog-nums"><span>${cur}/${m.target}</span><span>${Math.round(pct)}%</span></div>
+          <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>` : ''}
+      </div>
+      <div class="mission-reward">
+        <div class="reward-badge rb-xp">⚡ +${m.xp} XP</div>
+        <div class="reward-badge rb-coin">💰 +${m.coin}</div>
+        ${isClaimed
+          ? '<div class="done-check">✓</div>'
+          : `<button class="claim-btn" ${!isDone?'disabled':''} onclick="claimMission('${m.id}')">${isDone?'Al!':'Devam'}</button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+
+  updateProgress();
+  updateWeekly();
+
+  // Navbar
+  document.getElementById('navXP').textContent = (s.xp||0).toLocaleString();
+  const name = s.name||'EP';
+  document.getElementById('navAvatar').textContent = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+}
+
+function claimMission(id){
+  const s = getState();
+  const m = MISSIONS_TEMPLATE.find(x=>x.id===id);
+  if(!m) return;
+  s.xp = (s.xp||0) + m.xp;
+  s.coins = (s.coins||0) + m.coin;
+  s.dailyClaimed = s.dailyClaimed||{};
+  s.dailyClaimed[id] = true;
+  s.activities = s.activities||[];
+  s.activities.push({icon:m.icon,text:m.name+' görevi tamamlandı',xp:'+'+m.xp+' XP',time:'Az önce'});
+  setState(s);
+  loadMissions();
+  if(window.showToast) showToast(m.name+' tamamlandı! +'+m.xp+' XP 🎉','success');
+}
+
+function updateProgress(){
+  const s = getState();
+  const claimed = s.dailyClaimed||{};
+  const done = Object.keys(claimed).length;
+  const total = MISSIONS_TEMPLATE.length;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('dailyFill').style.width = (done/total*100)+'%';
+  if(done===total && window.showToast) showToast('Tüm görevler tamamlandı! 🎊','success');
+}
+
+function updateWeekly(){
+  const s = getState();
+  const weekDone = s.weeklyDays||0;
+  document.getElementById('weekDone').textContent = weekDone;
+  const dots = document.getElementById('bonusDots');
+  dots.innerHTML = Array.from({length:7},(_,i)=>{
+    let cls = i < weekDone ? 'done' : i===weekDone ? 'active' : 'future';
+    let content = i < weekDone ? '✓' : i===weekDone ? '●' : (i+1);
+    return `<div class="bonus-dot ${cls}">${content}</div>`;
+  }).join('');
+}
+
+function updateCountdown(){
+  const now = new Date();
+  const tomorrow = new Date(now); tomorrow.setDate(tomorrow.getDate()+1); tomorrow.setHours(0,0,0,0);
+  const diff = tomorrow - now;
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), ss = Math.floor((diff%60000)/1000);
+  document.getElementById('countdown').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+loadMissions();
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+</script>
+</body>
+</html>

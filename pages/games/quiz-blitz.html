@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Blitz — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <style>
+    .game-container { max-width:600px; margin:0 auto; padding:24px; }
+    .q-timer-bar { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; margin-bottom:24px; overflow:hidden; }
+    .q-timer-fill { height:100%; background:linear-gradient(90deg,var(--success),var(--warning)); border-radius:3px; transition:width 0.1s linear; }
+    .question-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; margin-bottom:20px; }
+    .q-category { font-size:11px; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+    .q-text { font-size:20px; font-weight:600; color:var(--text); line-height:1.5; margin-bottom:24px; }
+    .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .opt-btn {
+      background:rgba(255,255,255,0.03);border:2px solid var(--border);border-radius:var(--radius-sm);
+      padding:14px;color:var(--text);font-family:var(--font-body);font-size:14px;cursor:pointer;
+      transition:var(--transition);text-align:left;display:flex;align-items:center;gap:10px;
+    }
+    .opt-btn:hover:not(:disabled){border-color:rgba(0,245,212,0.4);background:rgba(0,245,212,0.04);}
+    .opt-btn.correct{border-color:var(--success);background:rgba(0,200,150,0.12);color:var(--success);}
+    .opt-btn.wrong{border-color:var(--danger);background:rgba(255,71,87,0.08);color:var(--danger);}
+    .opt-letter{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+    @media(max-width:480px){.options{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="game-container">
+
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">🔬</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:12px">Quiz Blitz</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Her soru için 10 saniye! Hızlı düşün, doğru cevapla. 20 soru.</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">⚡ Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-family:var(--font-display);font-size:13px;color:var(--text-muted)">Soru <span id="qNum">1</span>/20</span>
+        <span style="font-family:var(--font-display);font-size:18px;color:var(--warning)">⚡ <span id="scoreD">0</span></span>
+        <span style="font-family:var(--font-display);font-size:18px;color:var(--danger)" id="timerD">10</span>
+      </div>
+      <div class="q-timer-bar"><div class="q-timer-fill" id="timerBar" style="width:100%"></div></div>
+      <div class="question-card">
+        <div class="q-category" id="qCat">KATEGORİ</div>
+        <div class="q-text" id="qText">Soru yükleniyor...</div>
+        <div class="options" id="opts"></div>
+      </div>
+    </div>
+
+    <div id="endScreen" style="display:none" class="game-screen">
+      <div class="big-emoji" id="endE">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:8px" id="endT">Bitti!</h2>
+      <div style="display:flex;justify-content:center;gap:28px;margin:20px 0">
+        <div><div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--primary)" id="fScore">0</div><div style="font-size:12px;color:var(--text-muted)">Skor</div></div>
+        <div><div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--success)" id="fCorrect">0</div><div style="font-size:12px;color:var(--text-muted)">Doğru</div></div>
+        <div><div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--warning)" id="fXP">0</div><div style="font-size:12px;color:var(--text-muted)">XP</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn btn-secondary">🎮 Oyunlar</a>
+      </div>
+    </div>
+
+    <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-top:24px"><span class="ad-label">Reklam</span></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+const QUESTIONS = [
+  {cat:'Fen', q:'Işık hızı yaklaşık kaçtır?', opts:['150.000 km/s','300.000 km/s','200.000 km/s','500.000 km/s'], ans:1},
+  {cat:'Matematik', q:'7 × 8 = ?', opts:['54','56','58','52'], ans:1},
+  {cat:'Tarih', q:'İstanbul hangi yıl fethedildi?', opts:['1389','1453','1492','1517'], ans:1},
+  {cat:'Fen', q:'Su kaç derecede kaynar? (1 atm)', opts:['80°C','90°C','100°C','110°C'], ans:2},
+  {cat:'Matematik', q:'√144 = ?', opts:['11','12','13','14'], ans:1},
+  {cat:'Coğrafya', q:"Türkiye'nin başkenti neresidir?", opts:['İstanbul','İzmir','Ankara','Bursa'], ans:2},
+  {cat:'Fen', q:"DNA'nın tam açılımı nedir?", opts:['Deoksiribonükleik Asit','Dioksit Nükleik Asit','Dinükleotit Asit','Diasit Nükleotit'], ans:0},
+  {cat:'Matematik', q:'2³ + 3² = ?', opts:['17','15','13','19'], ans:0},
+  {cat:'Tarih', q:'Cumhuriyet ne zaman ilan edildi?', opts:['1920','1921','1923','1924'], ans:2},
+  {cat:'Fen', q:'Hangi gezegen güneş sisteminin en büyüğüdür?', opts:['Satürn','Jüpiter','Uranüs','Neptün'], ans:1},
+  {cat:'Matematik', q:'15% of 200 = ?', opts:['25','30','35','40'], ans:1},
+  {cat:'Fen', q:'Periyodik tabloda "Au" hangi elementi simgeler?', opts:['Gümüş','Altın','Alüminyum','Arsenik'], ans:1},
+  {cat:'Coğrafya', q:'Dünyanın en uzun nehri hangisidir?', opts:['Amazon','Nil','Yangtze','Mississippi'], ans:1},
+  {cat:'Matematik', q:"Fibonacci dizisinde 8'den sonra gelen sayı nedir?", opts:['11','12','13','14'], ans:2},
+  {cat:'Fen', q:'Fotosentez hangi organelde gerçekleşir?', opts:['Mitokondri','Kloroplast','Ribozom','Golgi'], ans:1},
+  {cat:'Tarih', q:'Dünya Savaşı II ne zaman sona erdi?', opts:['1943','1944','1945','1946'], ans:2},
+  {cat:'Matematik', q:"2'nin 10. kuvveti kaçtır?", opts:['512','1024','2048','256'], ans:1},
+  {cat:'Fen', q:'H₂O hangi bileşiği temsil eder?', opts:['Hidrojen Peroksit','Su','Asit','Baz'], ans:1},
+  {cat:'Coğrafya', q:'Everest Dağı hangi ülkededir?', opts:['Hindistan','Tibet','Nepal','Pakistan'], ans:2},
+  {cat:'Matematik', q:'log₁₀(1000) = ?', opts:['2','3','4','5'], ans:1},
+];
+
+let qi = 0, score = 0, correct = 0, qTimer, timeLeft;
+let shuffled = [];
+
+function startGame() {
+  qi = 0; score = 0; correct = 0;
+  shuffled = shuffleArray(QUESTIONS).slice(0, 20);
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  showQ();
+}
+
+function showQ() {
+  if (qi >= shuffled.length) { endGame(); return; }
+  const q = shuffled[qi];
+  document.getElementById('qNum').textContent = qi + 1;
+  document.getElementById('qCat').textContent = q.cat.toUpperCase();
+  document.getElementById('qText').textContent = q.q;
+  const ls = ['A','B','C','D'];
+  document.getElementById('opts').innerHTML = q.opts.map((o,i) => `
+    <button class="opt-btn" onclick="pick(${i},this)">
+      <div class="opt-letter">${ls[i]}</div><span>${o}</span>
+    </button>`).join('');
+  startQTimer();
+}
+
+function startQTimer() {
+  clearInterval(qTimer);
+  timeLeft = 10;
+  const bar = document.getElementById('timerBar');
+  const timerD = document.getElementById('timerD');
+  qTimer = setInterval(() => {
+    timeLeft -= 0.1;
+    bar.style.width = `${(timeLeft / 10) * 100}%`;
+    if (timeLeft <= 3) bar.style.background = 'var(--danger)';
+    else bar.style.background = '';
+    timerD.textContent = Math.ceil(timeLeft);
+    if (timeLeft <= 0) { clearInterval(qTimer); pick(-1, null); }
+  }, 100);
+}
+
+function pick(idx, btn) {
+  clearInterval(qTimer);
+  const q = shuffled[qi];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  if (idx === q.ans) {
+    if (btn) btn.classList.add('correct');
+    score += Math.max(10, Math.floor(timeLeft * 10));
+    correct++;
+  } else {
+    if (btn) btn.classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+  }
+  document.getElementById('scoreD').textContent = score;
+  setTimeout(() => { qi++; showQ(); }, 800);
+}
+
+function endGame() {
+  const xp = Math.floor(correct * 15);
+  UserState.addXP(xp);
+  document.getElementById('fScore').textContent = score;
+  document.getElementById('fCorrect').textContent = correct;
+  document.getElementById('fXP').textContent = `+${xp}`;
+  const tier = correct >= 18 ? '🏆' : correct >= 14 ? '🎉' : correct >= 10 ? '😊' : '🙂';
+  document.getElementById('endE').textContent = tier;
+  document.getElementById('endT').textContent = correct >= 14 ? 'Harika!' : 'Tamamlandı!';
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('endScreen').style.display = 'block';
+  showToast(`⚡ Quiz bitti! +${xp} XP`, 'success');
+}
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

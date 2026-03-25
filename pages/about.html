@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hakkında — EduPlay</title>
+<link rel="stylesheet" href="../css/style.css">
+    
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.about-hero{text-align:center;padding:4rem 2rem;background:linear-gradient(135deg,rgba(0,245,212,.06),rgba(255,107,53,.06));border:1px solid rgba(0,245,212,.15);border-radius:24px;margin-bottom:2.5rem}
+.about-hero h1{font-family:'Orbitron',sans-serif;font-size:2.2rem;color:var(--primary);margin-bottom:1rem}
+.about-hero p{color:var(--text-secondary);max-width:600px;margin:0 auto;line-height:1.8;font-size:.95rem}
+.mission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem}
+.mission-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:1.5rem;text-align:center;transition:all .3s}
+.mission-card:hover{border-color:rgba(0,245,212,.2);transform:translateY(-4px)}
+.mission-icon{font-size:2.5rem;margin-bottom:.75rem}
+.mission-title{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--primary);margin-bottom:.5rem}
+.mission-text{font-size:.82rem;color:var(--text-secondary);line-height:1.6}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem;margin-bottom:2rem}
+.team-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;text-align:center;transition:all .3s}
+.team-card:hover{border-color:rgba(0,245,212,.2);transform:translateY(-4px)}
+.team-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;font-family:'Orbitron',sans-serif}
+.team-name{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+.team-role{font-size:.78rem;color:var(--primary);margin-bottom:.4rem;font-family:'Space Mono',monospace}
+.team-desc{font-size:.75rem;color:var(--text-secondary);line-height:1.5}
+.team-socials{display:flex;gap:.5rem;justify-content:center;margin-top:.75rem}
+.team-social{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--text-secondary);transition:all .3s;text-decoration:none}
+.team-social:hover{border-color:var(--primary);color:var(--primary)}
+.stats-banner{background:linear-gradient(135deg,rgba(0,245,212,.08),rgba(255,107,53,.08));border:1px solid rgba(0,245,212,.2);border-radius:20px;padding:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1.5rem;text-align:center;margin-bottom:2rem}
+.banner-stat-num{font-family:'Orbitron',sans-serif;font-size:2rem;color:var(--primary);font-weight:900}
+.banner-stat-lbl{font-size:.8rem;color:var(--text-secondary);margin-top:.2rem}
+.tech-grid{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.tech-badge{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:.4rem .8rem;font-size:.8rem;color:var(--text-secondary);font-family:'Space Mono',monospace;transition:all .3s}
+.tech-badge:hover{border-color:rgba(0,245,212,.3);color:var(--primary)}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-top:1rem}
+.contact-item{display:flex;align-items:center;gap:.75rem;padding:1rem;background:var(--card);border-radius:12px;border:1px solid rgba(255,255,255,.05);text-decoration:none;color:var(--text);transition:all .3s}
+.contact-item:hover{border-color:rgba(0,245,212,.3);transform:translateY(-2px)}
+.contact-item i{font-size:1.2rem;color:var(--primary);width:24px;text-align:center}
+.contact-info small{display:block;font-size:.72rem;color:var(--text-secondary)}
+.section-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.section-heading{font-family:'Orbitron',sans-serif;font-size:.95rem;color:var(--primary);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.faq-item{border-bottom:1px solid rgba(255,255,255,.05);padding:.9rem 0}
+.faq-item:last-child{border-bottom:none;padding-bottom:0}
+.faq-q{font-weight:600;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q i{transition:transform .3s;color:var(--primary)}
+.faq-a{font-size:.83rem;color:var(--text-secondary);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding-top:.5rem}
+.faq-item.open .faq-q i{transform:rotate(180deg)}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">Edu<span>Play</span></a>
+    <div class="nav-links">
+      <a href="learn.html"><i class="fas fa-book"></i> Öğren</a>
+      <a href="test.html"><i class="fas fa-tasks"></i> Test</a>
+      <a href="games.html"><i class="fas fa-gamepad"></i> Oyunlar</a>
+      <a href="leaderboard.html"><i class="fas fa-trophy"></i> Sıralama</a>
+      <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:5rem">
+  <div class="ad-banner ad-placeholder" data-ad-slot="about-top">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="about-hero">
+    <div style="font-size:3rem;margin-bottom:1rem">🎓</div>
+    <h1>EduPlay Hakkında</h1>
+    <p>EduPlay, öğrenmeyi eğlenceli hale getiren Türkçe bir eğitim platformudur. Oyunlaştırılmış içerikler, testler ve mini oyunlarla bilgini güçlendir, sıralamada yerini al!</p>
+  </div>
+
+  <!-- Mission -->
+  <div class="section-heading"><i class="fas fa-bullseye"></i> Misyonumuz</div>
+  <div class="mission-grid">
+    <div class="mission-card">
+      <div class="mission-icon">🎯</div>
+      <div class="mission-title">Etkili Öğrenme</div>
+      <div class="mission-text">Bilimsel öğrenme yöntemleri ile kalıcı bilgi edinimini destekliyoruz.</div>
+    </div>
+    <div class="mission-card">
+      <div class="mission-icon">🎮</div>
+      <div class="mission-title">Oyunlaştırma</div>
+      <div class="mission-text">XP, rozet ve liderlik tablosuyla öğrenmeyi bir oyuna dönüştürüyoruz.</div>
+    </div>
+    <div class="mission-card">
+      <div class="mission-icon">🌍</div>
+      <div class="mission-title">Erişilebilirlik</div>
+      <div class="mission-text">Kaliteli eğitime her öğrencinin ücretsiz erişebilmesi için çalışıyoruz.</div>
+    </div>
+    <div class="mission-card">
+      <div class="mission-icon">📱</div>
+      <div class="mission-title">Her Yerde</div>
+      <div class="mission-text">Web, mobil ve APK ile istediğin cihazdan, istediğin yerden öğren.</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-banner">
+    <div><div class="banner-stat-num" id="cnt-users">5K+</div><div class="banner-stat-lbl">Aktif Kullanıcı</div></div>
+    <div><div class="banner-stat-num">50+</div><div class="banner-stat-lbl">Ders İçeriği</div></div>
+    <div><div class="banner-stat-num">200+</div><div class="banner-stat-lbl">Test Sorusu</div></div>
+    <div><div class="banner-stat-num">5</div><div class="banner-stat-lbl">Mini Oyun</div></div>
+    <div><div class="banner-stat-num">4</div><div class="banner-stat-lbl">Ders Kategorisi</div></div>
+  </div>
+
+  <!-- Team -->
+  <div class="section-heading"><i class="fas fa-users"></i> Ekip</div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar" style="background:linear-gradient(135deg,#00f5d4,#00c4a8);color:#000">AY</div>
+      <div class="team-name">Ahmet Yılmaz</div>
+      <div class="team-role">Kurucu & Geliştirici</div>
+      <div class="team-desc">Full-stack geliştirici. EduPlay'in mimarisini ve oyun motorunu tasarladı.</div>
+      <div class="team-socials">
+        <a href="#" class="team-social"><i class="fab fa-github"></i></a>
+        <a href="#" class="team-social"><i class="fab fa-linkedin"></i></a>
+        <a href="#" class="team-social"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:linear-gradient(135deg,#ff6b35,#ff4500);color:#fff">ZK</div>
+      <div class="team-name">Zeynep Kaya</div>
+      <div class="team-role">İçerik & Pedagoji</div>
+      <div class="team-desc">Eğitim uzmanı. Ders içerikleri ve test sorularının pedagogik tasarımı.</div>
+      <div class="team-socials">
+        <a href="#" class="team-social"><i class="fab fa-linkedin"></i></a>
+        <a href="#" class="team-social"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff">MA</div>
+      <div class="team-name">Mert Arslan</div>
+      <div class="team-role">UI/UX Tasarımcı</div>
+      <div class="team-desc">Arayüz tasarımı ve kullanıcı deneyimi. Retro-futuristik temanın yaratıcısı.</div>
+      <div class="team-socials">
+        <a href="#" class="team-social"><i class="fab fa-dribbble"></i></a>
+        <a href="#" class="team-social"><i class="fab fa-behance"></i></a>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff">ES</div>
+      <div class="team-name">Elif Şahin</div>
+      <div class="team-role">Topluluk Yöneticisi</div>
+      <div class="team-desc">Kullanıcı geri bildirimleri, sosyal medya ve topluluk büyütme operasyonları.</div>
+      <div class="team-socials">
+        <a href="#" class="team-social"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="team-social"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Stack -->
+  <div class="section-card">
+    <div class="section-heading"><i class="fas fa-code"></i> Teknoloji Altyapısı</div>
+    <p style="color:var(--text-secondary);font-size:.85rem;margin-bottom:.5rem">EduPlay tamamen açık web teknolojileriyle inşa edilmiştir.</p>
+    <div class="tech-grid">
+      <span class="tech-badge">HTML5</span>
+      <span class="tech-badge">CSS3</span>
+      <span class="tech-badge">Vanilla JS</span>
+      <span class="tech-badge">Firebase Firestore</span>
+      <span class="tech-badge">Firebase Auth</span>
+      <span class="tech-badge">Google AdSense</span>
+      <span class="tech-badge">Font Awesome</span>
+      <span class="tech-badge">Google Fonts</span>
+      <span class="tech-badge">Netlify Hosting</span>
+      <span class="tech-badge">GitHub Pages</span>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-card">
+    <div class="section-heading"><i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular</div>
+    <div id="faqList">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">EduPlay ücretsiz mi? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a">Evet! EduPlay tamamen ücretsizdir. Tüm dersler, testler ve oyunlara ücretsiz erişebilirsin. Reklam gelirleriyle platform sürdürülmektedir.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Verilerim güvende mi? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a">İlerleme verilerin tarayıcı localStorage'da saklanır. Firebase hesabı oluşturulursa veriler Google altyapısında şifrelenerek korunur. Üçüncü taraflarla paylaşılmaz.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">İçerik önerisi nasıl yapabilirim? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a">Aşağıdaki iletişim formu veya e-posta ile bize ulaşabilirsin. Her öneri titizlikle değerlendirilir.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">APK güvenli mi? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a">Evet. APK'mız kötü amaçlı yazılım içermez. Google Play Protect uyumludur. Sadece resmi EduPlay sitesinden indirin.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Reklam engelleyici kullanabilir miyim? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-a">Reklam gelirimiz platformun sürdürülebilirliği için gereklidir. Reklam engelleyiciyi kapatmanı öneririz. Desteğin için teşekkürler!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="section-card">
+    <div class="section-heading"><i class="fas fa-envelope"></i> İletişim</div>
+    <div class="contact-grid">
+      <a href="mailto:info@eduplay.com.tr" class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <div><strong>E-posta</strong><small>info@eduplay.com.tr</small></div>
+      </a>
+      <a href="#" class="contact-item">
+        <i class="fab fa-discord"></i>
+        <div><strong>Discord</strong><small>discord.gg/eduplay</small></div>
+      </a>
+      <a href="#" class="contact-item">
+        <i class="fab fa-instagram"></i>
+        <div><strong>Instagram</strong><small>@eduplay.tr</small></div>
+      </a>
+      <a href="#" class="contact-item">
+        <i class="fab fa-github"></i>
+        <div><strong>GitHub</strong><small>github.com/eduplay</small></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="ad-banner ad-placeholder" data-ad-slot="about-bottom">
+    <span><i class="fas fa-ad"></i> Reklam Alanı — 728×90</span>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:2rem;color:var(--text-secondary);font-size:.85rem;margin-top:2rem;border-top:1px solid rgba(255,255,255,.05)">
+  <p>© 2025 EduPlay — Tüm hakları saklıdır.</p>
+  <p style="margin-top:.4rem"><a href="settings.html" style="color:var(--primary)">Ayarlar</a> • <a href="apk.html" style="color:var(--primary)">APK İndir</a> • <a href="leaderboard.html" style="color:var(--primary)">Sıralama</a></p>
+</footer>
+
+<script src="../js/main.js"></script>
+<script>
+function toggleFaq(el){el.closest('.faq-item').classList.toggle('open')}
+function toggleNav(){document.querySelector('.nav-links').classList.toggle('open')}
+// Animate counter
+function animateCount(el,target){
+  let n=0;const step=Math.ceil(target/40);
+  const iv=setInterval(()=>{n=Math.min(n+step,target);el.textContent=n.toLocaleString()+(target>=1000?'+':'');if(n>=target)clearInterval(iv)},30);
+}
+window.addEventListener('load',()=>{
+  animateCount(document.getElementById('cnt-users'),5000);
+});
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kesir Hesaplayıcı — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+.frac-wrap{max-width:580px;margin:0 auto;padding:80px 20px 40px}
+.frac-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.frac-header a{color:var(--text-2);text-decoration:none;font-size:13px}
+.frac-ops{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.op-btn{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text-2);cursor:pointer;font-family:var(--f-mono);font-size:20px;font-weight:700;transition:all var(--t-fast)}
+.op-btn:hover,.op-btn.active{border-color:var(--cyan);background:rgba(99,219,255,.1);color:var(--cyan)}
+.frac-input-row{display:flex;align-items:center;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.frac-input{display:flex;flex-direction:column;align-items:center;gap:4px}
+.frac-box{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:center}
+.frac-box input{width:80px;padding:12px 8px;background:transparent;border:none;outline:none;font-family:var(--f-mono);font-size:22px;font-weight:700;color:var(--text);text-align:center}
+.frac-line{height:2px;background:var(--border);margin:0 8px}
+.frac-op-symbol{font-family:var(--f-mono);font-size:28px;color:var(--cyan);font-weight:700}
+.result-section{background:linear-gradient(135deg,rgba(99,219,255,.07),rgba(184,255,78,.04));border:1px solid rgba(99,219,255,.15);border-radius:16px;padding:24px;margin-bottom:20px}
+.res-title{font-size:12px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--f-mono);margin-bottom:12px}
+.res-fraction{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:8px}
+.res-num{font-family:var(--f-mono);font-size:36px;font-weight:800;color:var(--lime);line-height:1}
+.res-line{width:80px;height:3px;background:var(--lime);border-radius:2px}
+.res-den{font-family:var(--f-mono);font-size:36px;font-weight:800;color:var(--lime);line-height:1}
+.res-decimal{font-family:var(--f-mono);font-size:16px;color:var(--cyan);margin-top:6px}
+.steps-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.steps-title{font-size:12px;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--f-mono);margin-bottom:12px}
+.step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13.5px}
+.step:last-child{border-bottom:none}
+.step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,219,255,.1);border:1px solid rgba(99,219,255,.2);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:11px;color:var(--cyan);flex-shrink:0;margin-top:2px}
+.step-text{color:var(--text-2);line-height:1.6;font-family:var(--f-mono)}
+.step-text em{color:var(--cyan);font-style:normal}
+</style>
+</head>
+<body>
+<div class="frac-wrap">
+  <div class="frac-header">
+    <a href="index.html">← Araçlar</a>
+    <div style="font-family:var(--f-display);font-size:18px;font-weight:800">½ Kesir Hesaplayıcı</div>
+    <span></span>
+  </div>
+
+  <div class="frac-ops">
+    <button class="op-btn active" data-op="+" onclick="setOp('+',this)">+</button>
+    <button class="op-btn" data-op="-" onclick="setOp('-',this)">−</button>
+    <button class="op-btn" data-op="*" onclick="setOp('*',this)">×</button>
+    <button class="op-btn" data-op="/" onclick="setOp('/',this)">÷</button>
+  </div>
+
+  <div class="frac-input-row">
+    <div class="frac-input">
+      <span style="font-size:11px;color:var(--text-3);font-family:var(--f-mono)">1. KESİR</span>
+      <div class="frac-box">
+        <input type="number" id="a_pay" value="1" oninput="calculate()">
+        <div class="frac-line"></div>
+        <input type="number" id="a_payda" value="2" oninput="calculate()">
+      </div>
+    </div>
+    <div class="frac-op-symbol" id="opDisplay">+</div>
+    <div class="frac-input">
+      <span style="font-size:11px;color:var(--text-3);font-family:var(--f-mono)">2. KESİR</span>
+      <div class="frac-box">
+        <input type="number" id="b_pay" value="1" oninput="calculate()">
+        <div class="frac-line"></div>
+        <input type="number" id="b_payda" value="3" oninput="calculate()">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="calculate()" style="width:100%;margin-bottom:20px">= Hesapla</button>
+
+  <div class="result-section" id="resultSection" style="display:none">
+    <div class="res-title">Sonuç</div>
+    <div class="res-fraction">
+      <div class="res-num" id="resNum">—</div>
+      <div class="res-line" id="resLine"></div>
+      <div class="res-den" id="resDen">—</div>
+    </div>
+    <div class="res-decimal" id="resDecimal"></div>
+  </div>
+
+  <div class="steps-box" id="stepsBox" style="display:none">
+    <div class="steps-title">📝 Çözüm Adımları</div>
+    <div id="stepsList"></div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+<script>
+let op = '+';
+
+function setOp(o, btn) {
+  op = o;
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const symbols = {'+':'+','-':'−','*':'×','/':'÷'};
+  document.getElementById('opDisplay').textContent = symbols[o];
+  calculate();
+}
+
+function gcd(a, b) { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
+
+function simplify(p, q) {
+  if (q === 0) return [0, 0];
+  const g = gcd(Math.abs(p), Math.abs(q));
+  const sign = q < 0 ? -1 : 1;
+  return [sign * p / g, sign * q / g];
+}
+
+function calculate() {
+  const ap = parseInt(document.getElementById('a_pay').value) || 0;
+  const aq = parseInt(document.getElementById('a_payda').value) || 1;
+  const bp = parseInt(document.getElementById('b_pay').value) || 0;
+  const bq = parseInt(document.getElementById('b_payda').value) || 1;
+
+  if (aq === 0 || bq === 0) return;
+
+  let rp, rq, steps = [];
+
+  if (op === '+' || op === '-') {
+    const ortak = lcm(aq, bq);
+    const newAp = ap * (ortak / aq);
+    const newBp = bp * (ortak / bq);
+    rp = op === '+' ? newAp + newBp : newAp - newBp;
+    rq = ortak;
+    steps = [
+      `Ortak payda: OKB(${aq}, ${bq}) = <em>${ortak}</em>`,
+      `${ap}/${aq} = <em>${newAp}/${ortak}</em> (${aq}×${ortak/aq}=${ortak})`,
+      `${bp}/${bq} = <em>${newBp}/${ortak}</em> (${bq}×${ortak/bq}=${ortak})`,
+      `${newAp}/${ortak} ${op} ${newBp}/${ortak} = <em>${rp}/${ortak}</em>`,
+      `Sadeleştir: <em>${simplify(rp,rq)[0]}/${simplify(rp,rq)[1]}</em>`
+    ];
+  } else if (op === '*') {
+    rp = ap * bp;
+    rq = aq * bq;
+    steps = [
+      `Pay × Pay: ${ap} × ${bp} = <em>${rp}</em>`,
+      `Payda × Payda: ${aq} × ${bq} = <em>${rq}</em>`,
+      `Sonuç: ${rp}/${rq}`,
+      `Sadeleştir: <em>${simplify(rp,rq)[0]}/${simplify(rp,rq)[1]}</em>`
+    ];
+  } else if (op === '/') {
+    rp = ap * bq;
+    rq = aq * bp;
+    steps = [
+      `Bölmede 2. kesri ters çevir: ${bp}/${bq} → <em>${bq}/${bp}</em>`,
+      `${ap}/${aq} × ${bq}/${bp}`,
+      `Pay × Pay: ${ap} × ${bq} = <em>${rp}</em>`,
+      `Payda × Payda: ${aq} × ${bp} = <em>${rq}</em>`,
+      `Sadeleştir: <em>${simplify(rp,rq)[0]}/${simplify(rp,rq)[1]}</em>`
+    ];
+  }
+
+  const [sp, sq] = simplify(rp, rq);
+  const decimal = sq !== 0 ? (sp / sq).toFixed(6).replace(/\.?0+$/, '') : '∞';
+
+  document.getElementById('resultSection').style.display = 'block';
+  document.getElementById('stepsBox').style.display = 'block';
+  document.getElementById('resNum').textContent = sp;
+  document.getElementById('resDen').textContent = sq;
+  document.getElementById('resLine').style.display = sq > 1 ? 'block' : 'none';
+  if (sq === 1) document.getElementById('resDen').style.display = 'none';
+  else document.getElementById('resDen').style.display = 'block';
+  document.getElementById('resDecimal').textContent = `Ondalık: ${decimal}`;
+
+  document.getElementById('stepsList').innerHTML = steps.map((s, i) => `
+    <div class="step">
+      <div class="step-num">${i+1}</div>
+      <div class="step-text">${s}</div>
+    </div>`).join('');
+}
+
+calculate();
+</script>
+</body>
+</html>

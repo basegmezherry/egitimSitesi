@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelime Zinciri — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <link rel="stylesheet" href="../../css/ads.css" />
+  <style>
+    .game-container{max-width:600px;margin:0 auto;padding:24px;}
+    .chain-display{
+      display:flex;flex-wrap:wrap;gap:8px;
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:16px;min-height:60px;margin-bottom:20px;align-items:center;
+    }
+    .chain-word{
+      padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;
+      background:rgba(0,245,212,0.1);border:1px solid rgba(0,245,212,0.2);color:var(--primary);
+      font-family:var(--font-mono);
+    }
+    .chain-arrow{color:var(--text-muted);font-size:16px;}
+    .current-letter{
+      font-family:var(--font-display);font-size:48px;font-weight:900;
+      color:var(--primary);text-align:center;margin:24px 0;
+      text-shadow:0 0 30px rgba(0,245,212,0.5);
+    }
+    .input-area{display:flex;gap:12px;margin-bottom:16px;}
+    .word-input{
+      flex:1;background:rgba(255,255,255,0.04);border:2px solid var(--border);
+      border-radius:var(--radius-sm);padding:12px 16px;color:var(--text);
+      font-family:var(--font-mono);font-size:18px;outline:none;transition:var(--transition);
+      text-transform:uppercase;letter-spacing:2px;
+    }
+    .word-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,245,212,0.1);}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+
+<div class="page-wrapper">
+  <div class="game-container">
+
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">📜</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:12px">Kelime Zinciri</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Son harften başlayarak yeni kelimeler türet! Her kelime bir öncekinin son harfiyle başlamalı. 60 saniye!</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">🚀 Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-family:var(--font-display);font-size:20px;color:var(--warning)">⚡ <span id="scoreD">0</span></span>
+        <span style="font-family:var(--font-display);font-size:20px;color:var(--primary)">⏱️ <span id="timerD">60</span></span>
+        <span style="font-family:var(--font-display);font-size:16px;color:var(--text-muted)">Kelime: <span id="wordCount">0</span></span>
+      </div>
+
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Zincir:</div>
+      <div class="chain-display" id="chainDisplay">
+        <span style="color:var(--text-muted);font-size:13px">Zincir henüz başlamadı...</span>
+      </div>
+
+      <div style="text-align:center;font-size:14px;color:var(--text-muted);margin-bottom:8px">
+        Şu anki baş harfi:
+      </div>
+      <div class="current-letter" id="currentLetter">—</div>
+
+      <div class="input-area">
+        <input type="text" class="word-input" id="wordInput" placeholder="KELİMENİ YAZ..." maxlength="20"
+          oninput="this.value=this.value.toUpperCase()">
+        <button class="btn btn-primary" onclick="submitWord()">→</button>
+      </div>
+      <div style="font-size:13px;color:var(--danger);min-height:20px;text-align:center;margin-bottom:12px" id="errorMsg"></div>
+
+      <div style="text-align:center">
+        <button class="btn btn-secondary btn-sm" onclick="quitGame()">✕ Çık</button>
+      </div>
+    </div>
+
+    <div id="endScreen" style="display:none" class="game-screen">
+      <div class="big-emoji" id="endEmoji">🎉</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:8px" id="endTitle">Oyun Bitti!</h2>
+      <div style="display:flex;justify-content:center;gap:28px;margin:20px 0">
+        <div><div style="font-family:var(--font-display);font-size:28px;color:var(--primary)" id="fWords">0</div><div style="font-size:12px;color:var(--text-muted)">Kelime</div></div>
+        <div><div style="font-family:var(--font-display);font-size:28px;color:var(--warning)" id="fScore">0</div><div style="font-size:12px;color:var(--text-muted)">Puan</div></div>
+        <div><div style="font-family:var(--font-display);font-size:28px;color:var(--success)" id="fXP">+0</div><div style="font-size:12px;color:var(--text-muted)">XP</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn btn-secondary">🎮 Oyunlar</a>
+      </div>
+    </div>
+
+    <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-top:24px"><span class="ad-label">Reklam</span></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+// Simple Turkish word bank
+const VALID_WORDS = new Set([
+  'ARABA','ANAHTAR','ARMUT','ARZU','ANNE','ASLAN','AY','AYAK','AYRAN',
+  'BAL','BALIK','BARDAK','BAYRAK','BEBEK','BILIM','BULUT',
+  'CAM','CEKET','CEVAP',
+  'DAL','DEGER','DERS','DONDURMA',
+  'ELMA','ELMAS','EKMEK','ERKEK',
+  'FEN','FUTBOL',
+  'GEL','GECE','GEMI','GITAR',
+  'HAL','HAVA','HERKES',
+  'ISIK','ISITMA',
+  'KAR','KALE','KALEM','KAPI','KARMA','KITAP','KUZU','KUVVET',
+  'LAL','LALE','LEVHA',
+  'MAL','MASA','MATEMATIK','MAVI',
+  'NAR','NEHIR','NOKTA',
+  'OCA','OKUL','ORMAN',
+  'PAR','PARA','PAZAR',
+  'RAHAT','RENK','RES',
+  'SAL','SABAH','SANAT','SARI','SICAK','SU','SAAT','SEHER',
+  'TAL','TARIH','TEMA','TREN',
+  'UAK','UZUN',
+  'VAR','VATAN',
+  'YAZ','YILDIZ','YOL','YURT',
+  'ZAMAN','ZEYTIN',
+  'AHBAP','BALON','CALGI','DENIZ','EVIN','FAZLA','GUMUS',
+  'HALUK','IHSAN','JALE','KAHVE','LIMON','MERAK','NESIL',
+  'OYUN','PERDE','ROMAN','SEKER','TURAN','ULKE','VAKIT','YAKUP','ZEVK',
+]);
+
+let chain = [], currentLetter = '', score = 0, gameTimer, timeLeft = 60;
+
+function startGame() {
+  chain = []; score = 0; timeLeft = 60;
+  const starters = ['ARABA','ELMA','MASA','KALEM','OKUL'];
+  const first = starters[Math.floor(Math.random()*starters.length)];
+  chain.push(first);
+  currentLetter = first[first.length-1];
+
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  document.getElementById('wordInput').value='';
+  document.getElementById('errorMsg').textContent='';
+
+  updateDisplay();
+
+  clearInterval(gameTimer);
+  gameTimer = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timerD').textContent = timeLeft;
+    if(timeLeft <= 0) endGame();
+  }, 1000);
+
+  document.getElementById('wordInput').focus();
+}
+
+function updateDisplay() {
+  document.getElementById('currentLetter').textContent = currentLetter;
+  document.getElementById('scoreD').textContent = score;
+  document.getElementById('wordCount').textContent = chain.length - 1;
+
+  const display = document.getElementById('chainDisplay');
+  if(chain.length === 0) {
+    display.innerHTML = '<span style="color:var(--text-muted);font-size:13px">Zincir başlamadı...</span>';
+    return;
+  }
+  const last4 = chain.slice(-5);
+  display.innerHTML = last4.map((w,i) => `
+    <div class="chain-word">${w}</div>
+    ${i < last4.length-1 ? '<div class="chain-arrow">→</div>' : ''}
+  `).join('');
+}
+
+function submitWord() {
+  const input = document.getElementById('wordInput');
+  const word = input.value.trim().toUpperCase().replace(/[^A-ZÇĞİÖŞÜ]/g,'');
+  const errEl = document.getElementById('errorMsg');
+
+  if(!word) return;
+
+  // Validate
+  if(word.length < 2) { errEl.textContent = '⚠️ En az 2 harf giriniz.'; return; }
+  if(word[0] !== currentLetter) { errEl.textContent = `⚠️ Kelime "${currentLetter}" harfiyle başlamalı!`; input.value=''; return; }
+  if(chain.includes(word)) { errEl.textContent = '⚠️ Bu kelime zaten kullanıldı!'; input.value=''; return; }
+  if(!VALID_WORDS.has(word)) { errEl.textContent = `⚠️ "${word}" geçerli bir kelime değil.`; input.value=''; return; }
+
+  // Accept
+  chain.push(word);
+  currentLetter = word[word.length-1];
+  score += word.length * 5;
+  errEl.textContent = '';
+  input.value = '';
+  updateDisplay();
+  showToast(`✅ ${word} (+${word.length*5} puan)`, 'success');
+}
+
+// Enter key
+document.addEventListener('keydown', e => { if(e.key==='Enter') submitWord(); });
+
+function endGame() {
+  clearInterval(gameTimer);
+  const xp = Math.floor(score / 5 + 20);
+  UserState.addXP(xp);
+
+  document.getElementById('fWords').textContent = chain.length - 1;
+  document.getElementById('fScore').textContent = score;
+  document.getElementById('fXP').textContent = `+${xp}`;
+  document.getElementById('endEmoji').textContent = chain.length > 10 ? '🏆' : chain.length > 5 ? '🎉' : '🙂';
+  document.getElementById('endTitle').textContent = chain.length > 8 ? 'Harika Zincir!' : 'Oyun Bitti!';
+
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('endScreen').style.display='block';
+  showToast(`📜 Oyun bitti! +${xp} XP`, 'success');
+}
+
+function quitGame() { clearInterval(gameTimer); document.getElementById('gameScreen').style.display='none'; document.getElementById('startScreen').style.display='block'; }
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

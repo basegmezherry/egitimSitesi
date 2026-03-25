@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Başarımlar — EduPlay</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.ach-hero{text-align:center;padding:48px 0 32px}
+.ach-stats{display:flex;justify-content:center;gap:32px;margin-top:24px;flex-wrap:wrap}
+.as-item{text-align:center}
+.as-num{font-family:var(--f-display);font-size:36px;font-weight:800;color:var(--cyan)}
+.as-lbl{font-size:12px;color:var(--text-2);margin-top:4px}
+.cat-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.cf-btn{padding:7px 16px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--text-2);cursor:pointer;font-family:var(--f-body);font-size:12.5px;font-weight:600;transition:all var(--t-fast)}
+.cf-btn.active{background:rgba(99,219,255,.1);border-color:var(--cyan);color:var(--cyan)}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.ach-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;text-align:center;transition:all var(--t-mid);position:relative;overflow:hidden}
+.ach-card.earned{border-color:rgba(255,209,102,.35);background:rgba(255,209,102,.04)}
+.ach-card.earned::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.ach-card.locked{opacity:.55;filter:grayscale(.5)}
+.ach-card:hover:not(.locked){transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.ach-icon{font-size:44px;margin-bottom:12px;display:block}
+.ach-name{font-family:var(--f-display);font-size:14px;font-weight:700;margin-bottom:6px}
+.ach-desc{font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:10px}
+.ach-req{font-family:var(--f-mono);font-size:11px;color:var(--text-3);margin-top:4px}
+.ach-reward{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.ach-xp{font-family:var(--f-mono);font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(99,219,255,.1);color:var(--cyan)}
+.ach-coin{font-family:var(--f-mono);font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(255,209,102,.1);color:var(--gold)}
+.earned-badge{position:absolute;top:10px;right:10px;font-size:16px}
+.progress-bar-wrap{margin-top:8px}
+.rare-label{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-logo"><div class="nav-logo-mark">🎓</div><span class="nav-logo-text">EduPlay</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+    <a href="test.html">✏️ Testler</a><a href="games.html">🎮 Oyunlar</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-xp">⚡ <span id="navXP">0</span> XP</div>
+    <a href="profile.html" class="nav-avatar" id="navAvatar">🎓</a>
+  </div>
+  <button class="nav-hamburger" onclick="document.getElementById('navDrawer').classList.toggle('open')">☰</button>
+</nav>
+<nav class="nav-drawer" id="navDrawer">
+  <a href="../index.html">🏠 Ana Sayfa</a><a href="learn.html">📚 Öğren</a>
+  <a href="test.html">✏️ Testler</a><a href="games.html">🎮 Oyunlar</a>
+  <a href="achievements.html">🏅 Başarımlar</a><a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper"><div class="container" style="padding-bottom:60px">
+
+  <div class="ach-hero">
+    <div class="section-label">Koleksiyon</div>
+    <h1 class="section-title">🏅 Başarımlar</h1>
+    <p class="section-sub" style="margin:10px auto 0">Görevleri tamamla, rozetleri kazan, koleksiyonunu doldur!</p>
+    <div class="ach-stats">
+      <div class="as-item"><div class="as-num" id="earnedCount">0</div><div class="as-lbl">Kazanılan</div></div>
+      <div class="as-item"><div class="as-num" id="totalCount">0</div><div class="as-lbl">Toplam</div></div>
+      <div class="as-item"><div class="as-num" id="pctVal">0%</div><div class="as-lbl">Tamamlanma</div></div>
+      <div class="as-item"><div class="as-num" id="xpTotal">0</div><div class="as-lbl">XP Kazanıldı</div></div>
+    </div>
+  </div>
+
+  <div class="cat-filter" id="catFilter"></div>
+  <div class="ach-grid" id="achGrid"></div>
+
+</div></div>
+
+<div id="toast-root"></div>
+<script src="../js/main.js"></script>
+<script src="../js/ads.js"></script>
+<script>
+const ALL_ACHIEVEMENTS = [
+  // Ders
+  {id:'first_lesson', cat:'lesson', icon:'📖', name:'İlk Ders', desc:'İlk dersini tamamla', req:'1 ders tamamla', xp:50, coin:10, rarity:'common', check:s=>(s.completedLessons||[]).length>=1},
+  {id:'lesson_5',     cat:'lesson', icon:'📚', name:'Hevesli Öğrenci', desc:'5 ders tamamla', req:'5 ders tamamla', xp:100, coin:20, rarity:'common', check:s=>(s.completedLessons||[]).length>=5},
+  {id:'lesson_20',    cat:'lesson', icon:'🎓', name:'Bilgin', desc:'20 ders tamamla', req:'20 ders tamamla', xp:250, coin:50, rarity:'rare', check:s=>(s.completedLessons||[]).length>=20},
+  {id:'all_cats',     cat:'lesson', icon:'🌟', name:'Çok Yönlü', desc:'Her dersten en az 1 ders tamamla', req:'5 farklı kategori', xp:300, coin:60, rarity:'epic', check:s=>false},
+  // Test
+  {id:'first_test',   cat:'test', icon:'✏️', name:'Kalem Kağıt', desc:'İlk testini çöz', req:'1 test çöz', xp:50, coin:10, rarity:'common', check:s=>(s.testsCompleted||0)>=1},
+  {id:'test_10',      cat:'test', icon:'📊', name:'Test Ustası', desc:'10 test tamamla', req:'10 test çöz', xp:150, coin:30, rarity:'common', check:s=>(s.testsCompleted||0)>=10},
+  {id:'test_perfect', cat:'test', icon:'💯', name:'Mükemmel', desc:'Bir testten 100 puan al', req:'Testten tam puan', xp:200, coin:40, rarity:'rare', check:s=>(s.perfectTests||0)>=1},
+  {id:'test_no_wrong', cat:'test', icon:'🎯', name:'Hatasız', desc:'Hiç hata yapmadan 5 test çöz', req:'5 hatasız test', xp:300, coin:60, rarity:'epic', check:s=>(s.flawlessTests||0)>=5},
+  // Oyun
+  {id:'first_game',   cat:'game', icon:'🎮', name:'Oyuncu', desc:'İlk oyununu tamamla', req:'1 oyun bitir', xp:50, coin:10, rarity:'common', check:s=>(s.gamesPlayed||0)>=1},
+  {id:'game_10',      cat:'game', icon:'🕹️', name:'Oyun Delisi', desc:'10 oyun tamamla', req:'10 oyun bitir', xp:150, coin:30, rarity:'common', check:s=>(s.gamesPlayed||0)>=10},
+  {id:'game_all',     cat:'game', icon:'🏆', name:'Tüm Oyunlar', desc:'Her oyunu en az bir kez oyna', req:'8 farklı oyun', xp:400, coin:80, rarity:'epic', check:s=>(s.uniqueGames||[]).length>=8},
+  {id:'sudoku_win',   cat:'game', icon:'🧩', name:'Sudoku Ustası', desc:'Sudoku\'yu 0 hatayla tamamla', req:'Hatasız sudoku', xp:200, coin:40, rarity:'rare', check:s=>(s.sudokuPerfect||0)>=1},
+  {id:'typing_60',    cat:'game', icon:'⌨️', name:'Hızlı Parmaklar', desc:'Yazma yarışında 60 WPM\'i aş', req:'60 WPM', xp:200, coin:40, rarity:'rare', check:s=>(s.bestWPM||0)>=60},
+  // Seri
+  {id:'streak_3',     cat:'streak', icon:'🔥', name:'Ateş Serisi', desc:'3 gün üst üste çalış', req:'3 günlük seri', xp:100, coin:20, rarity:'common', check:s=>(s.streak||0)>=3},
+  {id:'streak_7',     cat:'streak', icon:'⚡', name:'Yıldırım Seri', desc:'7 gün üst üste çalış', req:'7 günlük seri', xp:250, coin:50, rarity:'rare', check:s=>(s.streak||0)>=7},
+  {id:'streak_30',    cat:'streak', icon:'🌟', name:'Efsane Seri', desc:'30 gün üst üste çalış', req:'30 günlük seri', xp:1000, coin:200, rarity:'legendary', check:s=>(s.streak||0)>=30},
+  // XP
+  {id:'xp_100',       cat:'xp', icon:'⚡', name:'İlk Yüz', desc:'100 XP kazan', req:'100 XP', xp:25, coin:5, rarity:'common', check:s=>(s.xp||0)>=100},
+  {id:'xp_500',       cat:'xp', icon:'⭐', name:'Beş Yüz', desc:'500 XP kazan', req:'500 XP', xp:50, coin:10, rarity:'common', check:s=>(s.xp||0)>=500},
+  {id:'xp_1000',      cat:'xp', icon:'🚀', name:'Bin XP', desc:'1.000 XP kazan', req:'1.000 XP', xp:100, coin:25, rarity:'rare', check:s=>(s.xp||0)>=1000},
+  {id:'xp_5000',      cat:'xp', icon:'🌌', name:'Galaktik', desc:'5.000 XP kazan', req:'5.000 XP', xp:500, coin:100, rarity:'legendary', check:s=>(s.xp||0)>=5000},
+  // Sosyal
+  {id:'first_login',  cat:'social', icon:'👋', name:'Hoş Geldin', desc:'Platforma ilk giriş yap', req:'İlk giriş', xp:25, coin:5, rarity:'common', check:s=>true},
+  {id:'profile_set',  cat:'social', icon:'👤', name:'Profil Kuruldu', desc:'Profilini tamamla', req:'Profil doldur', xp:50, coin:10, rarity:'common', check:s=>!!s.name},
+  {id:'note_5',       cat:'social', icon:'📓', name:'Not Tutanı', desc:'5 not kaydet', req:'5 not', xp:75, coin:15, rarity:'common', check:s=>false},
+  {id:'shop_first',   cat:'social', icon:'🛒', name:'İlk Alışveriş', desc:'Mağazadan bir şey satın al', req:'1 alışveriş', xp:50, coin:0, rarity:'common', check:s=>Object.keys(s.shopOwned||{}).length>0},
+];
+
+const CATS = {all:'Tümü', lesson:'📚 Ders', test:'✏️ Test', game:'🎮 Oyun', streak:'🔥 Seri', xp:'⚡ XP', social:'👤 Sosyal'};
+const RARITY = {common:{label:'Yaygın',color:'#8fa3bf'}, rare:{label:'Nadir',color:'#63dbff'}, epic:{label:'Epik',color:'#c77dff'}, legendary:{label:'Efsane',color:'#ffd166'}};
+
+let activeCat = 'all';
+
+function init(){
+  const s = getState();
+  // Earn badges based on current state
+  const earned = new Set(s.badges||[]);
+  ALL_ACHIEVEMENTS.forEach(a=>{if(a.check(s)) earned.add(a.id);});
+  s.badges = [...earned];
+  setState(s);
+
+  const earnedList = ALL_ACHIEVEMENTS.filter(a=>earned.has(a.id));
+  const xpEarned = earnedList.reduce((sum,a)=>sum+a.xp,0);
+  document.getElementById('earnedCount').textContent = earnedList.length;
+  document.getElementById('totalCount').textContent = ALL_ACHIEVEMENTS.length;
+  document.getElementById('pctVal').textContent = Math.round(earnedList.length/ALL_ACHIEVEMENTS.length*100)+'%';
+  document.getElementById('xpTotal').textContent = xpEarned.toLocaleString();
+
+  // Nav
+  document.getElementById('navXP').textContent=(s.xp||0).toLocaleString();
+  if(s.name)document.getElementById('navAvatar').textContent=s.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+  // Category filter
+  document.getElementById('catFilter').innerHTML = Object.entries(CATS).map(([k,v])=>
+    `<button class="cf-btn ${k===activeCat?'active':''}" onclick="filterCat('${k}',this)">${v}</button>`
+  ).join('');
+
+  renderGrid(s, earned);
+}
+
+function filterCat(cat, btn){
+  activeCat = cat;
+  document.querySelectorAll('.cf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(getState(), new Set(getState().badges||[]));
+}
+
+function renderGrid(s, earned){
+  const items = activeCat==='all' ? ALL_ACHIEVEMENTS : ALL_ACHIEVEMENTS.filter(a=>a.cat===activeCat);
+  // Sort: earned first, then by rarity
+  const order = {legendary:0,epic:1,rare:2,common:3};
+  items.sort((a,b)=>{
+    const ae=earned.has(a.id), be=earned.has(b.id);
+    if(ae&&!be) return -1; if(!ae&&be) return 1;
+    return order[a.rarity]-order[b.rarity];
+  });
+
+  document.getElementById('achGrid').innerHTML = items.map(a=>{
+    const isEarned = earned.has(a.id);
+    const r = RARITY[a.rarity];
+    return `
+    <div class="ach-card ${isEarned?'earned':'locked'}">
+      ${isEarned?'<div class="earned-badge">✅</div>':''}
+      <span class="rare-label" style="background:${r.color}22;color:${r.color};border:1px solid ${r.color}44">${r.label}</span>
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      <div class="ach-req">${a.req}</div>
+      <div class="ach-reward">
+        <span class="ach-xp">⚡ +${a.xp}</span>
+        ${a.coin?`<span class="ach-coin">💰 +${a.coin}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getState(){try{return JSON.parse(localStorage.getItem('eduplay_user')||'{}')}catch{return{}}}
+function setState(s){localStorage.setItem('eduplay_user',JSON.stringify(s))}
+
+document.addEventListener('click',e=>{const d=document.getElementById('navDrawer');if(d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.nav-hamburger'))d.classList.remove('open');});
+init();
+</script>
+</body>
+</html>

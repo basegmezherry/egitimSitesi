@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Not Defteri — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.note-wrap{max-width:900px;margin:0 auto;padding:80px 20px 40px}
+.note-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.note-header a{color:var(--text-2);text-decoration:none;font-size:13px}
+.note-layout{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start}
+.notes-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.notes-panel-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.notes-panel-title{font-family:var(--f-display);font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em}
+.note-list{max-height:500px;overflow-y:auto}
+.note-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:background var(--t-fast)}
+.note-item:hover{background:rgba(99,219,255,.05)}
+.note-item.active{background:rgba(99,219,255,.08);border-left:2px solid var(--cyan)}
+.ni-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.ni-preview{font-size:11.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ni-date{font-size:10px;color:var(--text-3);margin-top:3px;font-family:var(--f-mono)}
+.note-editor{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.editor-toolbar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tb-btn{background:none;border:none;color:var(--text-2);cursor:pointer;padding:5px 8px;border-radius:5px;font-size:14px;transition:all var(--t-fast);font-family:var(--f-body)}
+.tb-btn:hover{background:rgba(99,219,255,.08);color:var(--cyan)}
+.tb-sep{width:1px;height:18px;background:var(--border);margin:0 2px}
+.title-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:14px 16px;font-family:var(--f-display);font-size:17px;font-weight:700;color:var(--text);outline:none}
+.title-input::placeholder{color:var(--text-3)}
+.content-area{flex:1;width:100%;background:transparent;border:none;padding:14px 16px;font-family:var(--f-body);font-size:14.5px;line-height:1.8;color:var(--text);outline:none;resize:none;min-height:360px}
+.content-area::placeholder{color:var(--text-3)}
+.editor-footer{padding:8px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--text-3)}
+.save-indicator{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px}
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--lime)}
+.save-dot.saving{background:var(--gold);animation:pulse-ring 1s ease infinite}
+@media(max-width:640px){.note-layout{grid-template-columns:1fr}.note-list{max-height:180px}}
+</style>
+</head>
+<body>
+<div class="note-wrap">
+  <div class="note-header">
+    <a href="index.html">← Araçlar</a>
+    <div style="font-family:var(--f-display);font-size:18px;font-weight:800">📓 Not Defteri</div>
+    <button class="btn btn-primary btn-sm" onclick="newNote()">+ Yeni Not</button>
+  </div>
+
+  <div class="note-layout">
+    <div class="notes-panel">
+      <div class="notes-panel-header">
+        <div class="notes-panel-title">Notlarım</div>
+        <span id="noteCount" style="font-family:var(--f-mono);font-size:11px;color:var(--text-3)">0</span>
+      </div>
+      <div class="note-list" id="noteList"></div>
+    </div>
+
+    <div class="note-editor">
+      <div class="editor-toolbar">
+        <button class="tb-btn" onclick="fmt('bold')" title="Kalın"><b>B</b></button>
+        <button class="tb-btn" onclick="fmt('italic')" title="İtalik"><i>İ</i></button>
+        <button class="tb-btn" onclick="fmt('underline')" title="Altı Çizili"><u>U</u></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="insertText('• ')" title="Madde işareti">• —</button>
+        <button class="tb-btn" onclick="insertText('[ ] ')" title="Görev kutusu">☐</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="insertText('📌 ')" title="Önemli">📌</button>
+        <button class="tb-btn" onclick="insertText('💡 ')" title="Fikir">💡</button>
+        <button class="tb-btn" onclick="insertText('⚠️ ')" title="Uyarı">⚠️</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="deleteCurrentNote()" title="Notu Sil" style="color:var(--coral)">🗑</button>
+      </div>
+
+      <input type="text" class="title-input" id="noteTitle" placeholder="Not başlığı…" oninput="autoSave()">
+      <textarea class="content-area" id="noteContent" placeholder="Notlarını buraya yaz… (Otomatik kaydedilir)
+  
+📌 Önemli noktaları vurgula
+💡 Fikirlerini kaydet
+[ ] Yapılacakları listele"></textarea>
+      <div class="editor-footer">
+        <div class="save-indicator">
+          <div class="save-dot" id="saveDot"></div>
+          <span id="saveLabel">Kaydedildi</span>
+        </div>
+        <span id="wordCount">0 kelime</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+<script>
+let notes = JSON.parse(localStorage.getItem('ep_notes') || '[]');
+let activeId = null, saveTimeout = null;
+
+function save() { localStorage.setItem('ep_notes', JSON.stringify(notes)); }
+
+function renderList() {
+  const list = document.getElementById('noteList');
+  document.getElementById('noteCount').textContent = notes.length;
+  if (!notes.length) {
+    list.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--text-3)">Henüz not yok.<br>+ Yeni Not ile başla.</div>';
+    return;
+  }
+  list.innerHTML = notes.slice().reverse().map(n => `
+    <div class="note-item ${n.id===activeId?'active':''}" onclick="openNote('${n.id}')">
+      <div class="ni-title">${n.title || 'Başlıksız Not'}</div>
+      <div class="ni-preview">${(n.content||'').replace(/\n/g,' ').substring(0,40)}</div>
+      <div class="ni-date">${new Date(n.updated).toLocaleDateString('tr-TR')}</div>
+    </div>`).join('');
+}
+
+function newNote() {
+  const n = { id: Date.now().toString(), title: '', content: '', created: Date.now(), updated: Date.now() };
+  notes.push(n);
+  save();
+  openNote(n.id);
+}
+
+function openNote(id) {
+  activeId = id;
+  const n = notes.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('noteTitle').value = n.title;
+  document.getElementById('noteContent').value = n.content;
+  updateWordCount();
+  renderList();
+}
+
+function autoSave() {
+  if (!activeId) return;
+  const dot = document.getElementById('saveDot');
+  const lbl = document.getElementById('saveLabel');
+  dot.classList.add('saving');
+  lbl.textContent = 'Kaydediliyor…';
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    const idx = notes.findIndex(x => x.id === activeId);
+    if (idx >= 0) {
+      notes[idx].title = document.getElementById('noteTitle').value;
+      notes[idx].content = document.getElementById('noteContent').value;
+      notes[idx].updated = Date.now();
+      save();
+      renderList();
+    }
+    dot.classList.remove('saving');
+    lbl.textContent = 'Kaydedildi';
+  }, 800);
+  updateWordCount();
+}
+
+function updateWordCount() {
+  const text = document.getElementById('noteContent').value;
+  const words = text.trim().split(/\s+/).filter(w => w).length;
+  document.getElementById('wordCount').textContent = words + ' kelime';
+}
+
+function fmt(cmd) {
+  const ta = document.getElementById('noteContent');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const selected = ta.value.substring(start, end);
+  const markers = { bold: '**', italic: '_', underline: '~~' };
+  const m = markers[cmd];
+  ta.value = ta.value.substring(0, start) + m + selected + m + ta.value.substring(end);
+  ta.selectionStart = start + m.length;
+  ta.selectionEnd = end + m.length;
+  autoSave();
+}
+
+function insertText(text) {
+  const ta = document.getElementById('noteContent');
+  const pos = ta.selectionStart;
+  ta.value = ta.value.substring(0, pos) + text + ta.value.substring(pos);
+  ta.selectionStart = ta.selectionEnd = pos + text.length;
+  ta.focus();
+  autoSave();
+}
+
+function deleteCurrentNote() {
+  if (!activeId) return;
+  if (!confirm('Bu notu silmek istediğinize emin misiniz?')) return;
+  notes = notes.filter(n => n.id !== activeId);
+  activeId = null;
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteContent').value = '';
+  save();
+  renderList();
+  if (window.showToast) showToast('Not silindi', 'info');
+}
+
+document.getElementById('noteContent').addEventListener('input', autoSave);
+document.getElementById('noteTitle').addEventListener('input', autoSave);
+
+// İlk notu aç
+renderList();
+if (notes.length > 0) openNote(notes[notes.length - 1].id);
+</script>
+</body>
+</html>

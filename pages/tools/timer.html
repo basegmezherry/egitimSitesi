@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ders Sayacı — EduPlay</title>
+<link rel="manifest" href="../../manifest.json">
+<link rel="stylesheet" href="../../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+.timer-wrap{max-width:480px;margin:0 auto;padding:80px 20px 40px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.timer-header{width:100%;display:flex;align-items:center;justify-content:space-between}
+.timer-header a{color:var(--text-2);text-decoration:none;font-size:13px}
+.mode-tabs{display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:3px}
+.mode-tab{padding:7px 14px;border-radius:7px;border:none;background:none;color:var(--text-2);font-family:var(--f-body);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--t-fast);white-space:nowrap}
+.mode-tab.active{background:var(--card);color:var(--cyan)}
+.timer-circle{position:relative;width:260px;height:260px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-track{fill:none;stroke:rgba(255,255,255,.06);stroke-width:10}
+.timer-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.timer-time{font-family:var(--f-mono);font-size:52px;font-weight:700;line-height:1;letter-spacing:.05em}
+.timer-label{font-size:12px;color:var(--text-2);letter-spacing:.08em;text-transform:uppercase}
+.timer-controls{display:flex;gap:12px}
+.session-log{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+.log-title{font-size:12px;color:var(--text-2);font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.log-item{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12.5px}
+.log-item:last-child{border-bottom:none}
+.pomodoro-dots{display:flex;gap:6px;justify-content:center}
+.pom-dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.04);transition:all var(--t-fast)}
+.pom-dot.done{background:var(--coral);border-color:var(--coral)}
+.pom-dot.current{background:rgba(255,107,107,.3);border-color:var(--coral);animation:pulse-ring 1.5s ease infinite}
+</style>
+</head>
+<body>
+<div class="timer-wrap">
+  <div class="timer-header">
+    <a href="index.html">← Araçlar</a>
+    <div style="font-family:var(--f-display);font-size:18px;font-weight:800">⏱️ Ders Sayacı</div>
+    <span></span>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('pomodoro',this)">🍅 Pomodoro</button>
+    <button class="mode-tab" onclick="setMode('short',this)">☕ Kısa Mola</button>
+    <button class="mode-tab" onclick="setMode('long',this)">🌴 Uzun Mola</button>
+    <button class="mode-tab" onclick="setMode('custom',this)">⚙️ Özel</button>
+  </div>
+
+  <div class="pomodoro-dots" id="pomDots">
+    <div class="pom-dot current" id="pd0"></div>
+    <div class="pom-dot" id="pd1"></div>
+    <div class="pom-dot" id="pd2"></div>
+    <div class="pom-dot" id="pd3"></div>
+  </div>
+
+  <div class="timer-circle">
+    <svg class="timer-svg" width="260" height="260" viewBox="0 0 260 260">
+      <circle class="timer-track" cx="130" cy="130" r="115"/>
+      <circle class="timer-fill" id="timerFill" cx="130" cy="130" r="115" style="stroke:var(--coral)"/>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-time" id="timerDisplay" style="color:var(--coral)">25:00</div>
+      <div class="timer-label" id="timerMode">Çalışma</div>
+    </div>
+  </div>
+
+  <div class="timer-controls">
+    <button class="btn btn-ghost" onclick="resetTimer()">↺ Sıfırla</button>
+    <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()" style="min-width:120px;background:linear-gradient(135deg,var(--coral),#e85454);box-shadow:0 4px 20px rgba(255,107,107,.3)">▶ Başla</button>
+    <button class="btn btn-ghost" onclick="skipTimer()">⏭ Atla</button>
+  </div>
+
+  <!-- Bugünkü özet -->
+  <div style="display:flex;gap:12px;width:100%">
+    <div class="stat-card" style="flex:1;text-align:center;flex-direction:column;gap:4px">
+      <div class="stat-value" id="todaySessions" style="font-size:28px;margin:0">0</div>
+      <div class="stat-label">Bugün Pomodoro</div>
+    </div>
+    <div class="stat-card" style="flex:1;text-align:center;flex-direction:column;gap:4px">
+      <div class="stat-value" id="todayMinutes" style="font-size:28px;margin:0">0</div>
+      <div class="stat-label">Çalışma Dk.</div>
+    </div>
+    <div class="stat-card" style="flex:1;text-align:center;flex-direction:column;gap:4px">
+      <div class="stat-value" id="totalSessions" style="font-size:28px;margin:0">0</div>
+      <div class="stat-label">Toplam</div>
+    </div>
+  </div>
+
+  <div class="session-log">
+    <div class="log-title">Oturum Geçmişi</div>
+    <div id="sessionLog"><p style="font-size:12px;color:var(--text-3)">Henüz oturum yok</p></div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+<script>
+const MODES = {
+  pomodoro: { duration: 25*60, label: 'Çalışma', color: 'var(--coral)', stroke: 'rgba(255,107,107,.3)' },
+  short:    { duration: 5*60,  label: 'Kısa Mola', color: 'var(--lime)',  stroke: 'rgba(184,255,78,.3)' },
+  long:     { duration: 15*60, label: 'Uzun Mola', color: 'var(--cyan)',  stroke: 'rgba(99,219,255,.3)' },
+  custom:   { duration: 10*60, label: 'Özel',      color: 'var(--gold)',  stroke: 'rgba(255,209,102,.3)' },
+};
+
+let mode = 'pomodoro', totalTime = 25*60, remaining = 25*60;
+let running = false, interval = null;
+let pomCount = 0, todaySessions = 0, todayMinutes = 0;
+const sessions = [];
+const CIRC = 2 * Math.PI * 115;
+
+document.querySelector('.timer-fill').style.strokeDasharray = CIRC;
+document.querySelector('.timer-fill').style.strokeDashoffset = 0;
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  clearInterval(interval); running = false;
+  document.getElementById('startBtn').textContent = '▶ Başla';
+  if (m === 'custom') {
+    const mins = parseInt(prompt('Kaç dakika? (1-120)', '10') || '10');
+    MODES.custom.duration = Math.min(120, Math.max(1, mins)) * 60;
+  }
+  totalTime = MODES[m].duration;
+  remaining = totalTime;
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const m = Math.floor(remaining / 60), s = remaining % 60;
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.style.color = MODES[mode].color;
+  document.getElementById('timerMode').textContent = MODES[mode].label;
+  document.querySelector('.timer-fill').style.stroke = MODES[mode].color;
+
+  // Circle
+  const pct = 1 - (remaining / totalTime);
+  document.querySelector('.timer-fill').style.strokeDashoffset = CIRC * (1 - pct);
+  if (pct > 0) {
+    document.title = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} — EduPlay`;
+  }
+}
+
+function toggleTimer() {
+  if (running) {
+    clearInterval(interval);
+    running = false;
+    document.getElementById('startBtn').textContent = '▶ Devam';
+  } else {
+    running = true;
+    document.getElementById('startBtn').textContent = '⏸ Duraklat';
+    interval = setInterval(() => {
+      remaining--;
+      updateDisplay();
+      if (remaining <= 0) {
+        clearInterval(interval);
+        running = false;
+        onTimerEnd();
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(interval); running = false;
+  remaining = totalTime;
+  document.getElementById('startBtn').textContent = '▶ Başla';
+  document.title = 'Ders Sayacı — EduPlay';
+  updateDisplay();
+}
+
+function skipTimer() { remaining = 0; onTimerEnd(); }
+
+function onTimerEnd() {
+  document.getElementById('startBtn').textContent = '▶ Başla';
+  remaining = 0; updateDisplay();
+
+  if (mode === 'pomodoro') {
+    pomCount++;
+    todaySessions++;
+    todayMinutes += 25;
+    document.getElementById('todaySessions').textContent = todaySessions;
+    document.getElementById('todayMinutes').textContent = todayMinutes;
+    document.getElementById('totalSessions').textContent = pomCount;
+
+    // Pomodoro dots
+    for (let i = 0; i < 4; i++) {
+      const dot = document.getElementById('pd' + i);
+      if (dot) dot.classList.toggle('done', i < pomCount % 4);
+    }
+
+    sessions.unshift({ type: '🍅 Pomodoro', mins: 25, time: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}) });
+    if (sessions.length > 8) sessions.pop();
+    renderLog();
+
+    // XP kazan
+    try {
+      const u = JSON.parse(localStorage.getItem('eduplay_user') || '{}');
+      u.xp = (u.xp || 0) + 30;
+      localStorage.setItem('eduplay_user', JSON.stringify(u));
+    } catch(e) {}
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('🍅 Pomodoro Tamamlandı!', { body: 'Harika iş! +30 XP kazandın. Kısa mola zamanı.' });
+    }
+    playBeep();
+    if (window.showToast) showToast('🍅 Pomodoro tamamlandı! +30 XP', 'success', 4000);
+  }
+}
+
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+    osc.start(); osc.stop(ctx.currentTime + 0.8);
+  } catch(e) {}
+}
+
+function renderLog() {
+  const el = document.getElementById('sessionLog');
+  if (!sessions.length) { el.innerHTML = '<p style="font-size:12px;color:var(--text-3)">Henüz oturum yok</p>'; return; }
+  el.innerHTML = sessions.map(s => `
+    <div class="log-item">
+      <span>${s.type}</span>
+      <span style="color:var(--text-2)">${s.mins} dk · ${s.time}</span>
+    </div>`).join('');
+}
+
+updateDisplay();
+</script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eğitim — EduPlay</title>
+  <link rel="stylesheet" href="../css/style.css">
+      <style>
+    .subject-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; margin-bottom:48px; }
+
+    .subject-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      display: block;
+    }
+    .subject-card:hover { transform:translateY(-4px); border-color:rgba(0,245,212,0.3); box-shadow:var(--shadow); }
+
+    .subject-icon { font-size:40px; margin-bottom:12px; }
+    .subject-name { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .subject-count { font-size:13px; color:var(--text-muted); margin-bottom:16px; }
+
+    .lesson-list { display:flex; flex-direction:column; gap:12px; }
+
+    .lesson-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .lesson-item:hover { border-color:rgba(0,245,212,0.25); background:rgba(0,245,212,0.02); }
+    .lesson-item.completed { border-left:3px solid var(--success); }
+    .lesson-item.locked { opacity:0.5; cursor:not-allowed; }
+
+    .lesson-num {
+      width:40px; height:40px;
+      border-radius: 50%;
+      background: rgba(0,245,212,0.1);
+      border: 2px solid rgba(0,245,212,0.2);
+      display: flex; align-items:center; justify-content:center;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .lesson-num.done { background:rgba(0,200,150,0.15); border-color:var(--success); color:var(--success); }
+    .lesson-num.lock { background:rgba(255,255,255,0.04); border-color:var(--border); color:var(--text-muted); }
+
+    .lesson-info { flex: 1; }
+    .lesson-title { font-weight:600; font-size:15px; color:var(--text); margin-bottom:4px; }
+    .lesson-meta { font-size:12px; color:var(--text-muted); display:flex; gap:12px; }
+
+    .lesson-xp {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--warning);
+    }
+
+    /* Lesson Modal */
+    .lesson-content { line-height:1.8; color:var(--text); }
+    .lesson-content h3 { font-family:var(--font-display); color:var(--primary); margin:20px 0 10px; font-size:18px; }
+    .lesson-content p { margin-bottom:14px; }
+    .lesson-content .highlight-box {
+      background: rgba(0,245,212,0.05);
+      border: 1px solid rgba(0,245,212,0.15);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .lesson-content .formula {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      margin: 12px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="navbar-brand">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">EduPlay</span>
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="../index.html">🏠 Ana Sayfa</a></li>
+    <li><a href="learn.html" class="active">📚 Eğitim</a></li>
+    <li><a href="test.html">✏️ Testler</a></li>
+    <li><a href="games.html">🎮 Oyunlar</a></li>
+    <li><a href="leaderboard.html">🏆 Liderlik</a></li>
+    <li><a href="apk.html">📱 APK</a></li>
+    <li><a href="about.html">ℹ️ Hakkında</a></li>
+  </ul>
+  <div class="navbar-actions">
+    <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warning)">⚡ <span data-user-xp>0</span> XP</div>
+    <a href="profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a>
+  </div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<nav class="mobile-nav">
+  <a href="../index.html">🏠 Ana Sayfa</a>
+  <a href="learn.html">📚 Eğitim</a>
+  <a href="test.html">✏️ Testler</a>
+  <a href="games.html">🎮 Oyunlar</a>
+  <a href="leaderboard.html">🏆 Liderlik</a>
+  <a href="apk.html">📱 APK</a>
+  <a href="about.html">ℹ️ Hakkında</a>
+  <a href="profile.html">👤 Profil</a>
+  <a href="settings.html">⚙️ Ayarlar</a>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">📚 Eğitim Merkezi</h1>
+      <p class="page-subtitle">Konuları seç, dersleri takip et ve ilerleni ölç.</p>
+    </div>
+
+    <!-- Ad Banner -->
+    <div class="ad-banner ad-placeholder" data-ad-size="728x90" style="margin-bottom:32px">
+      <span class="ad-label">Reklam</span>
+    </div>
+
+    <!-- Subject Filter -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px" id="subjectFilter">
+      <button class="btn btn-primary btn-sm active-filter" data-filter="all" onclick="filterSubject('all',this)">Tümü</button>
+      <button class="btn btn-secondary btn-sm" data-filter="math" onclick="filterSubject('math',this)">🔢 Matematik</button>
+      <button class="btn btn-secondary btn-sm" data-filter="science" onclick="filterSubject('science',this)">🔬 Fen Bilimleri</button>
+      <button class="btn btn-secondary btn-sm" data-filter="history" onclick="filterSubject('history',this)">📜 Tarih</button>
+      <button class="btn btn-secondary btn-sm" data-filter="language" onclick="filterSubject('language',this)">📝 Dil</button>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="grid-4" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));margin-bottom:40px">
+      <div class="stat-card">
+        <div class="stat-icon cyan">📖</div>
+        <div class="stat-info">
+          <div class="value" id="lessonsCompleted">0</div>
+          <div class="label">Tamamlanan Ders</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">⚡</div>
+        <div class="stat-info">
+          <div class="value" data-user-xp>0</div>
+          <div class="label">Toplam XP</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">🔥</div>
+        <div class="stat-info">
+          <div class="value" id="streakDays">0</div>
+          <div class="label">Gün Serisi</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">🏅</div>
+        <div class="stat-info">
+          <div class="value" data-user-level>1</div>
+          <div class="label">Seviye</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lessons Sections -->
+    <div id="lessonsContainer"></div>
+
+    <!-- Ad Banner Middle -->
+    <div class="ad-banner ad-placeholder" data-ad-size="300x250" style="margin:40px auto;max-width:400px">
+      <span class="ad-label">Reklam</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Lesson Detail Modal -->
+<div class="modal-overlay" id="lessonModal">
+  <div class="modal" style="max-width:640px;max-height:80vh;overflow-y:auto">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Ders</span>
+      <button class="modal-close" onclick="closeModal('lessonModal')">✕</button>
+    </div>
+    <div class="lesson-content" id="modalContent"></div>
+    <div style="display:flex;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary" id="completeBtn" onclick="completeLesson()">✅ Dersi Tamamla (+50 XP)</button>
+      <a href="test.html" class="btn btn-secondary">✏️ Testi Çöz</a>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom" style="border:none;padding-top:0">
+      <span>© 2025 EduPlay</span>
+      <span><a href="../index.html" style="color:var(--primary);text-decoration:none">Ana Sayfaya Dön</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../js/main.js"></script>
+<script>
+const SUBJECTS = [
+  {
+    id: 'math', name: 'Matematik', icon: '🔢', color: '#00f5d4',
+    lessons: [
+      { id:'m1', title:'Sayılar ve İşlemler', duration:'15 dk', xp:50, content:`
+        <h3>Sayılar ve Temel İşlemler</h3>
+        <p>Matematiksel işlemlerin temelini oluşturan dört işlem: toplama, çıkarma, çarpma ve bölme.</p>
+        <div class="highlight-box">
+          💡 <strong>Önemli:</strong> Sayılar, matematiğin yapı taşlarıdır. Doğal sayılar, tam sayılar ve reel sayılar arasındaki farkları anlamak kritik öneme sahiptir.
+        </div>
+        <h3>Temel Formüller</h3>
+        <div class="formula">a + b = b + a (Değişme Özelliği)</div>
+        <div class="formula">(a + b) + c = a + (b + c) (Birleşme Özelliği)</div>
+        <p>Bu özellikler zihinsel hesaplama yaparken büyük kolaylık sağlar.</p>
+      `},
+      { id:'m2', title:'Kesirler', duration:'20 dk', xp:60, content:`
+        <h3>Kesirler</h3>
+        <p>Bir bütünün parçalarını ifade eden kesirler günlük hayatın her alanında kullanılır.</p>
+        <div class="formula">a/b × c/d = (a×c)/(b×d)</div>
+        <div class="highlight-box">🍕 Örnek: Pizzanın 3/8'i yediyseniz, 5/8'i kalmıştır.</div>
+        <p>Kesirleri toplarken paydaları eşitlemek gerekir. Paydaları farklı kesirlerde en küçük ortak katı (EKOK) bulun.</p>
+      `},
+      { id:'m3', title:'Denklemler', duration:'25 dk', xp:75, content:`
+        <h3>Birinci Dereceden Denklemler</h3>
+        <p>Denklemler, bilinmeyen değerleri bulmamıza yardımcı olur.</p>
+        <div class="formula">ax + b = c → x = (c - b) / a</div>
+        <p>Denklemleri çözerken her iki tarafta aynı işlemi yaparak dengeyi koruruz.</p>
+        <div class="highlight-box">🎯 Strateji: Önce sabitleri bir tarafa, değişkenleri diğer tarafa topla.</div>
+      `},
+    ]
+  },
+  {
+    id: 'science', name: 'Fen Bilimleri', icon: '🔬', color: '#00c896',
+    lessons: [
+      { id:'s1', title:'Hücre Yapısı', duration:'20 dk', xp:55, content:`
+        <h3>Hücre: Yaşamın Temel Birimi</h3>
+        <p>Tüm canlılar hücrelerden oluşur. Hücre teorisi, modern biyolojinin temelini oluşturur.</p>
+        <div class="highlight-box">🔬 <strong>Hücre Organelleri:</strong> Mitokondri (enerji), Ribozom (protein), Golgi (paketleme), Lizozom (sindirim)</div>
+        <p>Prokaryot hücreler (bakteri) zarsız çekirdeğe sahipken, ökaryot hücreler (hayvan/bitki) zarlı çekirdeğe sahiptir.</p>
+      `},
+      { id:'s2', title:'Madde ve Değişim', duration:'18 dk', xp:50, content:`
+        <h3>Maddenin Halleri</h3>
+        <p>Madde üç temel halde bulunur: katı, sıvı ve gaz. Bu haller arasındaki geçişler ısı alışverişiyle gerçekleşir.</p>
+        <div class="formula">Erime → Donma → Buharlaşma → Yoğuşma</div>
+        <div class="highlight-box">🧊 Su 0°C'de donar, 100°C'de kaynar (1 atm basınçta)</div>
+      `},
+      { id:'s3', title:'Kuvvet ve Hareket', duration:'22 dk', xp:65, content:`
+        <h3>Newton'ın Hareket Yasaları</h3>
+        <p>Isaac Newton'ın üç temel yasası, klasik mekaniğin çerçevesini oluşturur.</p>
+        <div class="formula">F = m × a (Kuvvet = Kütle × İvme)</div>
+        <p><strong>1. Yasa:</strong> Üzerine net kuvvet etki etmeyen cisim durur veya sabit hızla hareket eder.</p>
+        <p><strong>3. Yasa:</strong> Her etkiye eşit ve zıt yönde tepki vardır.</p>
+      `},
+    ]
+  },
+  {
+    id: 'history', name: 'Tarih', icon: '📜', color: '#ff9f43',
+    lessons: [
+      { id:'h1', title:'Osmanlı İmparatorluğu', duration:'30 dk', xp:80, content:`
+        <h3>Osmanlı İmparatorluğu'nun Yükselişi</h3>
+        <p>Osmanlı Devleti, 1299'da Osman Bey tarafından kurulmuş ve yaklaşık 6 asır boyunca sürmüştür.</p>
+        <div class="highlight-box">📍 <strong>Önemli Tarihler:</strong><br>1453 - İstanbul'un Fethi (Fatih Sultan Mehmet)<br>1529 - Viyana Kuşatması<br>1683 - 2. Viyana Kuşatması</div>
+        <p>Kanuni Sultan Süleyman döneminde (1520-1566) imparatorluk en geniş sınırlarına ulaştı.</p>
+      `},
+      { id:'h2', title:'Türkiye Cumhuriyeti', duration:'25 dk', xp:70, content:`
+        <h3>Kurtuluş Savaşı ve Cumhuriyet</h3>
+        <p>Mustafa Kemal Atatürk önderliğinde verilen bağımsızlık savaşı, 29 Ekim 1923'te Cumhuriyet'in ilanıyla taçlandı.</p>
+        <div class="highlight-box">🇹🇷 <strong>Temel Devrimler:</strong> Harf Devrimi, Medeni Kanun, Öğretim Birliği, Laiklik</div>
+      `},
+    ]
+  },
+  {
+    id: 'language', name: 'Türkçe & Dil', icon: '📝', color: '#a29bfe',
+    lessons: [
+      { id:'l1', title:'Sözcük Türleri', duration:'20 dk', xp:55, content:`
+        <h3>Türkçe Sözcük Türleri</h3>
+        <p>Türkçede sözcükler işlevlerine göre 8 gruba ayrılır: İsim, Sıfat, Zamir, Zarf, Fiil, Edat, Bağlaç, Ünlem.</p>
+        <div class="highlight-box">✏️ <strong>İpucu:</strong> İsimler "ne?" sorusuna, sıfatlar "nasıl?" sorusuna cevap verir.</div>
+        <p>Fiiller "ne yapmak?" sorusuna cevap verir ve cümlenin yüklemi konumundadır.</p>
+      `},
+      { id:'l2', title:'Cümle Bilgisi', duration:'25 dk', xp:65, content:`
+        <h3>Cümle Öğeleri</h3>
+        <p>Türkçe cümleler özne, yüklem, nesne, dolaylı tümleç ve zarf tümleci öğelerinden oluşur.</p>
+        <div class="formula">Özne + Nesne + Yüklem (Türkçe Cümle Düzeni)</div>
+        <div class="highlight-box">📌 Yüklem cümlenin olmazsa olmazıdır. Öznesiz cümle olabilir ama yüklemsiz olmaz.</div>
+      `},
+    ]
+  }
+];
+
+let currentLesson = null;
+let activeFilter = 'all';
+
+function renderLessons() {
+  const container = document.getElementById('lessonsContainer');
+  const user = UserState.current;
+  const completed = user.completedLessons || [];
+  container.innerHTML = '';
+
+  const filtered = activeFilter === 'all' ? SUBJECTS : SUBJECTS.filter(s => s.id === activeFilter);
+
+  filtered.forEach(subject => {
+    const section = document.createElement('div');
+    section.setAttribute('data-subject', subject.id);
+    section.style.marginBottom = '40px';
+
+    section.innerHTML = `
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">${subject.icon} ${subject.name}</div>
+        <div class="section-line" style="background:linear-gradient(90deg,${subject.color},transparent)"></div>
+      </div>
+      <div class="lesson-list">
+        ${subject.lessons.map((lesson, i) => {
+          const isDone = completed.includes(lesson.id);
+          const isLocked = i > 0 && !completed.includes(subject.lessons[i-1].id);
+          return `
+            <div class="lesson-item ${isDone ? 'completed' : ''} ${isLocked ? 'locked' : ''}"
+              onclick="${isLocked ? "showToast('Önceki dersi tamamla!','warning')" : `openLesson('${subject.id}','${lesson.id}')`}">
+              <div class="lesson-num ${isDone ? 'done' : isLocked ? 'lock' : ''}">
+                ${isDone ? '✓' : isLocked ? '🔒' : i + 1}
+              </div>
+              <div class="lesson-info">
+                <div class="lesson-title">${lesson.title}</div>
+                <div class="lesson-meta">
+                  <span>⏱️ ${lesson.duration}</span>
+                  ${isDone ? '<span style="color:var(--success)">✅ Tamamlandı</span>' : ''}
+                </div>
+              </div>
+              <div class="lesson-xp">+${lesson.xp} XP</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    container.appendChild(section);
+  });
+
+  // Update stats
+  document.getElementById('lessonsCompleted').textContent = completed.length;
+  document.getElementById('streakDays').textContent = user.streak || 0;
+}
+
+function filterSubject(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('#subjectFilter .btn').forEach(b => {
+    b.className = b === btn ? 'btn btn-primary btn-sm active-filter' : 'btn btn-secondary btn-sm';
+  });
+  renderLessons();
+}
+
+function openLesson(subjectId, lessonId) {
+  const subject = SUBJECTS.find(s => s.id === subjectId);
+  const lesson = subject?.lessons.find(l => l.id === lessonId);
+  if (!lesson) return;
+  currentLesson = lesson;
+
+  document.getElementById('modalTitle').textContent = `${subject.icon} ${lesson.title}`;
+  document.getElementById('modalContent').innerHTML = lesson.content;
+
+  const isDone = UserState.current.completedLessons?.includes(lessonId);
+  const btn = document.getElementById('completeBtn');
+  if (isDone) {
+    btn.textContent = '✅ Tamamlandı';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  } else {
+    btn.textContent = `✅ Dersi Tamamla (+${lesson.xp} XP)`;
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+
+  openModal('lessonModal');
+}
+
+function completeLesson() {
+  if (!currentLesson) return;
+  const user = UserState.current;
+  if (!user.completedLessons) user.completedLessons = [];
+  if (!user.completedLessons.includes(currentLesson.id)) {
+    user.completedLessons.push(currentLesson.id);
+    UserState.addXP(currentLesson.xp);
+    showToast(`🎉 Ders tamamlandı! +${currentLesson.xp} XP kazandın`, 'success');
+    renderLessons();
+    closeModal('lessonModal');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderLessons);
+</script>
+  <script src="js/ads.js"></script>
+</body>
+</html>

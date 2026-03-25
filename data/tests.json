@@ -1,0 +1,342 @@
+{
+  "version": "4.0",
+  "categories": [
+    {
+      "id": "math5",
+      "name": "Matematik 5. Sınıf",
+      "icon": "🔢",
+      "color": "#63dbff",
+      "grade": 5,
+      "tests": [
+        {
+          "id": "m5_kesirler",
+          "title": "Kesirler",
+          "difficulty": "easy",
+          "xp": 80,
+          "time": 300,
+          "questions": [
+            { "id": "m5k1", "text": "3/4 + 1/4 = ?", "options": ["1","4/8","1/2","2"], "answer": 0, "explanation": "Aynı paydada: 3+1=4, 4/4=1" },
+            { "id": "m5k2", "text": "2/3 kesrinin 3 katı nedir?", "options": ["6/9","2","6/3","3"], "answer": 1, "explanation": "2/3 × 3 = 6/3 = 2" },
+            { "id": "m5k3", "text": "1/2 ile 1/4 arasındaki fark?", "options": ["1/2","1/6","1/4","2/6"], "answer": 2, "explanation": "2/4 - 1/4 = 1/4" },
+            { "id": "m5k4", "text": "5/8 ondalık gösterimi nedir?", "options": ["0.58","0.625","0.5","0.65"], "answer": 1, "explanation": "5 ÷ 8 = 0,625" },
+            { "id": "m5k5", "text": "Pizzanın 3/8'i yendi, kalan kesir?", "options": ["3/8","4/8","5/8","6/8"], "answer": 2, "explanation": "8/8 - 3/8 = 5/8" },
+            { "id": "m5k6", "text": "2/5 + 3/10 = ?", "options": ["5/15","7/10","5/10","7/15"], "answer": 1, "explanation": "4/10 + 3/10 = 7/10" },
+            { "id": "m5k7", "text": "En büyük kesir hangisi?", "options": ["2/5","3/7","4/9","1/2"], "answer": 3, "explanation": "1/2=0,5 en büyüğü" },
+            { "id": "m5k8", "text": "3/4 - 1/6 = ?", "options": ["2/3","7/12","5/12","1/2"], "answer": 1, "explanation": "9/12 - 2/12 = 7/12" },
+            { "id": "m5k9", "text": "1/3 × 1/4 = ?", "options": ["1/12","2/12","1/7","1/6"], "answer": 0, "explanation": "Pay × pay = 1, payda × payda = 12 → 1/12" },
+            { "id": "m5k10", "text": "4/5 yüzde kaç eder?", "options": ["%45","%60","%80","%75"], "answer": 2, "explanation": "4/5 = 80/100 = %80" }
+          ]
+        },
+        {
+          "id": "m5_carpma",
+          "title": "Çarpma ve Bölme",
+          "difficulty": "easy",
+          "xp": 80,
+          "time": 300,
+          "questions": [
+            { "id": "m5c1", "text": "456 × 7 = ?", "options": ["3192","3082","3100","3092"], "answer": 0, "explanation": "456 × 7 = 3192" },
+            { "id": "m5c2", "text": "2340 ÷ 6 = ?", "options": ["380","390","370","400"], "answer": 1, "explanation": "2340 ÷ 6 = 390" },
+            { "id": "m5c3", "text": "18 × 25 = ?", "options": ["420","450","440","400"], "answer": 1, "explanation": "18 × 25 = 450" },
+            { "id": "m5c4", "text": "864 ÷ 24 = ?", "options": ["34","36","32","38"], "answer": 1, "explanation": "864 ÷ 24 = 36" },
+            { "id": "m5c5", "text": "125 × 8 = ?", "options": ["900","980","1000","1200"], "answer": 2, "explanation": "125 × 8 = 1000" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math6",
+      "name": "Matematik 6. Sınıf",
+      "icon": "📐",
+      "color": "#b8ff4e",
+      "grade": 6,
+      "tests": [
+        {
+          "id": "m6_oran",
+          "title": "Oran ve Orantı",
+          "difficulty": "medium",
+          "xp": 100,
+          "time": 360,
+          "questions": [
+            { "id": "m6o1", "text": "12:8 oranının en sade hali?", "options": ["3:2","6:4","4:3","2:3"], "answer": 0, "explanation": "İkisini 4'e böl → 3:2" },
+            { "id": "m6o2", "text": "x/5 = 8/20 ise x = ?", "options": ["1","2","3","4"], "answer": 1, "explanation": "8/20=2/5 → x=2" },
+            { "id": "m6o3", "text": "3 işçi 12 günde bitiriyor. 4 işçi kaç günde?", "options": ["9","8","16","6"], "answer": 0, "explanation": "Ters orantı: 3×12=4×x → x=9" },
+            { "id": "m6o4", "text": "120 TL'yi 2:3 oranında böl, büyük pay?", "options": ["48","72","60","80"], "answer": 1, "explanation": "5 pay → 24 TL/pay → 3×24=72" },
+            { "id": "m6o5", "text": "A:B=4:5 ve A=60 ise B=?", "options": ["70","75","80","65"], "answer": 1, "explanation": "B=60×5/4=75" },
+            { "id": "m6o6", "text": "Haritada 1 cm=50 km, 3.5 cm = ?", "options": ["150","175","200","125"], "answer": 1, "explanation": "3,5×50=175 km" },
+            { "id": "m6o7", "text": "%25 indirimli 200 TL ürün kaç TL?", "options": ["150","160","175","140"], "answer": 0, "explanation": "200×0,75=150 TL" },
+            { "id": "m6o8", "text": "Doğru orantı: x=4→y=12, x=7→y=?", "options": ["18","21","24","14"], "answer": 1, "explanation": "k=3; y=3×7=21" }
+          ]
+        },
+        {
+          "id": "m6_geometri",
+          "title": "Geometri Temelleri",
+          "difficulty": "medium",
+          "xp": 110,
+          "time": 360,
+          "questions": [
+            { "id": "m6g1", "text": "Üçgen iç açılar toplamı?", "options": ["90°","180°","270°","360°"], "answer": 1, "explanation": "Her üçgenin iç açıları 180°'dir." },
+            { "id": "m6g2", "text": "6 cm kenarlı karenin alanı?", "options": ["24","36","12","48"], "answer": 1, "explanation": "6×6=36 cm²" },
+            { "id": "m6g3", "text": "r=5 cm daire çevresi? (π≈3,14)", "options": ["15,7","31,4","78,5","10"], "answer": 1, "explanation": "2πr=2×3,14×5=31,4 cm" },
+            { "id": "m6g4", "text": "Taban 8 cm, yükseklik 5 cm üçgen alanı?", "options": ["40","20","13","80"], "answer": 1, "explanation": "(8×5)/2=20 cm²" },
+            { "id": "m6g5", "text": "Dikdörtgenler prizması hacim formülü?", "options": ["a+b+c","2(ab+bc+ca)","a×b×c","(a+b)×c"], "answer": 2, "explanation": "Hacim = uzunluk×genişlik×yükseklik" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math7",
+      "name": "Matematik 7. Sınıf",
+      "icon": "🧮",
+      "color": "#c77dff",
+      "grade": 7,
+      "tests": [
+        {
+          "id": "m7_cebir",
+          "title": "Cebirsel İfadeler",
+          "difficulty": "medium",
+          "xp": 120,
+          "time": 420,
+          "questions": [
+            { "id": "m7c1", "text": "3x + 5 = 20 → x = ?", "options": ["3","4","5","6"], "answer": 2, "explanation": "3x=15 → x=5" },
+            { "id": "m7c2", "text": "2(x+4) = 18 → x = ?", "options": ["3","5","7","9"], "answer": 1, "explanation": "x+4=9 → x=5" },
+            { "id": "m7c3", "text": "(3x)² = ?", "options": ["3x²","6x²","9x²","9x"], "answer": 2, "explanation": "9x²" },
+            { "id": "m7c4", "text": "x=3 iken 4x²-2x+1 = ?", "options": ["25","31","37","19"], "answer": 1, "explanation": "36-6+1=31" },
+            { "id": "m7c5", "text": "2x-7 > 3 çözümü?", "options": ["x>5","x<5","x>-2","x<-2"], "answer": 0, "explanation": "2x>10 → x>5" },
+            { "id": "m7c6", "text": "a=2, b=-3 iken a²b-ab²=?", "options": ["30","-6","-30","6"], "answer": 2, "explanation": "4(-3)-2(9)=-12-18=-30" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "science5",
+      "name": "Fen Bil. 5. Sınıf",
+      "icon": "🔬",
+      "color": "#00c896",
+      "grade": 5,
+      "tests": [
+        {
+          "id": "sci5_madde",
+          "title": "Madde ve Isı",
+          "difficulty": "easy",
+          "xp": 80,
+          "time": 300,
+          "questions": [
+            { "id": "s5m1", "text": "Suyun donma noktası?", "options": ["0°C","100°C","-10°C","4°C"], "answer": 0, "explanation": "Su 0°C'de donar." },
+            { "id": "s5m2", "text": "Isı ölçen alet?", "options": ["Barometre","Termometre","Anemometre","Higrometre"], "answer": 1, "explanation": "Termometre sıcaklık ölçer." },
+            { "id": "s5m3", "text": "Katı → sıvı geçişe ne denir?", "options": ["Donma","Buharlaşma","Erime","Yoğunlaşma"], "answer": 2, "explanation": "Katı→Sıvı = Erime" },
+            { "id": "s5m4", "text": "En iyi ısı ileten madde?", "options": ["Plastik","Ahşap","Demir","Cam"], "answer": 2, "explanation": "Metaller ısıyı en iyi iletir." },
+            { "id": "s5m5", "text": "Moleküller arası boşluk: Katı, sıvı, gaz sırasıyla?", "options": ["Gaz>Sıvı>Katı","Katı>Sıvı>Gaz","Sıvı>Katı>Gaz","Eşit"], "answer": 0, "explanation": "Gaz en fazla, katı en az boşluk." },
+            { "id": "s5m6", "text": "Termos şişe ne yapar?", "options": ["İletim","Taşınım","Işıma","Hepsini engeller"], "answer": 3, "explanation": "Vakum ve çift cam tüm ısı transfer yollarını engeller." },
+            { "id": "s5m7", "text": "Kaşık çayda ısınır — bu hangi ısı iletim yolu?", "options": ["Taşınım","İletim","Işıma","Konveksiyon"], "answer": 1, "explanation": "Doğrudan temas = iletim (kondüksiyon)." }
+          ]
+        },
+        {
+          "id": "sci5_vucut",
+          "title": "İnsan Vücudu",
+          "difficulty": "easy",
+          "xp": 90,
+          "time": 300,
+          "questions": [
+            { "id": "s5v1", "text": "Kanı pompalayan organ?", "options": ["Akciğer","Böbrek","Karaciğer","Kalp"], "answer": 3, "explanation": "Kalp, dolaşım sisteminin pompasıdır." },
+            { "id": "s5v2", "text": "Sindirim nerede başlar?", "options": ["Mide","Ağız","İnce bağırsak","Yemek borusu"], "answer": 1, "explanation": "Dişler ve tükürük ile ağızda başlar." },
+            { "id": "s5v3", "text": "Oksijeni kana taşıyan hücreler?", "options": ["Akyuvarlar","Alyuvarlar","Trombositler","Plazma"], "answer": 1, "explanation": "Alyuvarlar hemoglobin ile oksijen taşır." },
+            { "id": "s5v4", "text": "Boşaltımın temel organı?", "options": ["Karaciğer","Akciğer","Böbrek","Deri"], "answer": 2, "explanation": "Böbrekler kanı süzerek idrar oluşturur." },
+            { "id": "s5v5", "text": "Gaz alışverişi nerede olur?", "options": ["Bronş","Trakea","Alveol","Diyafram"], "answer": 2, "explanation": "Alveoller ince duvarlı gaz alışveriş yapıları." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "science7",
+      "name": "Fen Bil. 7. Sınıf",
+      "icon": "⚗️",
+      "color": "#ff9f43",
+      "grade": 7,
+      "tests": [
+        {
+          "id": "sci7_kuvvet",
+          "title": "Kuvvet ve Hareket",
+          "difficulty": "medium",
+          "xp": 110,
+          "time": 360,
+          "questions": [
+            { "id": "s7k1", "text": "Kuvvetin birimi?", "options": ["Joule","Watt","Newton","Pascal"], "answer": 2, "explanation": "Kuvvet birimi Newton (N)." },
+            { "id": "s7k2", "text": "Her etkiye karşı ne vardır?", "options": ["Eşit etki","Büyük tepki","Eşit-zıt tepki","Hiçbir şey"], "answer": 2, "explanation": "Newton 3. Yasa: eşit ve zıt tepki." },
+            { "id": "s7k3", "text": "Hızlanma için ne gerekir?", "options": ["Net kuvvet=0","Net kuvvet≠0","Kütle artışı","Ağırlık azalması"], "answer": 1, "explanation": "F=ma, F≠0 ise a≠0." },
+            { "id": "s7k4", "text": "Sürtünme kuvvetinin yönü?", "options": ["Aynı yönde","Zıt yönde","Dik","Yön yok"], "answer": 1, "explanation": "Sürtünme harekete zıt yönde." },
+            { "id": "s7k5", "text": "m=4 kg, F=12 N → a=?", "options": ["3 m/s²","4 m/s²","48 m/s²","2 m/s²"], "answer": 0, "explanation": "a=F/m=12/4=3 m/s²" },
+            { "id": "s7k6", "text": "Atalet yasası hangisi?", "options": ["1. Yasa","2. Yasa","3. Yasa","Kütle çekim"], "answer": 0, "explanation": "1. Yasa: atalet prensibi." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "name": "Tarih",
+      "icon": "📜",
+      "color": "#ffd166",
+      "grade": 0,
+      "tests": [
+        {
+          "id": "hist_osmanlı",
+          "title": "Osmanlı Tarihi",
+          "difficulty": "medium",
+          "xp": 120,
+          "time": 420,
+          "questions": [
+            { "id": "ho1", "text": "Osmanlı'yı kim kurdu?", "options": ["Orhan Bey","Osman Bey","Murat I","Yıldırım Bayezid"], "answer": 1, "explanation": "Osman Bey 1299'da kurdu." },
+            { "id": "ho2", "text": "Fatih İstanbul'u kaç yaşında fethetti?", "options": ["19","21","25","18"], "answer": 1, "explanation": "1432 doğumlu, 1453'te 21 yaşındaydı." },
+            { "id": "ho3", "text": "Tanzimat Fermanı yılı?", "options": ["1839","1876","1856","1908"], "answer": 0, "explanation": "3 Kasım 1839." },
+            { "id": "ho4", "text": "Osmanlı'nın son padişahı?", "options": ["Abdülhamit II","Vahdettin","Abdülmecit I","Murat V"], "answer": 1, "explanation": "Mehmet VI Vahdettin (1918-1922)." },
+            { "id": "ho5", "text": "Mondros Mütarekesi yılı?", "options": ["1916","1917","1918","1919"], "answer": 2, "explanation": "30 Ekim 1918." },
+            { "id": "ho6", "text": "Osmanlı'da ilk meşrutiyet ne zaman ilan edildi?", "options": ["1839","1856","1876","1908"], "answer": 2, "explanation": "I. Meşrutiyet, 23 Aralık 1876'da Kanun-i Esasi ile ilan edildi." },
+            { "id": "ho7", "text": "Kanuni Sultan Süleyman'ın saltanat süresi?", "options": ["1481-1512","1512-1520","1520-1566","1566-1574"], "answer": 2, "explanation": "Kanuni 1520-1566 yılları arasında hüküm sürdü." }
+          ]
+        },
+        {
+          "id": "hist_kurtulus",
+          "title": "Kurtuluş Savaşı",
+          "difficulty": "medium",
+          "xp": 130,
+          "time": 420,
+          "questions": [
+            { "id": "hk1", "text": "Samsun çıkış tarihi?", "options": ["19 Mayıs 1918","19 Mayıs 1919","23 Nisan 1920","10 Ocak 1920"], "answer": 1, "explanation": "19 Mayıs 1919, Kurtuluş Savaşı başlangıcı." },
+            { "id": "hk2", "text": "TBMM'nin açıldığı tarih?", "options": ["23 Nisan 1920","29 Ekim 1923","30 Ağustos 1922","10 Kasım 1918"], "answer": 0, "explanation": "23 Nisan 1920." },
+            { "id": "hk3", "text": "Büyük Taarruz yılı?", "options": ["1921","1922","1923","1920"], "answer": 1, "explanation": "26 Ağustos 1922." },
+            { "id": "hk4", "text": "Lozan Antlaşması tarihi?", "options": ["24 Temmuz 1922","24 Temmuz 1923","29 Ekim 1923","30 Ağustos 1922"], "answer": 1, "explanation": "24 Temmuz 1923." },
+            { "id": "hk5", "text": "Sakarya Muharebesi'ni kim komuta etti?", "options": ["İsmet İnönü","Fevzi Çakmak","Mustafa Kemal","Ali Fuat Cebesoy"], "answer": 2, "explanation": "Mustafa Kemal bizzat komuta etti, Mareşal unvanı aldı." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "turkish",
+      "name": "Türkçe",
+      "icon": "📝",
+      "color": "#a29bfe",
+      "grade": 0,
+      "tests": [
+        {
+          "id": "tr_dilbilgisi",
+          "title": "Dil Bilgisi",
+          "difficulty": "easy",
+          "xp": 90,
+          "time": 300,
+          "questions": [
+            { "id": "td1", "text": "'Gelmek' mastar eki?", "options": ["-gel","-mek","-me","-iş"], "answer": 1, "explanation": "-mek/-mak mastar ekidir." },
+            { "id": "td2", "text": "Sıfat tamlaması hangisi?", "options": ["Ahmet'in kalemi","Kırmızı elma","Kitap okumak","Hızlı koştu"], "answer": 1, "explanation": "Sıfat + isim = sıfat tamlaması." },
+            { "id": "td3", "text": "Türkçede kaç ünlü harf var?", "options": ["6","7","8","9"], "answer": 2, "explanation": "8 ünlü: a,e,ı,i,o,ö,u,ü" },
+            { "id": "td4", "text": "'Dün hava soğuktu.' cümlesinin öznesi?", "options": ["Dün","Akşam","Hava","Soğuktu"], "answer": 2, "explanation": "Yüklemi gerçekleştiren varlık: hava." },
+            { "id": "td5", "text": "'Gözü açık' deyiminin anlamı?", "options": ["Gözleri açık","Uyanık ve dikkatli","Görmede güçlük","Meraklı"], "answer": 1, "explanation": "Uyanık, kurnaz, etrafından haberdar." },
+            { "id": "td6", "text": "Hangi cümle soru cümlesi?", "options": ["Ne güzel gün!","Kapıyı kapat.","Bu kitap kimin?","Çok yoruldum."], "answer": 2, "explanation": "'Bu kitap kimin?' soru bildiriyor." },
+            { "id": "td7", "text": "Eş anlamlı çift hangisi?", "options": ["Gelmek-Gitmek","Büyük-Ulu","Açık-Kapalı","Hızlı-Yavaş"], "answer": 1, "explanation": "Büyük ve ulu benzer anlam taşır." },
+            { "id": "td8", "text": "'Kara haber'de 'kara' hangi anlamda?", "options": ["Renk","Kötü","Büyük","Karanlık"], "answer": 1, "explanation": "Mecaz anlamıyla kötü, üzücü." }
+          ]
+        },
+        {
+          "id": "tr_anlam",
+          "title": "Sözcükte Anlam",
+          "difficulty": "medium",
+          "xp": 100,
+          "time": 360,
+          "questions": [
+            { "id": "ta1", "text": "Atasözü hangisi?", "options": ["Ne ekersen onu biçersin","Gözü açık","Canı sıkılmak","Elden düşme"], "answer": 0, "explanation": "Atasözleri kalıplaşmış öğüt bildiren ifadelerdir." },
+            { "id": "ta2", "text": "Zıt anlamlı çift?", "options": ["Büyük-Ulu","Açık-Kapalı","Güzel-Hoş","Hızlı-Çabuk"], "answer": 1, "explanation": "Açık ↔ Kapalı zıt anlamlıdır." },
+            { "id": "ta3", "text": "Birleşik sözcük hangisi?", "options": ["Kalem","Gözlük","Bardak","Kitap"], "answer": 1, "explanation": "Gözlük = göz + lük (birleşik)." },
+            { "id": "ta4", "text": "'Ayak bağı olmak' deyimi ne demek?", "options": ["Ayağa takılmak","Engel olmak","Yorulmak","Yardım etmek"], "answer": 1, "explanation": "Engel olmak, ilerlemeyi durdurmak." },
+            { "id": "ta5", "text": "Terim nedir?", "options": ["Her alanda kullanılan sözcük","Belirli bir alanda özel anlam taşıyan sözcük","Argo sözcük","Deyim"], "answer": 1, "explanation": "Terim: bilim, sanat, meslek alanına özgü sözcükler." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "name": "İngilizce",
+      "icon": "🌍",
+      "color": "#ff6b6b",
+      "grade": 0,
+      "tests": [
+        {
+          "id": "eng_basic",
+          "title": "Temel İngilizce",
+          "difficulty": "easy",
+          "xp": 80,
+          "time": 300,
+          "questions": [
+            { "id": "en1", "text": "'Elma' İngilizcesi?", "options": ["Orange","Apple","Banana","Grape"], "answer": 1, "explanation": "Apple = Elma" },
+            { "id": "en2", "text": "Renk olmayan hangisi?", "options": ["Red","Blue","Table","Green"], "answer": 2, "explanation": "Table = Masa (nesne, renk değil)." },
+            { "id": "en3", "text": "'I ___ a student.' boşluğa ne?", "options": ["is","are","am","be"], "answer": 2, "explanation": "I ile 'am' kullanılır." },
+            { "id": "en4", "text": "'Good morning' ne demek?", "options": ["İyi akşamlar","İyi geceler","Günaydın","Merhaba"], "answer": 2, "explanation": "Good morning = Günaydın." },
+            { "id": "en5", "text": "Hayvan olmayan hangisi?", "options": ["Cat","Dog","Car","Bird"], "answer": 2, "explanation": "Car = Araba." },
+            { "id": "en6", "text": "'She ___ to school.' boşluğa ne?", "options": ["go","goes","going","gone"], "answer": 1, "explanation": "3. tekil şahıs: -s/-es alır → goes." },
+            { "id": "en7", "text": "Three, One, Two'yu sırala.", "options": ["1-2-3","3-1-2","2-3-1","1-3-2"], "answer": 0, "explanation": "One=1, Two=2, Three=3." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "geography",
+      "name": "Coğrafya",
+      "icon": "🌏",
+      "color": "#63dbff",
+      "grade": 0,
+      "tests": [
+        {
+          "id": "geo_turkiye",
+          "title": "Türkiye Coğrafyası",
+          "difficulty": "easy",
+          "xp": 90,
+          "time": 300,
+          "questions": [
+            { "id": "g1", "text": "Türkiye'nin başkenti?", "options": ["İstanbul","Bursa","Ankara","İzmir"], "answer": 2, "explanation": "Ankara 1923'ten beri başkent." },
+            { "id": "g2", "text": "Türkiye kaç coğrafi bölgeye ayrılır?", "options": ["5","6","7","8"], "answer": 2, "explanation": "7 coğrafi bölge." },
+            { "id": "g3", "text": "En büyük göl?", "options": ["Tuz Gölü","Eğirdir","Van Gölü","Burdur"], "answer": 2, "explanation": "Van Gölü ~3.713 km²." },
+            { "id": "g4", "text": "En uzun nehir?", "options": ["Fırat","Kızılırmak","Dicle","Sakarya"], "answer": 1, "explanation": "Kızılırmak ~1.355 km." },
+            { "id": "g5", "text": "Türkiye hangi kıtalarda?", "options": ["Yalnızca Asya","Yalnızca Avrupa","Asya ve Avrupa","Afrika"], "answer": 2, "explanation": "%97 Asya, %3 Avrupa." },
+            { "id": "g6", "text": "Karadeniz bölgesinin özelliği?", "options": ["En az yağışlı","Yazın kurak","En fazla yağış alan bölge","Çöl iklimine sahip"], "answer": 2, "explanation": "Karadeniz bölgesi Türkiye'nin en fazla yağış alan bölgesidir." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lgs_prep",
+      "name": "LGS Hazırlık",
+      "icon": "🎯",
+      "color": "#ffd166",
+      "grade": 8,
+      "tests": [
+        {
+          "id": "lgs_mat",
+          "title": "LGS Matematik",
+          "difficulty": "hard",
+          "xp": 200,
+          "time": 600,
+          "questions": [
+            { "id": "lm1", "text": "2²⁰¹⁹ + 2²⁰¹⁸ - 2²⁰¹⁷ = 2²⁰¹⁷ × ?", "options": ["5","4","6","3"], "answer": 0, "explanation": "2²⁰¹⁷(4+2-1)=5×2²⁰¹⁷" },
+            { "id": "lm2", "text": "64 cm² karenin köşegeni?", "options": ["8√2","8","16","4√2"], "answer": 0, "explanation": "Kenar=8, köşegen=8√2" },
+            { "id": "lm3", "text": "x²-5x+6=0 kökleri?", "options": ["2 ve 3","1 ve 6","-2 ve -3","3 ve 4"], "answer": 0, "explanation": "(x-2)(x-3)=0" },
+            { "id": "lm4", "text": "Sayının %30'u=45, sayı=?", "options": ["135","150","120","140"], "answer": 1, "explanation": "x=45/0,3=150" },
+            { "id": "lm5", "text": "5 ardışık çift sayı ortalaması 18, en büyüğü?", "options": ["20","22","24","26"], "answer": 1, "explanation": "14,16,18,20,22 → en büyük 22" },
+            { "id": "lm6", "text": "Kenarlar 7 ve 10 cm, 3. kenar aralığı?", "options": ["3<c<17","0<c<17","3≤c≤17","1<c<10"], "answer": 0, "explanation": "|7-10|<c<7+10 → 3<c<17" },
+            { "id": "lm7", "text": "A={1,2,3,4,5}, B={3,4,5,6,7} → A∩B=?", "options": ["{3,4,5}","{1,2,6,7}","{1..7}","{}"], "answer": 0, "explanation": "Kesişim: {3,4,5}" },
+            { "id": "lm8", "text": "f(x)=3x-2 → f(5)-f(2)=?", "options": ["7","9","3","6"], "answer": 1, "explanation": "f(5)=13, f(2)=4, 13-4=9" }
+          ]
+        },
+        {
+          "id": "lgs_fen",
+          "title": "LGS Fen Bilimleri",
+          "difficulty": "hard",
+          "xp": 200,
+          "time": 600,
+          "questions": [
+            { "id": "lf1", "text": "DNA'daki bazlar?", "options": ["A,G,C,U","A,T,G,C","A,T,G,U","T,C,U,G"], "answer": 1, "explanation": "DNA: Adenin, Timin, Guanin, Sitozin." },
+            { "id": "lf2", "text": "Mitoz sonucu?", "options": ["2 hücre, aynı genetik","4 hücre, farklı","2 hücre, farklı","4 hücre, aynı"], "answer": 0, "explanation": "Mitoz: 2 yavru, aynı 2n." },
+            { "id": "lf3", "text": "pH<7 ne anlama gelir?", "options": ["Nötr","Bazik","Asidik","Tuzlu"], "answer": 2, "explanation": "pH<7 asidik." },
+            { "id": "lf4", "text": "Direnç 2 kat artar, akım ne olur?", "options": ["2 kat artar","Yarıya düşer","4 kat artar","Değişmez"], "answer": 1, "explanation": "I=V/R; R↑2× → I↓2×" },
+            { "id": "lf5", "text": "Güneş sisteminin en büyük gezegeni?", "options": ["Satürn","Neptün","Jüpiter","Uranüs"], "answer": 2, "explanation": "Jüpiter en büyük gezegendir." }
+          ]
+        }
+      ]
+    }
+  ]
+}
