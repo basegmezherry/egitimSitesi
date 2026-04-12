@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Denklem Düellosu — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <style>
+    .game-container{max-width:600px;margin:0 auto;padding:24px;}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+    .stat-row{display:flex;justify-content:space-between;margin-bottom:16px;}
+    .stat{text-align:center;}
+    .stat-val{font-size:22px;font-weight:700;color:var(--primary);font-family:var(--font-display);}
+    .stat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+    .eq-card{background:rgba(0,245,212,0.05);border:2px solid rgba(0,245,212,0.2);border-radius:var(--radius-lg);padding:32px;margin:20px 0;}
+    .eq-type{font-size:11px;color:var(--primary);font-weight:700;letter-spacing:2px;margin-bottom:12px;}
+    .eq-text{font-size:28px;font-weight:800;color:var(--text);font-family:var(--font-display);letter-spacing:2px;}
+    .eq-sub{font-size:14px;color:var(--text-muted);margin-top:8px;}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+    .opt-btn{background:rgba(255,255,255,0.03);border:2px solid var(--border);border-radius:10px;padding:18px;color:var(--text);font-family:var(--font-display);font-size:22px;font-weight:700;cursor:pointer;transition:var(--transition);}
+    .opt-btn:hover:not(:disabled){border-color:rgba(0,245,212,0.4);background:rgba(0,245,212,0.05);transform:scale(1.02);}
+    .opt-btn.correct{border-color:var(--success);background:rgba(0,200,150,0.15);color:var(--success);}
+    .opt-btn.wrong{border-color:var(--danger);background:rgba(255,71,87,0.1);color:var(--danger);}
+    .timer-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:16px;overflow:hidden;}
+    .timer-fill{height:100%;background:linear-gradient(90deg,var(--success),var(--primary));border-radius:3px;transition:width 0.1s linear;}
+    .progress-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:16px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:3px;transition:width 0.4s;}
+    @media(max-width:480px){.eq-text{font-size:22px;}.options{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<div class="page-wrapper">
+  <div class="game-container">
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">⚔️</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:12px">Denklem Düellosu</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Denklemi çöz, X'i bul! Her soruda 15 saniye. 20 denklem.</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">⚔️ Düelloya Başla</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div class="stat-row">
+        <div class="stat"><div class="stat-val" id="scoreD">0</div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="qNumD">1/20</div><div class="stat-lbl">Denklem</div></div>
+        <div class="stat"><div class="stat-val" id="timerD">15</div><div class="stat-lbl">Saniye</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:5%"></div></div>
+      <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+      <div class="eq-card">
+        <div class="eq-type" id="eqType">DENKLEM</div>
+        <div class="eq-text" id="eqText">x + 5 = 12</div>
+        <div class="eq-sub">X = ?</div>
+      </div>
+      <div class="options" id="opts"></div>
+    </div>
+
+    <div id="endScreen" class="game-screen" style="display:none">
+      <div class="big-emoji" id="endEmoji">🏆</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:8px">Düello Bitti!</h2>
+      <p id="endMsg" style="color:var(--text-muted);margin-bottom:24px"></p>
+      <div style="display:flex;gap:24px;justify-content:center;margin-bottom:32px">
+        <div class="stat"><div class="stat-val" id="finalScore" style="font-size:36px"></div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="finalCorrect" style="font-size:36px;color:var(--success)"></div><div class="stat-lbl">Doğru</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn" style="background:rgba(255,255,255,0.04);border-color:var(--border)">← Oyunlar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/main.js"></script>
+<script>
+function genEquations(){
+  const eqs=[];
+  // x + a = b
+  for(let i=0;i<5;i++){
+    const a=Math.floor(Math.random()*20)+1, x=Math.floor(Math.random()*30)+1;
+    eqs.push({text:`x + ${a} = ${x+a}`,answer:x,type:'Toplama',distractors:[x-1,x+1,x+2]});
+  }
+  // x - a = b
+  for(let i=0;i<4;i++){
+    const a=Math.floor(Math.random()*15)+1, x=Math.floor(Math.random()*25)+5;
+    eqs.push({text:`x − ${a} = ${x-a}`,answer:x,type:'Çıkarma',distractors:[x-1,x+1,x-2]});
+  }
+  // a * x = b
+  for(let i=0;i<4;i++){
+    const a=Math.floor(Math.random()*8)+2, x=Math.floor(Math.random()*10)+1;
+    eqs.push({text:`${a} × x = ${a*x}`,answer:x,type:'Çarpma',distractors:[x-1,x+1,x+2]});
+  }
+  // x / a = b
+  for(let i=0;i<4;i++){
+    const a=Math.floor(Math.random()*8)+2, x=Math.floor(Math.random()*5)+1;
+    eqs.push({text:`x ÷ ${a} = ${x}`,answer:a*x,type:'Bölme',distractors:[a*x-1,a*x+1,a*(x+1)]});
+  }
+  // 2-step: ax + b = c
+  for(let i=0;i<4;i++){
+    const a=Math.floor(Math.random()*5)+2, b=Math.floor(Math.random()*10)+1, x=Math.floor(Math.random()*8)+1;
+    eqs.push({text:`${a}x + ${b} = ${a*x+b}`,answer:x,type:'İki Adımlı',distractors:[x-1,x+1,x+2]});
+  }
+  return eqs;
+}
+
+let questions=[],current=0,score=0,correct=0,streak=0;
+let timerInterval=null,timeLeft=0;
+
+function shuffleArr(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function startGame(){
+  questions=shuffleArr(genEquations()).slice(0,20);
+  current=0;score=0;correct=0;streak=0;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(current>=questions.length){endGame();return;}
+  clearInterval(timerInterval);
+  const q=questions[current];
+  document.getElementById('eqText').textContent=q.text;
+  document.getElementById('eqType').textContent=q.type.toUpperCase();
+  document.getElementById('qNumD').textContent=`${current+1}/20`;
+  document.getElementById('progFill').style.width=`${(current/20)*100}%`;
+
+  const opts=shuffleArr([q.answer,...q.distractors.filter(d=>d!==q.answer)]).slice(0,4);
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML='';
+  opts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';
+    b.textContent=opt;
+    b.onclick=()=>selectAnswer(b,opt===q.answer,optsEl);
+    optsEl.appendChild(b);
+  });
+
+  timeLeft=15;
+  updateTimer();
+  timerInterval=setInterval(()=>{
+    timeLeft-=0.1;
+    updateTimer();
+    if(timeLeft<=0){clearInterval(timerInterval);timeExpired();}
+  },100);
+}
+
+function updateTimer(){
+  const t=Math.ceil(timeLeft);
+  document.getElementById('timerD').textContent=t;
+  document.getElementById('timerFill').style.width=`${(timeLeft/15)*100}%`;
+  document.getElementById('timerFill').style.background=timeLeft>7?'linear-gradient(90deg,var(--success),var(--primary))':timeLeft>4?'linear-gradient(90deg,var(--warning),var(--warning))':'linear-gradient(90deg,var(--danger),var(--danger))';
+}
+
+function timeExpired(){
+  streak=0;
+  Array.from(document.getElementById('opts').children).forEach(b=>b.disabled=true);
+  current++;
+  setTimeout(loadQuestion,400);
+}
+
+function selectAnswer(btn,isCorrect,optsEl){
+  clearInterval(timerInterval);
+  Array.from(optsEl.children).forEach(b=>b.disabled=true);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    const ans=questions[current].answer;
+    Array.from(optsEl.children).forEach(b=>{if(parseInt(b.textContent)===ans)b.classList.add('correct');});
+  }
+  if(isCorrect){const pts=Math.ceil(timeLeft/15*100)+streak*10;score+=pts;correct++;streak++;}
+  else{streak=0;}
+  document.getElementById('scoreD').textContent=score;
+  current++;
+  setTimeout(loadQuestion,700);
+}
+
+function endGame(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalCorrect').textContent=correct+'/20';
+  const pct=correct/20;
+  document.getElementById('endEmoji').textContent=pct>=0.8?'🏆':pct>=0.5?'⭐':'💪';
+  document.getElementById('endMsg').textContent=pct>=0.8?'Denklem çözme ustasısın!':pct>=0.5?'İyi! Daha hızlan!':'Denklemleri pratik et!';
+  if(window.EduPlay) EduPlay.addXP(Math.floor(score/10));
+}
+</script>
+</body>
+</html>

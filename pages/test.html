@@ -285,6 +285,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="../js/question-loader.js"></script>
 <script src="../js/main.js"></script>
 <script>
 let allTests = [];
@@ -493,5 +494,87 @@ function retryTest() {
 document.addEventListener('DOMContentLoaded', loadTests);
 </script>
   <script src="js/ads.js"></script>
+
+<script>
+// Dinamik kategori yükleme
+async function loadCategoryList() {
+  const container = document.getElementById('testCategoryList');
+  if (!container) return;
+  
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-2)"><div class="anim-spin" style="display:inline-block;font-size:24px">⏳</div><br>Kategoriler yükleniyor...</div>';
+  
+  try {
+    const cats = await QuestionLoader.getAllCategories();
+    container.innerHTML = cats.map(cat => `
+      <div class="test-card" onclick="openCategory('${cat.id}','${cat.name}','${cat.icon}','${cat.color}')">
+        <div class="test-header">
+          <div style="width:44px;height:44px;border-radius:10px;background:${cat.color}22;display:flex;align-items:center;justify-content:center;font-size:22px">${cat.icon}</div>
+          <span class="badge" style="background:${cat.color}18;color:${cat.color};border:1px solid ${cat.color}30;font-size:11px">${cat.grade > 0 ? cat.grade+'. Sınıf' : 'Genel'}</span>
+        </div>
+        <div class="test-title">${cat.name}</div>
+        <div class="test-meta">
+          <span>📝 ${cat.testCount} test</span>
+          <span>❓ ${cat.questionCount} soru</span>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:${Math.random()*60+10}%;background:${cat.color}"></div></div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<p style="color:var(--text-2);text-align:center">Kategoriler yüklenirken hata oluştu.</p>';
+  }
+}
+
+async function openCategory(catId, catName, catIcon, catColor) {
+  const listView  = document.getElementById('testListView');
+  const catView   = document.getElementById('categoryView');
+  const catTitle  = document.getElementById('catViewTitle');
+  const testList  = document.getElementById('testListInCat');
+  
+  if (!catView) return;
+  
+  listView.style.display = 'none';
+  catView.style.display  = 'block';
+  catTitle.textContent   = catIcon + ' ' + catName;
+  testList.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-2)">⏳ Testler yükleniyor...</div>';
+  
+  const tests = await QuestionLoader.getTestList(catId);
+  const DIFF_LABEL = {easy:'🟢 Kolay', medium:'🟡 Orta', hard:'🔴 Zor'};
+  const DIFF_COLOR = {easy:'var(--lime)', medium:'var(--gold)', hard:'var(--coral)'};
+  
+  testList.innerHTML = tests.map(t => `
+    <div class="test-card" onclick="startTest('${catId}','${t.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="test-title">${t.title}</div>
+        <span style="font-size:11px;font-weight:700;color:${DIFF_COLOR[t.difficulty]}">${DIFF_LABEL[t.difficulty]||t.difficulty}</span>
+      </div>
+      <div class="test-meta">
+        <span>❓ ${t.questionCount} soru</span>
+        <span>⏱ ${Math.round(t.time/60)} dk</span>
+        <span>⚡ ${t.xp} XP</span>
+      </div>
+    </div>
+  `).join('');
+  
+  window._currentCatId = catId;
+}
+
+async function startTest(catId, testId) {
+  const test = await QuestionLoader.getTest(catId, testId);
+  if (!test) { alert('Test yüklenemedi!'); return; }
+  
+  // Mevcut quiz motoru ile başlat
+  if (typeof window.startQuizWithData === 'function') {
+    window.startQuizWithData(test);
+  } else {
+    window._pendingTest = test;
+    document.getElementById('categoryView').style.display = 'none';
+    document.getElementById('testListView').style.display = 'none';
+    if (typeof beginQuiz === 'function') beginQuiz(test);
+  }
+}
+
+// Sayfa yüklendiğinde kategori listesini yükle
+document.addEventListener('DOMContentLoaded', loadCategoryList);
+</script>
 </body>
 </html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Coğrafya Ustası — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <style>
+    .game-container{max-width:600px;margin:0 auto;padding:24px;}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+    .stat-row{display:flex;justify-content:space-between;margin-bottom:16px;}
+    .stat{text-align:center;}
+    .stat-val{font-size:22px;font-weight:700;color:var(--primary);font-family:var(--font-display);}
+    .stat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+    .q-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;margin:16px 0;}
+    .q-category{font-size:11px;color:var(--primary);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+    .q-text{font-size:18px;font-weight:600;color:var(--text);line-height:1.6;}
+    .q-emoji{font-size:36px;margin-bottom:12px;}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+    .opt-btn{background:rgba(255,255,255,0.03);border:2px solid var(--border);border-radius:10px;padding:14px 10px;color:var(--text);font-size:13px;cursor:pointer;transition:var(--transition);font-family:var(--font-body);text-align:left;line-height:1.4;}
+    .opt-btn:hover:not(:disabled){border-color:rgba(0,245,212,0.4);background:rgba(0,245,212,0.05);}
+    .opt-btn.correct{border-color:var(--success);background:rgba(0,200,150,0.15);color:var(--success);}
+    .opt-btn.wrong{border-color:var(--danger);background:rgba(255,71,87,0.1);color:var(--danger);}
+    .explanation{background:rgba(0,245,212,0.05);border:1px solid rgba(0,245,212,0.15);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--text-muted);margin-top:10px;display:none;text-align:left;}
+    .progress-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:16px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:3px;transition:width 0.4s;}
+    .timer-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+    .timer-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.1s linear;}
+    @media(max-width:480px){.options{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<div class="page-wrapper">
+  <div class="game-container">
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">🌍</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:12px">Coğrafya Ustası</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Türkiye ve Dünya coğrafyası — 20 soru, her biri için 15 saniye!</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">🌍 Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div class="stat-row">
+        <div class="stat"><div class="stat-val" id="scoreD">0</div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="qNumD">1/20</div><div class="stat-lbl">Soru</div></div>
+        <div class="stat"><div class="stat-val" id="streakD">0🔥</div><div class="stat-lbl">Seri</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:5%"></div></div>
+      <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+      <div class="q-card">
+        <div class="q-emoji" id="qEmoji">🌍</div>
+        <div class="q-category" id="qCat">KATEGORİ</div>
+        <div class="q-text" id="qText">Soru yükleniyor...</div>
+      </div>
+      <div class="options" id="opts"></div>
+      <div class="explanation" id="explBox"></div>
+    </div>
+
+    <div id="endScreen" class="game-screen" style="display:none">
+      <div class="big-emoji" id="endEmoji">🏆</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:8px">Bitti!</h2>
+      <p id="endMsg" style="color:var(--text-muted);margin-bottom:24px"></p>
+      <div style="display:flex;gap:24px;justify-content:center;margin-bottom:32px">
+        <div class="stat"><div class="stat-val" id="finalScore" style="font-size:36px"></div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="finalCorrect" style="font-size:36px;color:var(--success)"></div><div class="stat-lbl">Doğru</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn" style="background:rgba(255,255,255,0.04);border-color:var(--border)">← Oyunlar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/main.js"></script>
+<script>
+const QUESTIONS=[
+  {emoji:'🇹🇷',cat:'Türkiye',text:'Türkiye\'nin başkenti hangi şehirdir?',opts:['İstanbul','Ankara','İzmir','Bursa'],answer:1,expl:'Ankara, 13 Ekim 1923\'te başkent ilan edildi.'},
+  {emoji:'🗺️',cat:'Türkiye',text:'Türkiye kaç ilden oluşur?',opts:['72','79','81','85'],answer:2,expl:'Türkiye 81 ilden oluşur.'},
+  {emoji:'🌊',cat:'Türkiye',text:'Türkiye\'nin güneyinde hangi deniz yer alır?',opts:['Karadeniz','Ege Denizi','Akdeniz','Marmara Denizi'],answer:2,expl:'Akdeniz Türkiye\'nin güney kıyılarını çevreler.'},
+  {emoji:'⛰️',cat:'Türkiye',text:'Türkiye\'nin en yüksek dağı hangisidir?',opts:['Erciyes','Uludağ','Ağrı Dağı','Kaçkar'],answer:2,expl:'Ağrı Dağı 5137 m ile Türkiye\'nin en yüksek noktasıdır.'},
+  {emoji:'🏙️',cat:'Türkiye',text:'Türkiye\'nin en kalabalık şehri hangisidir?',opts:['Ankara','İstanbul','İzmir','Bursa'],answer:1,expl:'İstanbul yaklaşık 15-16 milyon nüfusuyla en kalabalık şehirdir.'},
+  {emoji:'🌊',cat:'Türkiye',text:'Boğaziçi hangi şehirleri birbirine bağlar?',opts:['İstanbul-Çanakkale','İstanbul\'un Avrupa ve Asya yakasını','İzmir-Ankara','Bursa-İstanbul'],answer:1,expl:'Boğaziçi, İstanbul\'un Avrupa ve Asya yakalarını birbirine bağlar.'},
+  {emoji:'🏔️',cat:'Türkiye',text:'Fırat ve Dicle nehirleri hangi bölgeden doğar?',opts:['Karadeniz','Ege','İç Anadolu','Doğu Anadolu'],answer:3,expl:'Her iki nehir de Doğu Anadolu\'daki dağlardan kaynağını alır.'},
+  {emoji:'🌡️',cat:'Türkiye',text:'Hangi bölge Türkiye\'nin en yağışlı bölgesidir?',opts:['Ege','Akdeniz','Karadeniz','İç Anadolu'],answer:2,expl:'Karadeniz Bölgesi yıl boyunca yüksek yağış alır.'},
+  {emoji:'🌍',cat:'Dünya',text:'Dünyanın en uzun nehri hangisidir?',opts:['Amazon','Nil','Yangtze','Mississippi'],answer:1,expl:'Nil Nehri yaklaşık 6650 km uzunluğuyla dünyanın en uzun nehridir.'},
+  {emoji:'🏔️',cat:'Dünya',text:'Dünyanın en yüksek dağı hangisidir?',opts:['K2','Everest','Kangchenjunga','Lhotse'],answer:1,expl:'Everest 8849 m ile dünyanın en yüksek zirvesidir.'},
+  {emoji:'🌍',cat:'Dünya',text:'En büyük kıta hangisidir?',opts:['Afrika','Amerika','Asya','Avrupa'],answer:2,expl:'Asya, yaklaşık 44 milyon km² ile dünyanın en büyük kıtasıdır.'},
+  {emoji:'🌊',cat:'Dünya',text:'En büyük okyanus hangisidir?',opts:['Atlantik','Hint','Arktik','Pasifik'],answer:3,expl:'Pasifik Okyanusu, tüm kıtaların yüzeyinden büyük olan tek okyanustur.'},
+  {emoji:'🗾',cat:'Dünya',text:'Japonya\'nın başkenti neresidir?',opts:['Osaka','Kyoto','Tokyo','Nagoya'],answer:2,expl:'Tokyo, Japonya\'nın başkenti ve dünyanın en kalabalık şehirlerinden biridir.'},
+  {emoji:'🇧🇷',cat:'Dünya',text:'Brezilya\'nın başkenti neresidir?',opts:['Rio de Janeiro','São Paulo','Brasília','Salvador'],answer:2,expl:'Brezilya\'nın başkenti Brasília\'dır, 1960\'ta yapılan planlı bir şehir.'},
+  {emoji:'🌍',cat:'Dünya',text:'En fazla ülkeyi kapsayan kıta hangisidir?',opts:['Asya','Afrika','Avrupa','Amerika'],answer:1,expl:'Afrika 54 bağımsız ülkesiyle en fazla ülkeye sahip kıtadır.'},
+  {emoji:'❄️',cat:'Dünya',text:'Dünya\'nın en soğuk kıtası hangisidir?',opts:['Arktik','Avrupa','Asya','Antarktika'],answer:3,expl:'Antarktika, ortalama -57°C ile dünyanın en soğuk kıtasıdır.'},
+  {emoji:'🌊',cat:'Türkiye',text:'Türkiye hangi denizlerle çevrilidir? (Kaç tane?)',opts:['2','3','4','5'],answer:2,expl:'Karadeniz, Ege, Akdeniz ve Marmara — 4 deniz.'},
+  {emoji:'🏗️',cat:'Türkiye',text:'Türkiye\'nin en uzun nehri hangisidir?',opts:['Fırat','Kızılırmak','Dicle','Sakarya'],answer:1,expl:'Kızılırmak yaklaşık 1355 km ile Türkiye\'nin tamamen iç sınırlarda kalan en uzun nehridir.'},
+  {emoji:'🌋',cat:'Dünya',text:'\"Ateş Çemberi\" hangi okyanus kıyısında yer alır?',opts:['Atlantik','Hint','Pasifik','Arktik'],answer:2,expl:'Pasifik Ateş Çemberi, dünyanın en aktif volkanik ve sismik bölgesidir.'},
+  {emoji:'🗺️',cat:'Dünya',text:'Amazon Ormanı hangi kıtada yer alır?',opts:['Afrika','Asya','Avustralya','Güney Amerika'],answer:3,expl:'Amazon Ormanı ağırlıklı olarak Brezilya\'da, Güney Amerika\'da bulunur.'},
+  {emoji:'🇹🇷',cat:'Türkiye',text:'Türkiye\'nin en güneydoğusundaki il hangisidir?',opts:['Şırnak','Hakkari','Mardin','Gaziantep'],answer:1,expl:'Hakkari, Türkiye\'nin en güneydoğusundaki illerden biridir.'},
+  {emoji:'🌊',cat:'Türkiye',text:'Çanakkale Boğazı hangi denizleri birbirine bağlar?',opts:['Karadeniz-Ege','Ege-Akdeniz','Marmara-Ege','Karadeniz-Marmara'],answer:2,expl:'Çanakkale Boğazı, Marmara Denizi ile Ege Denizi\'ni birbirine bağlar.'},
+  {emoji:'⛵',cat:'Türkiye',text:'Türkiye\'nin en büyük gölü hangisidir?',opts:['Tuz Gölü','Van Gölü','Beyşehir','Eğirdir'],answer:1,expl:'Van Gölü yaklaşık 3755 km² ile Türkiye\'nin en büyük gölüdür.'},
+  {emoji:'🌍',cat:'Dünya',text:'Sahara Çölü hangi kıtada yer alır?',opts:['Asya','Güney Amerika','Avustralya','Afrika'],answer:3,expl:'Sahara, Afrika\'nın kuzeyinde yer alan dünyanın en büyük sıcak çölüdür.'},
+  {emoji:'🏔️',cat:'Türkiye',text:'Türkiye\'nin en uzun kıyı şeridi hangi denize aittir?',opts:['Karadeniz','Ege','Akdeniz','Marmara'],answer:1,expl:'Karadeniz kıyısı yaklaşık 1700 km ile Türkiye\'nin en uzun kıyı şerididir.'},
+];
+
+let questions=[],current=0,score=0,correct=0,streak=0;
+let timerInterval=null,timeLeft=0;
+
+function shuffleArr(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function startGame(){
+  questions=shuffleArr(QUESTIONS).slice(0,20);
+  current=0;score=0;correct=0;streak=0;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(current>=questions.length){endGame();return;}
+  clearInterval(timerInterval);
+  document.getElementById('explBox').style.display='none';
+  const q=questions[current];
+  document.getElementById('qEmoji').textContent=q.emoji;
+  document.getElementById('qCat').textContent=q.cat;
+  document.getElementById('qText').textContent=q.text;
+  document.getElementById('qNumD').textContent=`${current+1}/20`;
+  document.getElementById('streakD').textContent=`${streak}🔥`;
+  document.getElementById('progFill').style.width=`${(current/20)*100}%`;
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';
+    b.textContent=opt;
+    b.onclick=()=>selectAnswer(b,i===q.answer,optsEl,q);
+    optsEl.appendChild(b);
+  });
+  timeLeft=15;
+  timerInterval=setInterval(()=>{
+    timeLeft-=0.1;
+    document.getElementById('timerFill').style.width=`${(timeLeft/15)*100}%`;
+    if(timeLeft<=0){clearInterval(timerInterval);timeExpired(optsEl,q);}
+  },100);
+}
+
+function timeExpired(optsEl,q){
+  streak=0;
+  Array.from(optsEl.children).forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add('correct');});
+  showExpl(q);
+  current++;setTimeout(loadQuestion,1200);
+}
+
+function selectAnswer(btn,isCorrect,optsEl,q){
+  clearInterval(timerInterval);
+  Array.from(optsEl.children).forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add('correct');});
+  if(!isCorrect)btn.classList.add('wrong');
+  if(isCorrect){score+=100+streak*10;correct++;streak++;}else{streak=0;}
+  document.getElementById('scoreD').textContent=score;
+  showExpl(q);
+  current++;setTimeout(loadQuestion,1200);
+}
+
+function showExpl(q){
+  const el=document.getElementById('explBox');
+  el.textContent='💡 '+q.expl;
+  el.style.display='block';
+}
+
+function endGame(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalCorrect').textContent=correct+'/20';
+  const pct=correct/20;
+  document.getElementById('endEmoji').textContent=pct>=0.8?'🏆':pct>=0.5?'⭐':'💪';
+  document.getElementById('endMsg').textContent=pct>=0.8?'Coğrafya ustasısın!':pct>=0.5?'İyi! Haritaları biraz daha çalış.':'Türkiye ve Dünya haritasını incele!';
+  if(window.EduPlay) EduPlay.addXP(Math.floor(score/10));
+}
+</script>
+</body>
+</html>

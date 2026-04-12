@@ -2,14 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://eduplay.com.tr/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://eduplay.com.tr/pages/learn.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/test.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/test.html</loc><changefreq>daily</changefreq><priority>0.95</priority></url>
   <url><loc>https://eduplay.com.tr/pages/games.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/leaderboard.html</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/dashboard.html</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/daily.html</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/search.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/achievements.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/notes.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/calendar.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/shop.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/apk.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/about.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://eduplay.com.tr/pages/games/math-rush.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://eduplay.com.tr/pages/games/memory-match.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/games/quiz-blitz.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/games/word-hunt.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/games/word-chain.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/leaderboard.html</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/about.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://eduplay.com.tr/pages/apk.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/games/sudoku.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/games/typing-race.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/games/crossword.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/games/hangman.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://eduplay.com.tr/pages/games/game-2048.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

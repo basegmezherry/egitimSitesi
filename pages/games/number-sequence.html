@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sayı Dizisi — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css" />
+  <style>
+    .game-container{max-width:600px;margin:0 auto;padding:24px;}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+    .stat-row{display:flex;justify-content:space-between;margin-bottom:16px;font-family:var(--font-display);}
+    .stat{text-align:center;}
+    .stat-val{font-size:22px;font-weight:700;color:var(--primary);}
+    .stat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+    .sequence-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin:20px 0;}
+    .seq-nums{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+    .seq-num{width:56px;height:56px;background:rgba(0,245,212,0.08);border:2px solid rgba(0,245,212,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;font-family:var(--font-display);color:var(--primary);}
+    .seq-num.missing{background:rgba(255,255,255,0.03);border:2px dashed var(--text-muted);color:var(--text-muted);font-size:28px;}
+    .seq-rule{font-size:13px;color:var(--text-muted);margin-bottom:4px;}
+    .options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    .opt-btn{background:rgba(255,255,255,0.03);border:2px solid var(--border);border-radius:8px;padding:16px 8px;color:var(--text);font-family:var(--font-display);font-size:20px;font-weight:700;cursor:pointer;transition:var(--transition);}
+    .opt-btn:hover:not(:disabled){border-color:rgba(0,245,212,0.4);background:rgba(0,245,212,0.05);}
+    .opt-btn.correct{border-color:var(--success);background:rgba(0,200,150,0.15);color:var(--success);}
+    .opt-btn.wrong{border-color:var(--danger);background:rgba(255,71,87,0.1);color:var(--danger);}
+    .progress-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:3px;transition:width 0.4s;}
+    .diff-tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;display:inline-block;margin-bottom:16px;}
+    .diff-easy{background:rgba(0,200,150,0.15);color:var(--success);}
+    .diff-medium{background:rgba(255,209,0,0.15);color:var(--warning);}
+    .diff-hard{background:rgba(255,71,87,0.1);color:var(--danger);}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<div class="page-wrapper">
+  <div class="game-container">
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">🔢</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:12px">Sayı Dizisi</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Dizinin kuralını bul ve eksik sayıyı tamamla! 20 dizi, artan zorluk.</p>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">🔢 Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div class="stat-row">
+        <div class="stat"><div class="stat-val" id="scoreD">0</div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="qNumD">1/20</div><div class="stat-lbl">Dizi</div></div>
+        <div class="stat"><div class="stat-val" id="streakD">0🔥</div><div class="stat-lbl">Seri</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:5%"></div></div>
+      <div class="diff-tag" id="diffTag">KOLAY</div>
+      <div class="sequence-box">
+        <div class="seq-nums" id="seqNums"></div>
+        <div class="seq-rule" id="seqRule"></div>
+      </div>
+      <div class="options" id="opts"></div>
+    </div>
+
+    <div id="endScreen" class="game-screen" style="display:none">
+      <div class="big-emoji" id="endEmoji">🏆</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:8px">Bitti!</h2>
+      <p id="endMsg" style="color:var(--text-muted);margin-bottom:24px"></p>
+      <div style="display:flex;gap:24px;justify-content:center;margin-bottom:32px">
+        <div class="stat"><div class="stat-val" id="finalScore" style="font-size:36px"></div><div class="stat-lbl">Puan</div></div>
+        <div class="stat"><div class="stat-val" id="finalCorrect" style="font-size:36px;color:var(--success)"></div><div class="stat-lbl">Doğru</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn" style="background:rgba(255,255,255,0.04);border-color:var(--border)">← Oyunlar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/main.js"></script>
+<script>
+function genSequences(){
+  const seqs=[];
+  // Kolay: aritmetik
+  [[2,4,6,'?',10,12],[3,6,9,'?',15],[5,10,15,20,'?',30],[1,4,7,'?',13],[10,20,30,'?',50],
+   [2,5,8,'?',14],[100,90,80,'?',60],[1,3,5,'?',9,11]].forEach(seq=>{
+    const missingIdx=seq.indexOf('?');
+    const vals=seq.filter(v=>v!=='?');
+    const missing=seq[missingIdx-1]+seq[missingIdx+1];// guess from context... let me do it properly
+  });
+  // Daha iyi yaklaşım: doğrudan tanımlı sorular
+  return [
+    {nums:[2,4,6,'?',10],answer:8,rule:'Her sayı 2 artıyor',diff:'easy',distractors:[7,9,12]},
+    {nums:[3,6,9,'?',15],answer:12,rule:'Her sayı 3 artıyor',diff:'easy',distractors:[10,11,14]},
+    {nums:[5,10,15,'?',25],answer:20,rule:'Her sayı 5 artıyor',diff:'easy',distractors:[18,19,22]},
+    {nums:[1,3,5,'?',9],answer:7,rule:'Tek sayılar',diff:'easy',distractors:[6,8,10]},
+    {nums:[10,20,30,'?',50],answer:40,rule:'Her sayı 10 artıyor',diff:'easy',distractors:[35,38,45]},
+    {nums:[2,4,8,'?',32],answer:16,rule:'Her sayı 2 ile çarpılıyor',diff:'medium',distractors:[12,14,20]},
+    {nums:[1,2,4,'?',16],answer:8,rule:'Her sayı 2 ile çarpılıyor',diff:'medium',distractors:[6,7,10]},
+    {nums:[3,9,27,'?',243],answer:81,rule:'Her sayı 3 ile çarpılıyor',diff:'medium',distractors:[54,72,90]},
+    {nums:[100,50,25,'?'],answer:12.5,rule:'Her sayı 2\'ye bölünüyor',diff:'medium',distractors:[10,15,20]},
+    {nums:[1,1,2,3,5,'?',13],answer:8,rule:'Fibonacci: önceki iki sayı toplanıyor',diff:'medium',distractors:[7,9,11]},
+    {nums:[2,6,12,20,'?',42],answer:30,rule:'Farklar: 4,6,8,10... artıyor',diff:'hard',distractors:[25,28,35]},
+    {nums:[1,4,9,16,'?',36],answer:25,rule:'Tam kareler: 1²,2²,3²...',diff:'hard',distractors:[20,22,30]},
+    {nums:[1,8,27,64,'?'],answer:125,rule:'Tam küpler: 1³,2³,3³...',diff:'hard',distractors:[100,110,120]},
+    {nums:[0,1,3,6,10,'?'],answer:15,rule:'Üçgen sayılar',diff:'hard',distractors:[12,13,14]},
+    {nums:[2,3,5,7,11,'?'],answer:13,rule:'Asal sayılar',diff:'hard',distractors:[12,14,15]},
+    {nums:[4,8,16,32,'?',128],answer:64,rule:'Her sayı 2 ile çarpılıyor',diff:'medium',distractors:[48,56,72]},
+    {nums:[50,45,40,'?',30],answer:35,rule:'Her sayı 5 azalıyor',diff:'easy',distractors:[32,33,38]},
+    {nums:[1,2,6,24,'?'],answer:120,rule:'1×2, 2×3, 6×4, 24×5...',diff:'hard',distractors:[100,110,150]},
+    {nums:[7,14,21,'?',35],answer:28,rule:'Her sayı 7 artıyor',diff:'easy',distractors:[24,25,30]},
+    {nums:[2,3,5,8,12,'?'],answer:17,rule:'Farklar 1,2,3,4,5... artıyor',diff:'hard',distractors:[14,15,16]},
+  ];
+}
+
+const ALL_SEQS=genSequences();
+let questions=[], current=0, score=0, correct=0, streak=0;
+
+function shuffleArr(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function startGame(){
+  questions=shuffleArr(ALL_SEQS).slice(0,20);
+  current=0;score=0;correct=0;streak=0;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(current>=questions.length){endGame();return;}
+  const q=questions[current];
+  document.getElementById('qNumD').textContent=`${current+1}/20`;
+  document.getElementById('streakD').textContent=`${streak}🔥`;
+  document.getElementById('progFill').style.width=`${(current/20)*100}%`;
+  const diffEl=document.getElementById('diffTag');
+  diffEl.textContent=q.diff==='easy'?'KOLAY':q.diff==='medium'?'ORTA':'ZOR';
+  diffEl.className='diff-tag diff-'+q.diff;
+
+  // Render sequence
+  const seqEl=document.getElementById('seqNums');
+  seqEl.innerHTML='';
+  q.nums.forEach(n=>{
+    const d=document.createElement('div');
+    d.className='seq-num'+(n==='?'?' missing':'');
+    d.textContent=n==='?'?'?':n;
+    seqEl.appendChild(d);
+  });
+  document.getElementById('seqRule').textContent='Kuralı bul: ?';
+
+  // Options
+  const allOpts=shuffleArr([q.answer,...q.distractors]);
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML='';
+  allOpts.forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='opt-btn';
+    b.textContent=opt;
+    b.onclick=()=>selectAnswer(b,opt===q.answer,optsEl,q.rule);
+    optsEl.appendChild(b);
+  });
+}
+
+function selectAnswer(btn,isCorrect,optsEl,rule){
+  Array.from(optsEl.children).forEach(b=>b.disabled=true);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    Array.from(optsEl.children).forEach(b=>{if(b.textContent==questions[current].answer) b.classList.add('correct');});
+  }
+  if(isCorrect){score+=100+streak*15;correct++;streak++;}
+  else{streak=0;}
+  document.getElementById('scoreD').textContent=score;
+  document.getElementById('seqRule').textContent='💡 '+rule;
+  current++;
+  setTimeout(loadQuestion,900);
+}
+
+function endGame(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalCorrect').textContent=correct+'/20';
+  const pct=correct/20;
+  document.getElementById('endEmoji').textContent=pct>=0.8?'🏆':pct>=0.5?'⭐':'💪';
+  document.getElementById('endMsg').textContent=pct>=0.8?'Mükemmel! Sayı dehasısın!':pct>=0.5?'İyi! Örüntüleri çok iyi buluyorsun.':'Sayı örüntülerini pratik et!';
+  if(window.EduPlay) EduPlay.addXP(Math.floor(score/10));
+}
+</script>
+</body>
+</html>

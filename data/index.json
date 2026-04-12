@@ -1,0 +1,141 @@
+{
+  "version": "5.3",
+  "updated": "2026",
+  "totalQuestions": 25960,
+  "totalTests": 1298,
+  "totalGames": 20,
+  "categories": [
+    {
+      "id": "math5",
+      "name": "Matematik 5. Sınıf",
+      "icon": "🔢",
+      "color": "#63dbff",
+      "grade": 5,
+      "file": "questions/math5.json",
+      "testCount": 8,
+      "questionCount": 160,
+      "tags": [
+        "matematik",
+        "5.sınıf",
+        "kesir",
+        "yüzde",
+        "veri"
+      ]
+    },
+    {
+      "id": "math6",
+      "name": "Matematik 6. Sınıf",
+      "icon": "📐",
+      "color": "#b8ff4e",
+      "grade": 6,
+      "file": "questions/math6.json",
+      "testCount": 7,
+      "questionCount": 140,
+      "tags": [
+        "matematik",
+        "6.sınıf",
+        "oran",
+        "cebir",
+        "geometri"
+      ]
+    },
+    {
+      "id": "math78",
+      "name": "Matematik 7-8. & LGS",
+      "icon": "🧮",
+      "color": "#c77dff",
+      "grade": 8,
+      "file": "questions/math78.json",
+      "testCount": 5,
+      "questionCount": 100,
+      "tags": [
+        "matematik",
+        "lgs",
+        "cebir",
+        "olasılık",
+        "geometri"
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Fen Bilimleri",
+      "icon": "🔬",
+      "color": "#00c896",
+      "grade": 0,
+      "file": "questions/science.json",
+      "testCount": 10,
+      "questionCount": 200,
+      "tags": [
+        "fen",
+        "fizik",
+        "kimya",
+        "biyoloji",
+        "çevre"
+      ]
+    },
+    {
+      "id": "history",
+      "name": "Tarih",
+      "icon": "📜",
+      "color": "#ffd166",
+      "grade": 0,
+      "file": "questions/history.json",
+      "testCount": 8,
+      "questionCount": 160,
+      "tags": [
+        "tarih",
+        "osmanlı",
+        "atatürk",
+        "dünya tarihi"
+      ]
+    },
+    {
+      "id": "turkish_english",
+      "name": "Türkçe & İngilizce",
+      "icon": "📝",
+      "color": "#a29bfe",
+      "grade": 0,
+      "file": "questions/turkish_english.json",
+      "testCount": 7,
+      "questionCount": 140,
+      "tags": [
+        "türkçe",
+        "dil bilgisi",
+        "ingilizce",
+        "gramer"
+      ]
+    },
+    {
+      "id": "geography_social",
+      "name": "Coğrafya & Vatandaşlık",
+      "icon": "🌏",
+      "color": "#63dbff",
+      "grade": 0,
+      "file": "questions/geography_social.json",
+      "testCount": 6,
+      "questionCount": 120,
+      "tags": [
+        "coğrafya",
+        "türkiye",
+        "dünya",
+        "vatandaşlık"
+      ]
+    },
+    {
+      "id": "din_beden",
+      "name": "Din Kültürü & Sağlık",
+      "icon": "🕌",
+      "color": "#ff9f43",
+      "grade": 0,
+      "file": "questions/din_beden.json",
+      "testCount": 6,
+      "questionCount": 120,
+      "tags": [
+        "din",
+        "ibadet",
+        "ahlak",
+        "sağlık"
+      ]
+    }
+  ]
+}

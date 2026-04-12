@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Hız Matematik — EduPlay</title>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <style>
+    .game-container{max-width:500px;margin:0 auto;padding:24px;}
+    .game-screen{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px 32px;text-align:center;}
+    .big-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite;}
+    .countdown{font-size:80px;font-weight:900;font-family:var(--font-display);color:var(--primary);text-shadow:0 0 40px rgba(0,245,212,0.4);line-height:1;margin:16px 0;}
+    .time-bar{height:10px;background:rgba(255,255,255,0.06);border-radius:5px;margin:16px 0;overflow:hidden;}
+    .time-fill{height:100%;border-radius:5px;transition:width 0.1s linear;}
+    .score-big{font-size:48px;font-weight:900;font-family:var(--font-display);color:var(--warning);}
+    .combo{font-size:14px;color:var(--primary);font-weight:700;margin-bottom:8px;min-height:20px;}
+    .problem{font-size:40px;font-weight:800;color:var(--text);font-family:var(--font-display);margin:16px 0;letter-spacing:2px;}
+    .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto;}
+    .num-btn{background:rgba(255,255,255,0.05);border:2px solid var(--border);border-radius:12px;padding:18px;font-size:24px;font-weight:700;color:var(--text);cursor:pointer;transition:var(--transition);font-family:var(--font-display);}
+    .num-btn:hover:not(:disabled){background:rgba(0,245,212,0.08);border-color:rgba(0,245,212,0.3);}
+    .num-btn:active{transform:scale(0.95);}
+    .num-btn.del-btn{grid-column:span 1;font-size:18px;}
+    .num-btn.enter-btn{grid-column:span 2;background:rgba(0,245,212,0.1);border-color:rgba(0,245,212,0.3);color:var(--primary);}
+    .input-display{background:rgba(255,255,255,0.04);border:2px solid var(--border);border-radius:10px;padding:14px;font-size:28px;font-weight:700;font-family:var(--font-display);color:var(--primary);min-height:58px;margin-bottom:16px;letter-spacing:4px;}
+    .input-display.correct-flash{animation:cFlash 0.3s;}
+    .input-display.wrong-flash{animation:wFlash 0.3s;}
+    @keyframes cFlash{50%{background:rgba(0,200,150,0.3);border-color:var(--success);}}
+    @keyframes wFlash{50%{background:rgba(255,71,87,0.2);border-color:var(--danger);}}
+    .diff-row{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+    .diff-btn{padding:8px 20px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;font-weight:700;transition:var(--transition);}
+    .diff-btn.active{border-color:var(--primary);background:rgba(0,245,212,0.1);color:var(--primary);}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../../index.html" class="navbar-brand"><div class="logo-icon">🎓</div><span class="logo-text">EduPlay</span></a>
+  <ul class="navbar-nav"><li><a href="../games.html">🎮 Oyunlar</a></li></ul>
+  <div class="navbar-actions"><a href="../profile.html" class="btn-avatar"><span data-user-avatar>🎓</span></a></div>
+  <button class="mobile-menu-btn">☰</button>
+</nav>
+<div class="page-wrapper">
+  <div class="game-container">
+    <div id="startScreen" class="game-screen">
+      <div class="big-emoji">⚡</div>
+      <h2 style="font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:12px">Hız Matematik</h2>
+      <p style="color:var(--text-muted);margin-bottom:20px">60 saniyede mümkün olduğu kadar çok işlem çöz!</p>
+      <div class="diff-row">
+        <button class="diff-btn active" onclick="setDiff('easy',this)">🟢 Kolay</button>
+        <button class="diff-btn" onclick="setDiff('medium',this)">🟡 Orta</button>
+        <button class="diff-btn" onclick="setDiff('hard',this)">🔴 Zor</button>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="startGame()">⚡ Başlat</button>
+    </div>
+
+    <div id="gameScreen" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:var(--font-display)"><span style="font-size:13px;color:var(--text-muted)">Puan </span><span id="scoreD" style="font-size:22px;font-weight:700;color:var(--warning)">0</span></div>
+        <div style="font-family:var(--font-display)"><span id="timerD" style="font-size:28px;font-weight:800;color:var(--primary)">60</span><span style="font-size:13px;color:var(--text-muted)"> sn</span></div>
+        <div style="font-family:var(--font-display)"><span style="font-size:13px;color:var(--text-muted)">Çözdü </span><span id="solvedD" style="font-size:22px;font-weight:700;color:var(--success)">0</span></div>
+      </div>
+      <div class="time-bar"><div class="time-fill" id="timeFill" style="width:100%;background:var(--primary)"></div></div>
+      <div class="combo" id="comboDisplay"></div>
+      <div class="problem" id="problemDisplay">2 + 3</div>
+      <div class="input-display" id="inputDisplay">_</div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pressNum('7')">7</button>
+        <button class="num-btn" onclick="pressNum('8')">8</button>
+        <button class="num-btn" onclick="pressNum('9')">9</button>
+        <button class="num-btn" onclick="pressNum('4')">4</button>
+        <button class="num-btn" onclick="pressNum('5')">5</button>
+        <button class="num-btn" onclick="pressNum('6')">6</button>
+        <button class="num-btn" onclick="pressNum('1')">1</button>
+        <button class="num-btn" onclick="pressNum('2')">2</button>
+        <button class="num-btn" onclick="pressNum('3')">3</button>
+        <button class="num-btn del-btn" onclick="pressNum('del')">⌫</button>
+        <button class="num-btn" onclick="pressNum('0')">0</button>
+        <button class="num-btn" onclick="pressNum('neg')">-</button>
+        <button class="num-btn enter-btn" onclick="submit()">✅ Gir</button>
+        <button class="num-btn" onclick="skip()" style="background:rgba(255,255,255,0.03);color:var(--text-muted);font-size:14px">⏭ Geç</button>
+      </div>
+    </div>
+
+    <div id="endScreen" class="game-screen" style="display:none">
+      <div class="big-emoji" id="endEmoji">🏆</div>
+      <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:8px">Süre Doldu!</h2>
+      <div class="score-big" id="finalScore">0</div>
+      <p style="color:var(--text-muted);margin:8px 0 24px">puan</p>
+      <div style="display:flex;gap:24px;justify-content:center;margin-bottom:28px">
+        <div class="stat" style="text-align:center"><div style="font-size:28px;font-weight:700;color:var(--success);font-family:var(--font-display)" id="finalSolved">0</div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">Çözüldü</div></div>
+        <div class="stat" style="text-align:center"><div style="font-size:28px;font-weight:700;color:var(--primary);font-family:var(--font-display)" id="finalBest">0</div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">En İyi Seri</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center">
+        <button class="btn btn-primary" onclick="startGame()">🔄 Tekrar</button>
+        <a href="../games.html" class="btn" style="background:rgba(255,255,255,0.04);border-color:var(--border)">← Oyunlar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../js/main.js"></script>
+<script>
+let difficulty='easy',score=0,solved=0,streak=0,bestStreak=0;
+let timerInterval=null,timeLeft=60;
+let currentAnswer=0,inputStr='';
+
+function setDiff(d,btn){
+  difficulty=d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function genProblem(){
+  const ops=difficulty==='easy'?['+','-']:difficulty==='medium'?['+','-','×']:['+','-','×','÷'];
+  const op=ops[Math.floor(Math.random()*ops.length)];
+  let a,b,ans;
+  if(op==='+'){
+    const max=difficulty==='easy'?20:difficulty==='medium'?50:100;
+    a=Math.floor(Math.random()*max)+1;
+    b=Math.floor(Math.random()*max)+1;
+    ans=a+b;
+  } else if(op==='-'){
+    const max=difficulty==='easy'?20:difficulty==='medium'?50:100;
+    a=Math.floor(Math.random()*max)+5;
+    b=Math.floor(Math.random()*a)+1;
+    ans=a-b;
+  } else if(op==='×'){
+    const max=difficulty==='medium'?9:12;
+    a=Math.floor(Math.random()*max)+2;
+    b=Math.floor(Math.random()*max)+2;
+    ans=a*b;
+  } else {
+    b=Math.floor(Math.random()*9)+2;
+    ans=Math.floor(Math.random()*10)+1;
+    a=b*ans;
+  }
+  currentAnswer=ans;
+  document.getElementById('problemDisplay').textContent=`${a} ${op} ${b} = ?`;
+}
+
+function startGame(){
+  score=0;solved=0;streak=0;bestStreak=0;inputStr='';timeLeft=60;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('endScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  updateDisplay();
+  genProblem();
+  timerInterval=setInterval(()=>{
+    timeLeft-=0.1;
+    document.getElementById('timerD').textContent=Math.ceil(timeLeft);
+    const pct=timeLeft/60;
+    document.getElementById('timeFill').style.width=`${pct*100}%`;
+    document.getElementById('timeFill').style.background=pct>0.5?'var(--primary)':pct>0.25?'var(--warning)':'var(--danger)';
+    if(timeLeft<=0){clearInterval(timerInterval);endGame();}
+  },100);
+}
+
+function updateDisplay(){
+  document.getElementById('inputDisplay').textContent=inputStr||'_';
+  document.getElementById('scoreD').textContent=score;
+  document.getElementById('solvedD').textContent=solved;
+  document.getElementById('comboDisplay').textContent=streak>=3?`🔥 ${streak} seri! +${streak*5} bonus`:'';
+}
+
+function pressNum(v){
+  if(v==='del'){inputStr=inputStr.slice(0,-1);}
+  else if(v==='neg'){inputStr=inputStr.startsWith('-')?inputStr.slice(1):'-'+inputStr;}
+  else{if(inputStr.length<5)inputStr+=v;}
+  updateDisplay();
+}
+
+function submit(){
+  if(!inputStr||inputStr==='-')return;
+  const userAns=parseInt(inputStr);
+  const inp=document.getElementById('inputDisplay');
+  if(userAns===currentAnswer){
+    inp.className='input-display correct-flash';
+    const bonus=streak>=3?streak*5:0;
+    const pts=difficulty==='easy'?10:difficulty==='medium'?20:35;
+    score+=pts+bonus;solved++;streak++;
+    bestStreak=Math.max(bestStreak,streak);
+  } else {
+    inp.className='input-display wrong-flash';
+    streak=0;
+  }
+  inputStr='';
+  setTimeout(()=>inp.className='input-display',300);
+  updateDisplay();
+  genProblem();
+}
+
+function skip(){streak=0;inputStr='';updateDisplay();genProblem();}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('gameScreen').style.display==='none')return;
+  if(e.key>='0'&&e.key<='9')pressNum(e.key);
+  else if(e.key==='-')pressNum('neg');
+  else if(e.key==='Backspace')pressNum('del');
+  else if(e.key==='Enter')submit();
+});
+
+function endGame(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('endScreen').style.display='block';
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalSolved').textContent=solved;
+  document.getElementById('finalBest').textContent=bestStreak;
+  const pct=solved/30;
+  document.getElementById('endEmoji').textContent=pct>=0.8?'🏆':pct>=0.5?'⭐':'💪';
+  if(window.EduPlay) EduPlay.addXP(Math.floor(score/5));
+}
+</script>
+</body>
+</html>
